@@ -1,0 +1,16 @@
+{
+  "lastChangelogVersion": "0.67.1",
+  "defaultProvider": "openai-codex",
+  "defaultModel": "gpt-5.4-mini",
+  "defaultThinkingLevel": "high",
+  "theme": "kanagawa-dragon",
+  "terminal": {
+    "showImages": true
+  },
+  "editorPaddingX": 2,
+  "compaction": {
+    "enabled": true
+  },
+  "treeFilterMode": "default",
+  "hideThinkingBlock": true
+}

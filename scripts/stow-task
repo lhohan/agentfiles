@@ -1,0 +1,44 @@
+#!/bin/sh
+set -eu
+
+action="${1:-}"
+if [ -z "$action" ]; then
+  echo "Usage: scripts/stow-task <stow|unstow|restow|check> [packages...]" >&2
+  exit 2
+fi
+shift
+
+if [ "$#" -gt 0 ]; then
+  packages="$*"
+else
+  set -- agents/*
+  packages=""
+  for path in "$@"; do
+    if [ -d "$path" ]; then
+      packages="$packages ${path#agents/}"
+    fi
+  done
+  if [ -z "$packages" ]; then
+    echo "No packages found under agents/" >&2
+    exit 1
+  fi
+fi
+
+case "$action" in
+  stow)
+    stow $packages
+    ;;
+  unstow)
+    stow -D $packages
+    ;;
+  restow)
+    stow -R $packages
+    ;;
+  check)
+    stow --simulate --verbose=2 $packages
+    ;;
+  *)
+    echo "Unknown action: $action" >&2
+    exit 2
+    ;;
+esac

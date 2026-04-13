@@ -1,0 +1,68 @@
+{
+  "$schema": "https://raw.githubusercontent.com/badlogic/pi-mono/main/packages/coding-agent/src/modes/interactive/theme/theme-schema.json",
+  "name": "kanagawa-dragon",
+  "colors": {
+    "accent": "#8BA4B0",
+    "border": "#7A8382",
+    "borderAccent": "#8BA4B0",
+    "borderMuted": "#393836",
+    "success": "#87A987",
+    "error": "#C4746E",
+    "warning": "#C4B28A",
+    "muted": "#A6A69C",
+    "dim": "#7A8382",
+    "text": "",
+    "thinkingText": "#7A8382",
+
+    "selectedBg": "#2D4F67",
+    "userMessageBg": "#1D1C19",
+    "userMessageText": "",
+    "customMessageBg": "#12120F",
+    "customMessageText": "",
+    "customMessageLabel": "#8992A7",
+    "toolPendingBg": "#181616",
+    "toolSuccessBg": "#2B3328",
+    "toolErrorBg": "#43242B",
+    "toolTitle": "#8BA4B0",
+    "toolOutput": "#C5C9C5",
+
+    "mdHeading": "#C4B28A",
+    "mdLink": "#8BA4B0",
+    "mdLinkUrl": "#7A8382",
+    "mdCode": "#8EA4A2",
+    "mdCodeBlock": "#C5C9C5",
+    "mdCodeBlockBorder": "#7A8382",
+    "mdQuote": "#7A8382",
+    "mdQuoteBorder": "#7A8382",
+    "mdHr": "#7A8382",
+    "mdListBullet": "#8BA4B0",
+
+    "toolDiffAdded": "#98BB6C",
+    "toolDiffRemoved": "#E82424",
+    "toolDiffContext": "#7A8382",
+
+    "syntaxComment": "#737C73",
+    "syntaxKeyword": "#8992A7",
+    "syntaxFunction": "#8BA4B0",
+    "syntaxVariable": "#C4B28A",
+    "syntaxString": "#8A9A7B",
+    "syntaxNumber": "#A292A3",
+    "syntaxType": "#8EA4A2",
+    "syntaxOperator": "#C4746E",
+    "syntaxPunctuation": "#9E9B93",
+
+    "thinkingOff": "#393836",
+    "thinkingMinimal": "#7A8382",
+    "thinkingLow": "#8BA4B0",
+    "thinkingMedium": "#8EA4A2",
+    "thinkingHigh": "#8992A7",
+    "thinkingXhigh": "#C4746E",
+
+    "bashMode": "#B6927B"
+  },
+  "export": {
+    "pageBg": "#0D0C0C",
+    "cardBg": "#181616",
+    "infoBg": "#223249"
+  }
+}

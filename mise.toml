@@ -1,0 +1,15 @@
+[tasks.stow]
+description = "Link agent configurations with Stow"
+run = "./scripts/stow-task stow"
+
+[tasks.unstow]
+description = "Remove agent configuration links managed by Stow"
+run = "./scripts/stow-task unstow"
+
+[tasks.restow]
+description = "Recreate agent configuration links managed by Stow"
+run = "./scripts/stow-task restow"
+
+[tasks.check]
+description = "Preview agent configuration links managed by Stow"
+run = "./scripts/stow-task check"
