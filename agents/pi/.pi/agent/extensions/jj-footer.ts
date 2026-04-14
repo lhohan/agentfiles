@@ -267,7 +267,7 @@ export default function (pi: ExtensionAPI) {
 					statsParts.push(contextColored);
 					const statsLeft = statsParts.join(" ");
 
-					const modelName = ctx.model?.id ?? "no-model";
+					const modelName = ctx.model ? `${theme.fg("dim", `${ctx.model.provider} •`)} ${ctx.model.id}` : "no-model";
 					const thinkingLevel = pi.getThinkingLevel();
 					const rightSide = ctx.model?.reasoning
 						? `${modelName} • ${thinkingLevel === "off" ? "thinking off" : thinkingLevel}`
