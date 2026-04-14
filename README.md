@@ -39,3 +39,7 @@ Canonical Stow settings live in `.stowrc`:
 ## Decision log
 
 See [`DECISIONS.md`](./DECISIONS.md) for the full decision log.
+
+## Contributing
+
+This is a mirror repository. For issues or questions visit [Codeberg](https://codeberg.org/hanlho/agentfiles).
