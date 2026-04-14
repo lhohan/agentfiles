@@ -10,7 +10,9 @@ Dotfiles but for agents.
 
 Currently managed agents:
 
-- [Pi](agents/pi)
+- [Pi](agents/pi) includes:
+  - a [Jujutsu-aware footer extension](agents/pi/.pi/agent/extensions/) that shows jj file counts, nearest bookmark distance, and cwd location in the TUI.
+  - [custom themes](agents/pi/.pi/agent/themes/)
 
 ## Tooling
 
