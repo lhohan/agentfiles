@@ -42,4 +42,4 @@ See [`DECISIONS.md`](./DECISIONS.md) for the full decision log.
 
 ## Contributing
 
-This is a mirror repository. For issues or questions visit [Codeberg](https://codeberg.org/hanlho/agentfiles).
+For issues or pull requests visit [Codeberg](https://codeberg.org/hanlho/agentfiles).
