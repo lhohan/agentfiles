@@ -284,7 +284,8 @@ export default function (pi: ExtensionAPI) {
             jjInfo = nextJjInfo;
             fileCounts = nextFileCounts;
           }
-        } catch {
+        } catch (error) {
+          pi.logger?.debug?.("jj-footer: refresh failed", error);
           if (!disposed) {
             jjInfo = { bookmark: "(unavailable)", ahead: 0 };
             fileCounts = { added: 0, changed: 0, deleted: 0, conflicted: 0 };
