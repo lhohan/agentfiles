@@ -113,7 +113,7 @@ function parseJjBookmarkAnchor(stdout: string): JjBookmarkAnchor | null {
 
   return {
     commitId: lines[0],
-    bookmark: lines[1],
+    bookmark: lines.slice(1).join(",") || "(no bookmark)",
   };
 }
 
