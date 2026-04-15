@@ -151,8 +151,6 @@ function parseJjStatusCounts(stdout: string): FileCounts {
 
   for (const rawLine of stdout.split(/\r?\n/)) {
     const line = rawLine.trim();
-    if (!/^[AMDRCUT?]\s+/.test(line)) continue;
-
     const kind = classifyJjStatusLine(line);
     if (kind) counts[kind]++;
   }
