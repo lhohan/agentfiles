@@ -60,6 +60,8 @@ function findJjRoot(startDir: string): string | null {
 }
 
 function formatCount(value: number): string {
+  if (!Number.isFinite(value)) return "∞";
+
   const units = ["", "k", "m", "b", "t"];
   let scaled = Math.abs(value);
   let unitIndex = 0;
