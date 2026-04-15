@@ -38,6 +38,10 @@ Canonical Stow settings live in `.stowrc`:
 - `mise check` — preview link actions for all packages
 - `mise check pi` — preview link actions for package `pi`
 
+### Helper scripts
+
+- `scripts/commit-pi-day-to-day` — use `jj` to commit only `agents/pi/.pi/agent/settings.json` with the message `pi: day-to-day updates`
+
 ## Decision log
 
 See [`DECISIONS.md`](./DECISIONS.md) for the full decision log.

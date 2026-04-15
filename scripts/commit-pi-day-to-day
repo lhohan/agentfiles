@@ -1,0 +1,3 @@
+#!/bin/sh
+
+jj -R "$(dirname "$0")/.." commit -m 'pi: day-to-day updates' agents/pi/.pi/agent/settings.json

@@ -1,7 +1,7 @@
 {
-  "lastChangelogVersion": "0.67.1",
-  "defaultProvider": "opencode-go",
-  "defaultModel": "kimi-k2.5",
+  "lastChangelogVersion": "0.67.2",
+  "defaultProvider": "openai-codex",
+  "defaultModel": "gpt-5.4-mini",
   "defaultThinkingLevel": "high",
   "theme": "kanagawa-dragon",
   "terminal": {
