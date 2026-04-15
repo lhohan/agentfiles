@@ -5,7 +5,7 @@ Dotfiles but for agents.
 ## Layout
 
 - `agents/` contains all managed agent packages.
-- Every direct `agents/<name>/` subdirectory is a Stow package.
+- Every direct `agents/<name>/` subdirectory is a "Stow package" which means te content of it will be symlinked to the home directory (and therefore will become used).
 - Keep only package directories directly under `agents/`.
 
 Currently managed agents:
