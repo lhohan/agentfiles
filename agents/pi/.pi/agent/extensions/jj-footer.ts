@@ -217,14 +217,17 @@ export default function (pi: ExtensionAPI) {
 		};
 
 		ctx.ui.setFooter((tui, theme, footerData) => {
-			requestRefresh = () => void refresh(tui);
+			const myRequestRefresh = () => void refresh(tui);
+			requestRefresh = myRequestRefresh;
 			requestRefresh();
 			refreshTimer = setInterval(() => requestRefresh?.(), 5000);
 
 			return {
 				dispose() {
 					disposed = true;
-					requestRefresh = undefined;
+					if (requestRefresh === myRequestRefresh) {
+						requestRefresh = undefined;
+					}
 					if (refreshTimer) clearInterval(refreshTimer);
 				},
 				invalidate() {},
