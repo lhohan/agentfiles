@@ -2,10 +2,23 @@
 
 Dotfiles but for agents.
 
-## Layout
+## Setup
+
+Agent configuration files are managed with Mise and GNU Stow.
+
+```text
+.
+├── .agents/                # not the agentfiles repo content
+├── agents/                 # managed agent packages
+│   ├── pi/                 # Pi package
+│   └── …                   # other agent packages as needed
+└── docs/                   # package-specific documentation
+    ├── pi/
+    └── …                   # other package docs as needed
+```
 
 - `agents/` contains all managed agent packages.
-- Every direct `agents/<name>/` subdirectory is a "Stow package" which means the content is symlinked to the home directory (and therefore used).
+- Every direct `agents/<name>/` subdirectory is a Stow package, so its contents are symlinked into the home directory.
 - Keep only package directories directly under `agents/`.
 
 Currently managed agents:
