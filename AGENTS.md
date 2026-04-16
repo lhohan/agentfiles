@@ -21,4 +21,4 @@ Repository for agent configuration files. It uses [Mise](https://mise.jdx.dev) t
 ## Documentation Triggers
 
 - Update `README.md` when user-facing commands or workflow behavior changes.
-- Update `DECISIONS.md` when package model or operational policy changes.
+- Update `decisions.md` when package model or operational policy changes.

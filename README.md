@@ -56,9 +56,9 @@ Canonical Stow settings live in `.stowrc`:
 
 - `scripts/commit-pi-day-to-day` — use `jj` to commit only `agents/pi/.pi/agent/settings.json` with the message `pi: day-to-day updates`
 
-## Decision log
+## decisions
 
-See [`DECISIONS.md`](./DECISIONS.md) for the full decision log.
+See [`decisions.md`](./decisions.md) for the repo-wide decisions, and `docs/<agent>/decisions.md` for agent-specific decisions.
 
 ## Contributing
 
