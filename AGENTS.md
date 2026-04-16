@@ -9,6 +9,7 @@ Repository for agent configuration files. It uses [Mise](https://mise.jdx.dev) t
 - Edit files in this repository, not linked files in `~/`.
 - Preserve package directory layout; do not flatten nested files.
 - Keep JSON files valid when editing.
+- Log important package decisions in `docs/<package>/decisions.md` as you make them.
 
 ## Stow/Mise Workflow
 
@@ -22,3 +23,4 @@ Repository for agent configuration files. It uses [Mise](https://mise.jdx.dev) t
 
 - Update `README.md` when user-facing commands or workflow behavior changes.
 - Update `decisions.md` when package model or operational policy changes.
+- Keep package-specific docs and decisions in `docs/<package>/` in sync with package and implementation changes.
