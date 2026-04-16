@@ -5,13 +5,14 @@ Dotfiles but for agents.
 ## Layout
 
 - `agents/` contains all managed agent packages.
-- Every direct `agents/<name>/` subdirectory is a "Stow package" which means te content of it will be symlinked to the home directory (and therefore will become used).
+- Every direct `agents/<name>/` subdirectory is a "Stow package" which means the content is symlinked to the home directory (and therefore used).
 - Keep only package directories directly under `agents/`.
 
 Currently managed agents:
 
 - [Pi](agents/pi) includes:
   - a [Jujutsu-aware footer extension](agents/pi/.pi/agent/extensions/) that shows jj file counts, nearest bookmark distance, and cwd location in the TUI.
+    - extension documentation: [`docs/pi/jj-footer-extension.md`](docs/pi/jj-footer-extension.md)
   - [custom themes](agents/pi/.pi/agent/themes/)
 
 ## Tooling
