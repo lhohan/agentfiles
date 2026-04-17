@@ -62,7 +62,7 @@ Canonical Stow settings live in `.stowrc`:
 
 ## decisions
 
-See [`decisions.md`](./decisions.md) for the repo-wide decisions, and `docs/<agent>/decisions.md` for agent-specific decisions.
+See [`docs/decisions.md`](./docs/decisions.md) for the repo-wide decisions, and `docs/<agent>/decisions.md` for agent-specific decisions.
 
 ## Contributing
 

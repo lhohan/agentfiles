@@ -2,7 +2,7 @@
 
 Decisions are listed in reverse chronological order (most recent first).
 
-Pi-specific decisions live in [`docs/pi/decisions.md`](./docs/pi/decisions.md).
+Pi-specific decisions live in [`pi/decisions.md`](./pi/decisions.md).
 
 ### AGF-005: Treat each direct `agents/` subdirectory as a Stow package [Accepted]
 
