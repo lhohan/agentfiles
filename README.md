@@ -2,14 +2,18 @@
 
 Dotfiles but for agents.
 
-## Setup
+## The dotfiles
+
+If you want to go straight to the agent configurations, the actual dotfiles, go [here](agents/). 
+
+## Repository Setup
 
 Agent configuration files are managed with Mise and GNU Stow.
 
 ```text
 .
 ├── .agents/                # not the agentfiles repo content
-├── agents/                 # managed agent packages
+├── agents/                 # managed agent packages (a.k.a. the dotfiles)
 │   ├── pi/                 # Pi package
 │   └── …                   # other agent packages as needed
 └── docs/                   # package-specific documentation
