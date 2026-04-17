@@ -2,6 +2,14 @@
 
 Pi-specific decisions are listed in reverse chronological order (most recent first).
 
+### pi-003: Pin `pi-web-access` to a reviewed release [Accepted]
+
+> **In the context of** loading the `pi-web-access` package inside Pi,
+> **facing** the fact that Pi packages run with full system access and can change behaviour on update,
+> **we decided** to pin `pi-web-access` to the reviewed release `0.10.6` in `agents/pi/.pi/agent/settings.json`,
+> **to achieve** reproducible installs and reduce the chance of unreviewed behaviour changes,
+> **accepting** that updates now require an explicit manual version bump and review.
+
 ### pi-002: Use Exa API and Gemini API only — disable browser-based fallbacks [Accepted]
 
 > **In the context of** configuring search providers for the pi-web-access extension,
