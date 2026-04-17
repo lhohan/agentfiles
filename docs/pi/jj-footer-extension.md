@@ -6,11 +6,19 @@ Canonical maintainer documentation for the Pi extension at:
 
 ## Purpose
 
-When Pi runs in a Jujutsu repository, this extension *replaces* Pi’s detached-HEAD footer label with a `jj`-aware label showing:
+When Pi runs in a Jujutsu repository, this extension *replaces* Pi's detached-HEAD footer label with a `jj`-aware label showing:
 
 - nearest bookmark name
 - commits ahead of that bookmark (`↑N`)
 - working-copy file counts (`+`, `~`, `-`, `!`)
+
+### Before:
+
+![Pi footer showing detached HEAD label](without-jj-footer.png)
+
+### After: Pi shows the active bookmark, commits ahead, and working-copy changes:
+
+![Pi footer showing jj bookmark and status counts](with-jj-footer.png)
 
 ## Where it is loaded from
 
