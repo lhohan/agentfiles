@@ -1,10 +1,10 @@
 # agentfiles
 
-Dotfiles but for agents.
+Agent dotfiles, managed with Mise and GNU Stow.
 
 ## The dotfiles
 
-If you want to go straight to the agent configurations, the actual dotfiles, go [here](agents/). 
+If you want to go straight to the dotfiles, go [here](agents/). 
 
 ## Repository Setup
 
@@ -12,11 +12,13 @@ Agent configuration files are managed with Mise and GNU Stow.
 
 ```text
 .
-├── .agents/                # not the agentfiles repo content
-├── agents/                 # managed agent packages (a.k.a. the dotfiles)
+├── .agents/                # repo-local skills and agent instructions
+├── agents/                 # managed dotfiles packages
+│   ├── dotagents/          # empty ~/.agents scaffold package
 │   ├── pi/                 # Pi package
 │   └── …                   # other agent packages as needed
 └── docs/                   # package-specific documentation
+    ├── dotagents/
     ├── pi/
     └── …                   # other package docs as needed
 ```
@@ -25,8 +27,9 @@ Agent configuration files are managed with Mise and GNU Stow.
 - Every direct `agents/<name>/` subdirectory is a Stow package, so its contents are symlinked into the home directory.
 - Keep only package directories directly under `agents/`.
 
-Currently managed agents:
+Currently managed dotfiles:
 
+- [Dotagents](agents/dotagents) manages the `~/.agents` directory structure.
 - [Pi](agents/pi) includes:
   - a [Jujutsu-aware footer extension](agents/pi/.pi/agent/extensions/) that shows jj file counts, nearest bookmark distance, and cwd location in the TUI.
     - extension documentation: [`docs/pi/jj-footer-extension.md`](docs/pi/jj-footer-extension.md)
@@ -50,10 +53,13 @@ Canonical Stow settings live in `.stowrc`:
 ## Common tasks
 
 - `mise stow` — link all packages under `agents/`
+- `mise stow dotagents` — link only package `dotagents`
 - `mise stow pi` — link only package `pi`
 - `mise unstow` — remove links for all packages
+- `mise restow dotagents` — recreate links for package `dotagents`
 - `mise restow pi` — recreate links for package `pi`
 - `mise check` — preview link actions for all packages
+- `mise check dotagents` — preview link actions for package `dotagents`
 - `mise check pi` — preview link actions for package `pi`
 
 ### Helper scripts

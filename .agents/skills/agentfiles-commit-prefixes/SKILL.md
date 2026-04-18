@@ -15,6 +15,7 @@ This is **not** traditional Conventional Commits.
 ## Current prefix map
 
 - `pi:` — changes under `agents/pi/`
+- `dotagents:` — changes under `agents/dotagents/`
 - `docs:` — documentation changes (only)
 - `build:` — task management or build related changes
 - `chore:` — repository-wide or cross-cutting changes, including root files, task scripts

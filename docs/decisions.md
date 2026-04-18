@@ -4,6 +4,14 @@ Decisions are listed in reverse chronological order (most recent first).
 
 Pi-specific decisions live in [`pi/decisions.md`](./pi/decisions.md).
 
+### AGF-006: Frame the repository as agent dotfiles first [Accepted]
+
+> **In the context of** describing the repository to newcomers,
+> **facing** wording that makes the agent package layout sound secondary,
+> **we decided** to describe the repository as agent dotfiles managed with Stow, with `agents/` as the canonical package layout,
+> **to achieve** a clearer first impression that matches the repository's purpose,
+> **accepting** that package-level details remain documented separately.
+
 ### AGF-005: Treat each direct `agents/` subdirectory as a Stow package [Accepted]
 
 > **In the context of** managing multiple agent configurations with GNU Stow,
