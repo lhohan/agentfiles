@@ -2,6 +2,18 @@
 
 Pi-specific decisions are listed in reverse chronological order (most recent first).
 
+### pi-006: Adopt pi-prompt-template-model for prompt-owned model selection [Accepted]
+
+> **In the context of** wanting prompts to be executed by the most suited (performance, capability, speed, cost) language model,
+> **facing** the need to manage models for `/plan` ,
+> **we decided** to adopt the third-party extension `pi-prompt-template-model@0.7.3` as a pinned package,
+> **to achieve** prompt-specific model selection via frontmatter,
+> **accepting** an increased trust surface (third-party executable code).
+>
+> **Rationale:** The extension provides exactly the needed capability (frontmatter-declared model, automatic restore) without custom code. We limit the feature surface to `model`, `thinking`, and default `restore` behavior only. The package is pinned at `0.7.3` following the same pattern as `pi-web-access` (pi-003).
+>
+> **Scope limit:** Only `agents/pi/.pi/agent/prompts/plan.md` uses frontmatter initially. Future prompts may adopt the same pattern without further extension changes.
+
 ### pi-005: Add a lightweight read-only `/plan` prompt [Accepted]
 
 > **In the context of** adding prompt templates to the Pi package,

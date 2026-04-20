@@ -1,3 +1,9 @@
+---
+model: openai-codex/gpt-5.4
+thinking: high
+restore: false
+---
+
 # Plan Mode
 
 CRITICAL: Plan mode is active. You are in a strict read-only planning phase.

@@ -13,7 +13,10 @@
   },
   "treeFilterMode": "default",
   "hideThinkingBlock": true,
-  "packages": ["npm:pi-web-access@0.10.6"],
+  "packages": [
+    "npm:pi-web-access@0.10.6",
+    "npm:pi-prompt-template-model@0.7.3"
+  ],
   "enabledModels": [
     "openai-codex/gpt-5.4-mini",
     "opencode-go/kimi-k2.5",
