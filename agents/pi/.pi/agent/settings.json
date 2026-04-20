@@ -1,7 +1,7 @@
 {
   "lastChangelogVersion": "0.67.68",
   "defaultProvider": "openai-codex",
-  "defaultModel": "gpt-5.4-mini",
+  "defaultModel": "gpt-5.3-codex",
   "defaultThinkingLevel": "high",
   "theme": "kanagawa-dragon",
   "terminal": {
@@ -13,7 +13,9 @@
   },
   "treeFilterMode": "default",
   "hideThinkingBlock": true,
-  "packages": ["npm:pi-web-access@0.10.6"],
+  "packages": [
+    "npm:pi-web-access@0.10.6"
+  ],
   "enabledModels": [
     "openai-codex/gpt-5.4-mini",
     "opencode-go/kimi-k2.5",
