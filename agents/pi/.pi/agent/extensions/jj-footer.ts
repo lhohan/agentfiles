@@ -197,7 +197,13 @@ async function readFileCounts(
 ): Promise<FileCounts> {
   const result = await pi.exec(
     "jj",
-    ["status", "--quiet", "--no-pager", "--color=never"],
+    [
+      "status",
+      "--ignore-working-copy",
+      "--quiet",
+      "--no-pager",
+      "--color=never",
+    ],
     {
       cwd,
       timeout: 2500,
@@ -274,11 +280,14 @@ function createFooterSessionShim(ctx: ExtensionContext, pi: ExtensionAPI) {
   };
 }
 
-// `jj` Refresh strategy: dual mechanism for comprehensive updates
-// 1. turn_end event: catches working copy changes made by the AI (file edits without jj commands)
+// `jj` refresh strategy: dual mechanism for timely updates
+// 1. turn_end event: refreshes after agent actions so footer state stays current
 // 2. fs.watch on .jj/: catches jj metadata changes (commits, bookmarks) from any source
-// Why both? jj is lazy - editing files doesn't touch .jj/, and AI file edits don't trigger fs.watch
-function createJjStateController(pi: ExtensionAPI, jjRoot: string): JjStateController {
+// Why both? filesystem edits don't reliably emit .jj/ watcher events, while jj ops do.
+function createJjStateController(
+  pi: ExtensionAPI,
+  jjRoot: string,
+): JjStateController {
   let state: JjState = {
     jjInfo: { bookmark: "(loading…)", ahead: 0 },
     fileCounts: { added: 0, changed: 0, deleted: 0, conflicted: 0 },

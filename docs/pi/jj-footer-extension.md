@@ -44,6 +44,14 @@ Example label:
 
 ## Data collection
 
+The extension reads JJ state with commands that all pass `--ignore-working-copy` to avoid snapshotting/re-writing the working-copy commit (`@`) as a side effect of footer refresh.
+
+Commands used:
+
+- bookmark/ahead anchor: `jj log -r 'latest(heads(::@ & bookmarks()))' --ignore-working-copy ...`
+- ahead count: `jj log -r '<anchor-commit>..@' --ignore-working-copy ...`
+- file counts: `jj status --ignore-working-copy --quiet ...`
+
 `jj` status classification:
 
 - `A`, `?` → added (`+`)
@@ -53,11 +61,15 @@ Example label:
 
 Only lines matching `<CODE> <PATH>` are counted.
 
+### Note on file-count freshness
+
+Because `jj status` runs with `--ignore-working-copy`, footer file counts reflect the last snapshotted working-copy state rather than forcing a new snapshot during refresh.
+
 ## Refresh strategy
 
 The extension uses both mechanisms intentionally:
 
-- `turn_end` event: catches file edits made by the agent
+- `turn_end` event: refreshes footer state after agent actions
 - `fs.watch(.jj/, recursive)` with debounce: catches JJ metadata changes (commits/bookmarks)
 
 A queued refresh loop prevents overlapping refresh work and ensures the newest state is eventually shown.

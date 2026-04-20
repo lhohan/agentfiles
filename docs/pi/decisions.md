@@ -2,6 +2,14 @@
 
 Pi-specific decisions are listed in reverse chronological order (most recent first).
 
+### pi-004: Prevent `jj` footer refresh from mutating working-copy commits [Accepted]
+
+> **In the context of** the custom Pi `jj` footer extension polling repository state,
+> **facing** accidental working-copy commit rewrites/snapshots caused by read-only footer refresh commands,
+> **we decided** to pass `--ignore-working-copy` to all `jj` commands used by the extension (including `jj status`),
+> **to achieve** side-effect-free footer refreshes that do not create confusing JJ history churn,
+> **accepting** that working-copy file-count indicators may lag until the working copy is snapshotted by normal `jj` operations.
+
 ### pi-003: Pin `pi-web-access` to a reviewed release [Accepted]
 
 > **In the context of** loading the `pi-web-access` package inside Pi,
