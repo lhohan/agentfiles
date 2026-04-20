@@ -1,7 +1,29 @@
-# Decisions
+# dotagents decisions
 
-## 2026-04-18 — Improve `find-docs` activation and CLI consistency
+## 2026-04-20 — dotagents owns globally installed reusable skills
 
-- Expanded the `find-docs` frontmatter description to include the exact phrase "use Context7" plus related variants so the skill activates more reliably from user requests.
-- Standardised command examples on `npx ctx7@latest` to remove ambiguity about whether the latest CLI or a locally installed binary should be used.
-- Added explicit prerequisites, troubleshooting, and error-handling notes so the skill fails more clearly when Context7 is unavailable, stale, or rate-limited.
+### Context
+The repo ships multiple agent skills that are needed globally (by Pi, OpenCode, and Codex), but it was unclear whether such skills should live inside `agents-shared` or in `dotagents`.
+
+### Decision
+Globally installed reusable skills belong in `agents/dotagents/.agents/skills/`, not inside `agents/agents-shared`.
+
+- `agents-shared` owns: the canonical shared `AGENTS.md` text and tool-specific AGENTS entrypoints.
+- `dotagents` owns: globally installed reusable skills under `~/.agents/skills/`.
+
+### Considerations
+
+- Currently supported coding agents in the agentsfiles repository all support the `~/.agents/skills` skills location.
+
+### Consequences
+- `agents-shared` stays focused on the shared policy file and its installed paths.
+- `dotagents` includes the global skill library.
+- Skills vendored into `dotagents` can be maintained copies; upstream changes must be manually synced.
+
+### Skills vendored
+- `detect-jujutsu` — vendored from `agent-chisels` repo (version 0.5.0)
+- `use-jujutsu` — vendored from `agent-chisels` repo (version 0.3.1)
+
+### Migration
+- Removed external symlinks in `~/.agents/skills/` that pointed to `agent-chisels`
+- Restowed `dotagents` so Stow owns the new paths

@@ -1,7 +1,7 @@
 {
   "lastChangelogVersion": "0.67.68",
-  "defaultProvider": "openai-codex",
-  "defaultModel": "gpt-5.4-mini",
+  "defaultProvider": "opencode-go",
+  "defaultModel": "qwen3.6-plus",
   "defaultThinkingLevel": "high",
   "theme": "kanagawa-dragon",
   "terminal": {
@@ -26,7 +26,8 @@
     "opencode/gemini-3-flash",
     "opencode/nemotron-3-super-free",
     "opencode-go/mimo-v2-pro",
-    "opencode-go/minimax-m2.7"
+    "opencode-go/minimax-m2.7",
+    "opencode-go/qwen3.6-plus"
   ],
   "enableSkillCommands": true,
   "showHardwareCursor": true,

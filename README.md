@@ -1,6 +1,6 @@
 # agentfiles
 
-Agent dotfiles, managed with Mise and GNU Stow.
+Dotfiles, but for agents.
 
 ## The dotfiles
 
@@ -14,10 +14,12 @@ Agent configuration files are managed with Mise and GNU Stow.
 .
 ├── .agents/                # repo-local skills and agent instructions
 ├── agents/                 # managed dotfiles packages
-│   ├── dotagents/          # empty ~/.agents scaffold package
+│   ├── agents-shared/      # shared AGENTS.md for Pi, OpenCode, and Codex
+│   ├── dotagents/          # shared global skills under ~/.agents/skills/
 │   ├── pi/                 # Pi package
 │   └── …                   # other agent packages as needed
 └── docs/                   # package-specific documentation
+    ├── agents-shared/
     ├── dotagents/
     ├── pi/
     └── …                   # other package docs as needed
@@ -29,9 +31,10 @@ Agent configuration files are managed with Mise and GNU Stow.
 
 Currently managed dotfiles:
 
-- [Dotagents](agents/dotagents) manages the `~/.agents` directory structure.
+- [Agents-shared](agents/agents-shared) provides one canonical `AGENTS.md` symlinked to Pi, OpenCode, and Codex global paths.
+- [Dotagents](agents/dotagents) installs reusable global skills under `~/.agents/skills/`.
 - [Pi](agents/pi) includes:
-  - a lightweight `/plan` prompt at [`agents/pi/.pi/agent/prompts/plan.md`](agents/pi/.pi/agent/prompts/plan.md) for read-only planning before implementation
+  - a `/plan` prompt at [`agents/pi/.pi/agent/prompts/plan.md`](agents/pi/.pi/agent/prompts/plan.md) for read-only planning before implementation
   - a [Jujutsu-aware footer extension](agents/pi/.pi/agent/extensions/) that shows jj file counts, nearest bookmark distance, and cwd location in the TUI.
     - extension documentation: [`docs/pi/jj-footer-extension.md`](docs/pi/jj-footer-extension.md)
   - [custom themes](agents/pi/.pi/agent/themes/)
@@ -54,12 +57,15 @@ Canonical Stow settings live in `.stowrc`:
 ## Common tasks
 
 - `mise stow` — link all packages under `agents/`
+- `mise stow agents-shared` — link only package `agents-shared`
 - `mise stow dotagents` — link only package `dotagents`
 - `mise stow pi` — link only package `pi`
 - `mise unstow` — remove links for all packages
+- `mise restow agents-shared` — recreate links for package `agents-shared`
 - `mise restow dotagents` — recreate links for package `dotagents`
 - `mise restow pi` — recreate links for package `pi`
 - `mise check` — preview link actions for all packages
+- `mise check agents-shared` — preview link actions for package `agents-shared`
 - `mise check dotagents` — preview link actions for package `dotagents`
 - `mise check pi` — preview link actions for package `pi`
 

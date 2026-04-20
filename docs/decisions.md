@@ -3,6 +3,15 @@
 Decisions are listed in reverse chronological order (most recent first).
 
 Pi-specific decisions live in [`pi/decisions.md`](./pi/decisions.md).
+Agents-shared-specific decisions live in [`agents-shared/decisions.md`](./agents-shared/decisions.md).
+
+### AGF-007: Share one global AGENTS.md across Pi, OpenCode, and Codex [Accepted]
+
+> **In the context of** Pi, OpenCode, and Codex each reading a global `AGENTS.md` for agent instructions _from a different location_,
+> **facing** drift and duplication from maintaining separate copies,
+> **we decided** to create a single Stow package (`agents-shared`) with one canonical `AGENTS.md` symlinked to all three tool paths internally,
+> **to achieve** a single source of truth for global agent instructions,
+> **accepting** that existing home-directory files must be cleaned up before the first install.
 
 ### AGF-006: Frame the repository as agent dotfiles first [Accepted]
 
