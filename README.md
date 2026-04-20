@@ -31,6 +31,7 @@ Currently managed dotfiles:
 
 - [Dotagents](agents/dotagents) manages the `~/.agents` directory structure.
 - [Pi](agents/pi) includes:
+  - a lightweight `/plan` prompt at [`agents/pi/.pi/agent/prompts/plan.md`](agents/pi/.pi/agent/prompts/plan.md) for read-only planning before implementation
   - a [Jujutsu-aware footer extension](agents/pi/.pi/agent/extensions/) that shows jj file counts, nearest bookmark distance, and cwd location in the TUI.
     - extension documentation: [`docs/pi/jj-footer-extension.md`](docs/pi/jj-footer-extension.md)
   - [custom themes](agents/pi/.pi/agent/themes/)

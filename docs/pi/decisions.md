@@ -2,6 +2,16 @@
 
 Pi-specific decisions are listed in reverse chronological order (most recent first).
 
+### pi-005: Add a lightweight read-only `/plan` prompt [Accepted]
+
+> **In the context of** adding prompt templates to the Pi package,
+> **facing** the need for a planning mode that stays clearly separate from execution,
+> **we decided** to add a lightweight read-only `/plan` prompt at `agents/pi/.pi/agent/prompts/plan.md`,
+> **to achieve** repo-first planning that surfaces unresolved decisions before implementation,
+> **accepting** an extra clarification round when material decisions remain unresolved and an explicit handoff before any execution begins.
+
+Rationale: The prompt was shaped by reviewing existing planning guidance and OpenCode's plan mode, then adapting those ideas to Pi's read-only planning workflow.
+
 ### pi-004: Prevent `jj` footer refresh from mutating working-copy commits [Accepted]
 
 > **In the context of** the custom Pi `jj` footer extension polling repository state,
