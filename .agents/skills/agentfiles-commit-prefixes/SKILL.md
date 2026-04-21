@@ -16,6 +16,7 @@ This is **not** traditional Conventional Commits.
 
 - `pi:` — changes under `agents/pi/`
 - `dotagents:` — changes under `agents/dotagents/`
+- `shared:` — changes under `agents/agents-shared/`
 - `docs:` — documentation changes (only)
 - `build:` — task management or build related changes
 - `chore:` — repository-wide or cross-cutting changes, including root files, task scripts
@@ -33,6 +34,7 @@ Examples:
 
 - `pi: show all bookmarks in jj footer`
 - `build: update stow task documentation`
+- `shared: review and update canonical AGENTS.md content`
 - `docs: document the commit prefix convention`
 
 Keep the subject short, direct, and in present tense. Add a body only when the rationale needs explanation.

@@ -1,8 +1,8 @@
 {
   "lastChangelogVersion": "0.67.68",
-  "defaultProvider": "opencode-go",
-  "defaultModel": "qwen3.6-plus",
-  "defaultThinkingLevel": "high",
+  "defaultProvider": "openai-codex",
+  "defaultModel": "gpt-5.3-codex",
+  "defaultThinkingLevel": "medium",
   "theme": "kanagawa-dragon",
   "terminal": {
     "showImages": true
