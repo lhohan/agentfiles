@@ -1,1 +1,1 @@
-../agent-rules/AGENTS.md
+../canonical/AGENTS.md
