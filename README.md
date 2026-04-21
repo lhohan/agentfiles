@@ -36,6 +36,7 @@ Currently managed dotfiles:
 - [Agents-shared](agents/agents-shared) provides one canonical `AGENTS.md` symlinked to Pi, OpenCode, and Codex global paths.
 - [Dotagents](agents/dotagents) installs reusable global skills under `~/.agents/skills/`.
 - [Pi](agents/pi) includes:
+  - a global [`APPEND_SYSTEM.md`](agents/pi/.pi/agent/APPEND_SYSTEM.md) for Pi-specific first-message intro behaviour
   - a `/plan` prompt at [`agents/pi/.pi/agent/prompts/plan.md`](agents/pi/.pi/agent/prompts/plan.md) for read-only planning before implementation
   - a [Jujutsu-aware footer extension](agents/pi/.pi/agent/extensions/) that shows jj file counts, nearest bookmark distance, and cwd location in the TUI.
     - extension documentation: [`docs/pi/jj-footer-extension.md`](docs/pi/jj-footer-extension.md)

@@ -2,6 +2,14 @@
 
 Pi-specific decisions are listed in reverse chronological order (most recent first).
 
+### pi-007: Use APPEND_SYSTEM.md for Pi-only first-message behavior [Accepted]
+
+> **In the context of** sharing one global `AGENTS.md` across Pi, OpenCode, and Codex,
+> **facing** the need for Pi to reliably introduce itself in the first message of each new session without imposing that behavior on other tools,
+> **we decided** to put the first-message intro instruction in `agents/pi/.pi/agent/APPEND_SYSTEM.md` instead of the shared `AGENTS.md`,
+> **to achieve** Pi-specific startup behavior while keeping the shared global policy file tool-neutral,
+> **accepting** one Pi-specific behaviour not shared by the other agents.
+
 ### pi-006: Adopt pi-prompt-template-model for prompt-owned model selection [Accepted]
 
 > **In the context of** wanting prompts to be executed by the most suited (performance, capability, speed, cost) language model,
