@@ -16,6 +16,7 @@ Repository for agent configuration files. It uses [Mise](https://mise.jdx.dev) t
 - Use `mise` as the command entrypoint for Stow operations.
 - Canonical Stow options live in `.stowrc` (`--dir=agents`, `--target=~`, `--no-folding`).
 - Run `mise check` before `mise stow` or `mise restow`.
+- Before stowing a new package, verify each top-level directory inside it is intended as an install target. Use `.stow-local-ignore` to exclude canonical-internal directories.
 - No-arg tasks apply to all direct `agents/*` packages.
 - Explicit args (for example `mise check pi`) apply only to those packages.
 
