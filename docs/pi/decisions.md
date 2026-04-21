@@ -2,6 +2,14 @@
 
 Pi-specific decisions are listed in reverse chronological order (most recent first).
 
+### pi-008: Use a global questionnaire tool for bounded clarification flows [Accepted]
+
+> **In the context of** wanting Pi to reduce clarification friction across planning and non-planning workflows,
+> **facing** the awkwardness of asking multiple bounded questions in prose and forcing the user to scroll chat history to recover the active choices,
+> **we decided** to add a global Pi questionnaire extension based on Pi's shipped example and steer its usage from `agents/pi/.pi/agent/APPEND_SYSTEM.md`,
+> **to achieve** a reusable tabbed clarification UI for multiple bounded questions while keeping shared cross-tool policy unchanged,
+> **accepting** one more Pi-specific interaction mechanism that should be used narrowly for bounded option selection rather than open-ended discussion.
+
 ### pi-007: Use APPEND_SYSTEM.md for Pi-only first-message behavior [Accepted]
 
 > **In the context of** sharing one global `AGENTS.md` across Pi, OpenCode, and Codex,
