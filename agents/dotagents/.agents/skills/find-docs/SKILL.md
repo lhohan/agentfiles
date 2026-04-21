@@ -1,6 +1,6 @@
 ---
 name: find-docs
-description: Retrieves up-to-date documentation, API references, and code examples from Context7. Use when the user says "use context7" or "use Context7" or asks for current docs for a library, framework, SDK, CLI tool, or cloud service.
+description: Retrieves up-to-date documentation, API references, and code examples from Context7. Use when the user says "use find-docs", "use context7", "use Context7", "context 7", "ctx7", "contact 7", or asks for current docs for a library, framework, SDK, CLI tool, or cloud service.
 ---
 
 # Documentation Lookup
@@ -11,9 +11,16 @@ Retrieve current documentation and code examples from Context7.
 
 Use this skill when the user says or means any of the following:
 
+- "use find-docs"
+- "use Context7 docs skill"
 - "use Context7"
 - "use context7"
+- "context 7"
+- "ctx7"
+- "contact 7" (common ASR/typo variant)
+- "context seven"
 - "look up Context7"
+- "use docs skill"
 - "find docs for <library>"
 - asks for documentation, API references, SDK usage, CLI help, or code examples for a library, framework, SDK, CLI tool, or cloud service
 
