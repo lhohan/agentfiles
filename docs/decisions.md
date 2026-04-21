@@ -5,6 +5,14 @@ Decisions are listed in reverse chronological order (most recent first).
 Pi-specific decisions live in [`pi/decisions.md`](./pi/decisions.md).
 Agents-shared-specific decisions live in [`agents-shared/decisions.md`](./agents-shared/decisions.md).
 
+### AGF-008: Add a repo-local "less is more" skill to restrain setup growth [Accepted]
+
+> **In the context of** an agent setup that is growing with skills, prompts, extensions, and packages, and the tendency to adopt tools preemptively or because they exist,
+> **facing** the risk of gradual setup bloat that outpaces actual need and makes the configuration harder to understand and maintain,
+> **we decided** to add a repo-local `less-is-more` skill at `.agents/skills/less-is-more/SKILL.md` that biases against unnecessary additions, requires speculative additions to be labelled `experimental`, and encourages explicit decision records for meaningful setup changes,
+> **to achieve** deliberate, need-driven growth where the motivation for each addition is visible and reviewable,
+> **accepting** that the skill itself is an addition that needed justification (this record), that it adds a small amount of overhead to setup decisions, and that it must stay concise or it undermines its own purpose.
+
 ### AGF-007: Share one global AGENTS.md across Pi, OpenCode, and Codex [Accepted]
 
 > **In the context of** Pi, OpenCode, and Codex each reading a global `AGENTS.md` for agent instructions _from a different location_,
