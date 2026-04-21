@@ -1,5 +1,15 @@
 # decisions
 
+### AGF-010: Use canonical saved-plan location at docs/plans/ [Accepted]
+
+> **In the context of** `/plan` producing substantial implementation plans that should persist beyond the conversation,
+> **facing** ad-hoc plan storage and no predictable location for saved plans,
+> **we decided** to use `docs/plans/YYYY-MM-DD-<topic>.md` as the canonical saved-plan location,
+> **to achieve** a predictable, dated, topic-named convention for finished plans,
+> **accepting** that the save handoff should appear only at the end of a substantial completed plan, never mid-planning, and that the directory must be created when first needed.
+
+### AGF-009: Keep decision logs focused on durable structural choices [Accepted]
+
 Decisions are listed in reverse chronological order (most recent first).
 
 Package-specific decisions live in:

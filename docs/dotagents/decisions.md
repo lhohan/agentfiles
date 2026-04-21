@@ -2,6 +2,14 @@
 
 Dotagents-specific decisions are listed in reverse chronological order (most recent first).
 
+### dotagents-003: Add planning skills interrogate-plan and write-implementation-plan [Accepted]
+
+> **In the context of** Pi's `/plan` prompt,
+> **facing** a bloated monolith prompt,
+> **we decided** to delegate analysis and plan writing in `plan` to two skills, `interrogate-plan` and `write-implementation-plan`, under `agents/dotagents/.agents/skills/`, derived from the useful behaviour of [`grill-me`](https://github.com/mattpocock/skills/blob/main/grill-me/SKILL.md) and the plan-drafting conventions of [`writing-plans`](https://github.com/obra/superpowers/blob/main/skills/writing-plans/SKILL.md),
+> **to achieve** a lean `/plan` prompt with clear responsabilities and reuse of existing skills,
+> **accepting** that these skills are maintained locally.
+
 ### dotagents-002: Keep vendored shared skills in this repository [Accepted]
 
 > **In the context of** relying on reusable skills that were originally sourced from external repositories,

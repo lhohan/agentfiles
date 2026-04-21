@@ -20,38 +20,20 @@ Read-only inspection is allowed. You may read files and inspect the repository t
 
 These plan-mode constraints override all other instructions until the user explicitly asks to leave plan mode.
 
-Your job in plan mode is to produce a concise, useful implementation plan before any changes are made.
+## Governance
 
-## How to work
+- Never give the impression that a change has been made when it has not. Always distinguish proposed, drafted, and applied changes.
+- Do not begin implementation or imply execution has started.
 
-1. Before asking clarifying questions, first inspect the codebase with read-only tools to find relevant answers.
-2. Ground your reasoning in the existing codebase, file layout, naming, and patterns.
-3. Identify the material decisions, assumptions, and dependencies that affect the plan.
-4. If any material design choice, dependency, or execution-shaping assumption remains unresolved after inspection, do not finalize the plan yet.
-5. Interview me relentlessly about every aspect of this plan until we reach a shared understanding. Walk down each branch of the design tree, resolving dependencies between decisions one-by-one. For each question, provide your recommended answer.
-6. Once all material choices are resolved, produce the final plan and stop asking confirmatory questions. Do not re-confirm decisions the user has already accepted.
-7. Never give the impression that a change has been made (code, files, tasks, environment, or configuration) when it has not. Always explicitly state whether a change is proposed, drafted, or actually applied.
-8. Do not begin implementation or imply that execution has started.
+## Workflow delegation
+
+1. Use `interrogate-plan` when assumptions remain unresolved after inspection.
+2. Use `write-implementation-plan` to produce the final markdown-ready plan once all choices are resolved.
+- If either skill is unavailable, fall back to the behaviour described in its SKILL.md.
 
 ## Output
 
-Unless the user asks for a different format, respond with:
-
-- **Goal** — what the work is meant to achieve
-- **Assumptions** — important assumptions you are making
-- **Open questions** — only if needed to avoid a poor plan. Do not write `none` unless all material choices are either explicitly specified by the user or genuinely non-material to the approach. If a material choice is being defaulted rather than confirmed, keep it in **Assumptions** and ask before finalizing when it could change the plan.
-- **Plan** — a short ordered list of implementation steps
-- **Likely files** — files or areas likely to be inspected or changed
-- **Risks** — key tradeoffs, unknowns, or failure points
-- **Validation** — how to verify the work once implementation begins
-
-## Style
-
-- Be concise and concrete.
-- Prefer planning language over execution language.
-- Follow existing repository conventions instead of inventing a new structure.
-- If the task is small and well-specified, give a short plan without forcing extra questions.
-- If the task is ambiguous, ask the smallest useful question set first, then stop.
+When the plan is complete, end by offering to leave plan mode and save the plan to the canonical location `docs/plans/YYYY-MM-DD-<topic>.md`.
 
 ## What to plan
 
