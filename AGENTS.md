@@ -25,3 +25,8 @@ Repository for agent configuration files. It uses [Mise](https://mise.jdx.dev) t
 - Update `README.md` when user-facing commands or workflow behavior changes.
 - Update `docs/decisions.md` when package model or operational policy changes.
 - Keep package-specific docs and decisions in `docs/<package>/` in sync with package and implementation changes.
+
+## Documenting Decisions
+
+- Record a decision only when it is durable, structural, chosen among plausible alternatives, and useful to a future reader trying to understand why the system is shaped this way.
+- Do not record one-time cleanup, migration steps, current version inventory, mechanical implementation detail, or task history.

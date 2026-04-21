@@ -2,8 +2,18 @@
 
 Decisions are listed in reverse chronological order (most recent first).
 
-Pi-specific decisions live in [`pi/decisions.md`](./pi/decisions.md).
-Agents-shared-specific decisions live in [`agents-shared/decisions.md`](./agents-shared/decisions.md).
+Package-specific decisions live in:
+- [`agents-shared/decisions.md`](./agents-shared/decisions.md)
+- [`dotagents/decisions.md`](./dotagents/decisions.md)
+- [`pi/decisions.md`](./pi/decisions.md)
+
+### AGF-009: Keep decision logs focused on durable structural choices [Accepted]
+
+> **In the context of** maintaining repo-wide and package-specific decision logs,
+> **facing** drift and noise from recording cleanup history, migration steps, version inventory, and mechanical implementation detail as decisions,
+> **we decided** to record only durable, structural choices selected among plausible alternatives, and to remove task history and other transient details from decision records,
+> **to achieve** decision logs that stay accurate, useful, and readable to future maintainers,
+> **accepting** that some historical implementation context will be omitted unless it explains a current constraint.
 
 ### AGF-008: Add a repo-local "less is more" skill to restrain setup growth [Accepted]
 
@@ -19,7 +29,7 @@ Agents-shared-specific decisions live in [`agents-shared/decisions.md`](./agents
 > **facing** drift and duplication from maintaining separate copies,
 > **we decided** to create a single Stow package (`agents-shared`) with one canonical `AGENTS.md` symlinked to all three tool paths internally,
 > **to achieve** a single source of truth for global agent instructions,
-> **accepting** that existing home-directory files must be cleaned up before the first install.
+> **accepting** that the shared instructions must remain tool-neutral and installation conflicts must be handled explicitly rather than hidden in repo automation.
 
 ### AGF-006: Frame the repository as agent dotfiles first [Accepted]
 

@@ -1,28 +1,27 @@
 # agents-shared decisions
 
-## 2026-04-20 — One shared AGENTS.md for Pi, OpenCode, and Codex
+Agents-shared-specific decisions are listed in reverse chronological order (most recent first).
 
-### Context
-Pi, OpenCode, and Codex each read a global `AGENTS.md` file for agent instructions. Maintaining separate copies creates drift and duplicate effort.
+### agents-shared-003: Keep reusable global skills outside the shared AGENTS package [Accepted]
 
-### Decision
-- Create a single Stow package (`agents/agents-shared`) with one canonical `AGENTS.md` at `agent-rules/AGENTS.md`.
-- Expose the canonical file at three tool-specific locations via Stow symlinks:
-  - `~/.pi/agent/AGENTS.md` (Pi)
-  - `~/.config/opencode/AGENTS.md` (OpenCode)
-  - `~/.codex/AGENTS.md` (Codex)
-- Within the package, the three entry-point paths are symlinks to the canonical file. Stow resolves these when creating target symlinks, so all three installed paths ultimately resolve to `agents/agents-shared/agent-rules/AGENTS.md`.
-- Seed the canonical content from the existing `~/.config/opencode/AGENTS.md`, adapted to be tool-neutral.
-- Exclude `agent-rules/` from Stow output using a package-local `.stow-local-ignore` file, so the canonical file remains in-repo but does not create a `~/agent-rules/` directory.
-- Globally installed reusable skills (e.g. `detect-jujutsu`, `use-jujutsu`) belong in `agents/dotagents/.agents/skills/`, not inside `agents-shared`.
+> **In the context of** sharing reusable skills across Pi, OpenCode, and Codex,
+> **facing** the need for clear package ownership and a stable install shape,
+> **we decided** that `dotagents` owns the reusable global skills,
+> **to achieve** clear maintenance boundaries,
+> **accepting** that agent setup is split across two packages
 
-### Consequences
-- Editing the canonical repo file changes the effective instructions for all three tools.
-- The `~/agent-rules/` path is not managed by Stow for this package.
-- Existing home-directory files at `~/.config/opencode/AGENTS.md` and `~/.codex/AGENTS.md` must be removed (or adopted) before the first `mise stow agents-shared`.
-- The `~/.codex/AGENTS.override.md` file must not exist, as Codex uses it to override the main `AGENTS.md`.
+### agents-shared-002: Keep location of the canonical AGENTS.md internal to the package [Accepted]
 
-### Cleanup performed
-- Removed stale symlink `~/.config/opencode/AGENTS.md` (pointed to external dotfiles repo).
-- Removed empty file `~/.codex/AGENTS.md`.
-- Removed leftover `~/agent-rules/` directory from an earlier stow before the ignore file was added.
+> **In the context of** storing the canonical shared policy file at `agents/agents-shared/agent-rules/AGENTS.md`,
+> **facing** Stow's default behaviour of exposing top-level package paths into `~`,
+> **we decided** to exclude `agent-rules/` from Stow output with a package-local `.stow-local-ignore`,
+> **to achieve** one in-repo source of truth without creating an unintended `~/agent-rules/` install target,
+> **accepting** that the package relies on an explicit ignore rule that maintainers must preserve when restructuring the package.
+
+### agents-shared-001: Share one canonical AGENTS.md across Pi, OpenCode, and Codex [Accepted]
+
+> **In the context of** Pi, OpenCode, and Codex each reading a global `AGENTS.md` file from a different path,
+> **facing** drift and duplicate maintenance from keeping separate copies,
+> **we decided** to maintain one canonical `AGENTS.md` in `agents/agents-shared/agent-rules/AGENTS.md` and expose it through tool-specific entrypoints,
+> **to achieve** a single source of truth for shared global policy across all three tools,
+> **accepting** that the shared instructions must remain tool-neutral and compatible with each tool's loading behaviour.

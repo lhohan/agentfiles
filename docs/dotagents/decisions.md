@@ -1,29 +1,18 @@
 # dotagents decisions
 
-## 2026-04-20 — dotagents owns globally installed reusable skills
+Dotagents-specific decisions are listed in reverse chronological order (most recent first).
 
-### Context
-The repo ships multiple agent skills that are needed globally (by Pi, OpenCode, and Codex), but it was unclear whether such skills should live inside `agents-shared` or in `dotagents`.
+### dotagents-002: Keep vendored shared skills in this repository [Accepted]
 
-### Decision
-Globally installed reusable skills belong in `agents/dotagents/.agents/skills/`, not inside `agents/agents-shared`.
+> **In the context of** relying on reusable skills that were originally sourced from external repositories,
+> **facing** the need for a stable local source of truth after migrating away from `agent-chisels`,
+> **we decided** to maintain vendored copies of shared skills inside `agents/dotagents/.agents/skills/`, treat that directory's contents as the ground-truth inventory, and treat this repository as their maintained source of truth,
+> **to achieve** reproducible installs and local control over updates to globally shared skills,
+> **accepting** that upstream changes must be reviewed and synced manually when they are still relevant.
 
-- `agents-shared` owns: the canonical shared `AGENTS.md` text and tool-specific AGENTS entrypoints.
-- `dotagents` owns: globally installed reusable skills under `~/.agents/skills/`.
+### dotagents-001: Use dotagents for globally installed reusable skills [Accepted]
 
-### Considerations
-
-- Currently supported coding agents in the agentsfiles repository all support the `~/.agents/skills` skills location.
-
-### Consequences
-- `agents-shared` stays focused on the shared policy file and its installed paths.
-- `dotagents` includes the global skill library.
-- Skills vendored into `dotagents` can be maintained copies; upstream changes must be manually synced.
-
-### Skills vendored
-- `detect-jujutsu` — vendored from `agent-chisels` repo (version 0.5.0)
-- `use-jujutsu` — vendored from `agent-chisels` repo (version 0.3.1)
-
-### Migration
-- Removed external symlinks in `~/.agents/skills/` that pointed to `agent-chisels`
-- Restowed `dotagents` so Stow owns the new paths
+> **In the context of** providing reusable skills to multiple coding agents from one home-directory location,
+> **facing** the need to separate shared capabilities from shared AGENTS policy text,
+> **we decided** to install globally reusable skills from the `dotagents` package under `~/.agents/skills/`,
+> **to achieve** a dedicated ownership boundary for cross-agent skills and keep `agents-shared` focused on shared `AGENTS.md` policy files,
