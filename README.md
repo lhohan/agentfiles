@@ -4,7 +4,9 @@ Dotfiles, but for agents.
 
 ## The dotfiles
 
-If you want to go straight to the dotfiles, go [here](agents/). 
+If you want to go straight to the dotfiles, go [here](agents/).
+
+Note: as with dotfiles, this repository is not meant to be checked out and _used_ on your own systems. For example [some skills](agents/dotagents/.agents/skills/find-docs/SKILL.md) may call out to third party services.
 
 ## Repository Setup
 
