@@ -1,8 +1,8 @@
 {
-  "lastChangelogVersion": "0.67.68",
+  "lastChangelogVersion": "0.68.0",
   "defaultProvider": "openai-codex",
-  "defaultModel": "gpt-5.3-codex",
-  "defaultThinkingLevel": "medium",
+  "defaultModel": "gpt-5.4-mini",
+  "defaultThinkingLevel": "high",
   "theme": "kanagawa-dragon",
   "terminal": {
     "showImages": true
@@ -12,22 +12,21 @@
     "enabled": true
   },
   "treeFilterMode": "default",
-  "hideThinkingBlock": true,
+  "hideThinkingBlock": false,
   "packages": [
     "npm:pi-web-access@0.10.6",
     "npm:pi-prompt-template-model@0.7.3"
   ],
   "enabledModels": [
     "openai-codex/gpt-5.4-mini",
-    "opencode-go/kimi-k2.5",
     "openai-codex/gpt-5.4",
     "openai-codex/gpt-5.3-codex",
     "opencode-go/glm-5.1",
     "opencode/gemini-3-flash",
-    "opencode/nemotron-3-super-free",
     "opencode-go/mimo-v2-pro",
     "opencode-go/minimax-m2.7",
-    "opencode-go/qwen3.6-plus"
+    "opencode-go/qwen3.6-plus",
+    "opencode-go/kimi-k2.6"
   ],
   "enableSkillCommands": true,
   "showHardwareCursor": true,
