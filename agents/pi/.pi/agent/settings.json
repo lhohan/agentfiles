@@ -1,7 +1,7 @@
 {
-  "lastChangelogVersion": "0.68.0",
-  "defaultProvider": "opencode-go",
-  "defaultModel": "qwen3.6-plus",
+  "lastChangelogVersion": "0.68.1",
+  "defaultProvider": "openai-codex",
+  "defaultModel": "gpt-5.4-mini",
   "defaultThinkingLevel": "high",
   "theme": "kanagawa-dragon",
   "terminal": {
@@ -14,7 +14,6 @@
   "treeFilterMode": "default",
   "hideThinkingBlock": false,
   "packages": [
-    "npm:pi-web-access@0.10.6",
     "npm:pi-prompt-template-model@0.7.3"
   ],
   "enabledModels": [

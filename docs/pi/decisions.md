@@ -2,6 +2,23 @@
 
 Pi-specific decisions are listed in reverse chronological order (most recent first).
 
+### pi-009: Replace pi-web-access with Brave bx plus local fetch tools [Accepted]
+
+> **In the context of** wanting reliable web search and content fetching in Pi,
+> **facing** the complexity and external dependencies of `pi-web-access` (Exa API, Gemini API, Gemini Web, browser cookies, Keychain prompts (!) and browser pop-ups),
+> **we decided** to replace `pi-web-access` with a custom Pi extension (`brave-search.ts`) backed by the Brave `bx` CLI for search and with Pi-local fetch/extract logic for pages and GitHub repos,
+> **to achieve** predictable, API-only search behaviour, zero Keychain prompts, narrower trust surface, and a clearer separation between search (`bx`) and fetch (local extension),
+> **accepting** that:
+>   - `bx` must be installed and a Brave Search API key configured as a documented prerequisite
+>   - `code_search`, YouTube/video support, and PDF extraction are dropped
+>   - web-page extraction quality is "good enough" rather than Readability-grade
+>   - session-scoped temp storage means responseIds do not survive session changes
+>   - the extension is custom code that must be maintained
+>
+> **Rationale:** `bx context` is purpose-built for AI agents and returns clean pre-extracted text without requiring HTML parsing libraries at search time. Removing `pi-web-access` eliminates the entire provider fallback chain and its associated credential surfaces. Local fetch logic replaces only the page/repo extraction paths we actually use, with zero extra npm dependencies. A vendored `bx` skill at `agents/dotagents/.agents/skills/bx/` preserves cross-agent portability for search workflows.
+>
+> **Scope limit:** The extension registers exactly three tools (`web_search`, `fetch_content`, `get_fetched_content`).
+
 ### pi-008: Use a global questionnaire tool for bounded clarification flows [Accepted]
 
 > **In the context of** wanting Pi to reduce clarification friction across planning and non-planning workflows,
