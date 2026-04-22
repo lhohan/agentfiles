@@ -8,9 +8,6 @@ import { existsSync, watch, type FSWatcher } from "node:fs";
 import { dirname, join } from "node:path";
 
 /**
- * Docs
- * - Canonical maintainer docs: docs/pi/jj-footer-extension.md
- *
  * Doc sync checklist (update docs when changing):
  * - footer label format/content
  * - jj commands/revsets used for data collection

@@ -8,7 +8,7 @@ If you want to go straight to the dotfiles, go [here](agents/).
 
 Note: as with dotfiles, this repository is not meant to be checked out and _used_ on your own systems. For example [some skills](agents/dotagents/.agents/skills/find-docs/SKILL.md) may call out to third party services.
 
-## Repository Setup
+### Repository Setup
 
 Agent configuration files are managed with Mise and GNU Stow.
 
@@ -31,21 +31,33 @@ Agent configuration files are managed with Mise and GNU Stow.
 - Every direct `agents/<name>/` subdirectory is a Stow package, so its contents are symlinked into the home directory.
 - Keep only package directories directly under `agents/`.
 
-Currently managed dotfiles:
+## Agents shared
 
-- [Agents-shared](agents/agents-shared) provides one canonical `AGENTS.md` symlinked to Pi, OpenCode, and Codex global paths.
-- [Dotagents](agents/dotagents) installs reusable global skills under `~/.agents/skills/`.
-- [Pi](agents/pi) includes:
-  - a global [`APPEND_SYSTEM.md`](agents/pi/.pi/agent/APPEND_SYSTEM.md) for Pi-specific startup and questionnaire-steering behaviour
-  - a `/plan` prompt at [`agents/pi/.pi/agent/prompts/plan.md`](agents/pi/.pi/agent/prompts/plan.md) for read-only planning before implementation.
-  - a [Jujutsu-aware footer extension](agents/pi/.pi/agent/extensions/) that shows jj file counts, nearest bookmark distance, and cwd location in the TUI.
-    - extension documentation: [`jj-footer.md`](agents/pi/.pi/agent/extensions/jj-footer.md)
-  - a questionnaire extension at [`agents/pi/.pi/agent/extensions/questionnaire.ts`](agents/pi/.pi/agent/extensions/questionnaire.ts) for bounded multi-question clarification flows ([docs](agents/pi/.pi/agent/extensions/questionnaire.md))
-  - a Brave search extension at [`agents/pi/.pi/agent/extensions/brave-search.ts`](agents/pi/.pi/agent/extensions/brave-search.ts) that registers `web_search`, `fetch_content`, and `get_fetched_content`
-    - requires [Brave `bx`](https://github.com/brave/bx) on `PATH` with a configured API key
-    - extension documentation: [`brave-search.md`](agents/pi/.pi/agent/extensions/brave-search.md)
+[Agents-shared](agents/agents-shared) provides one canonical [`AGENTS.md`](agents/agents-shared/CANONICAL/AGENTS.md) symlinked to Pi, OpenCode, and Codex global paths.
+
+## .agents skills
+
+[Dotagents](agents/dotagents) installs reusable global skills under `~/.agents/skills/`.
+
+- [detect-jujutsu](agents/dotagents/.agents/skills/detect-jujutsu/) and [use-jujutsu](agents/dotagents/.agents/skills/use-jujutsu/) instruct the agents to use Jujutsu instead of Git. Combine with instructions in [`AGENTS.md`](agents/agents-shared/CANONICAL/AGENTS.md).
+
+## Pi
+
+Located in [Pi](agents/pi).
+
+  - A global [`APPEND_SYSTEM.md`](agents/pi/.pi/agent/APPEND_SYSTEM.md) for Pi-specific startup and questionnaire-steering behaviour
+  - A `/plan` prompt at [`agents/pi/.pi/agent/prompts/plan.md`](agents/pi/.pi/agent/prompts/plan.md) for read-only planning before implementation.
   - [custom themes](agents/pi/.pi/agent/themes/)
+  
+### Extensions
 
+- A [Jujutsu-aware footer extension](agents/pi/.pi/agent/extensions/) that shows jj file counts plus the nearest bookmark name and ahead count in the TUI. [Documentation](agents/pi/.pi/agent/extensions/jj-footer.md).
+
+- A [Questionnaire extension](agents/pi/.pi/agent/extensions/questionnaire.ts) for bounded multi-question clarification flows. [Documentation](agents/pi/.pi/agent/extensions/questionnaire.md).
+
+- A [Brave search extension](agents/pi/.pi/agent/extensions/brave-search.ts) that registers `web_search`, `fetch_content`, and `get_fetched_content`. [Documentation](agents/pi/.pi/agent/extensions/brave-search.md)
+    - requires [Brave `bx`](https://github.com/brave/bx) on `PATH` with a configured API key
+  
 ## Tooling
 
 - [GNU Stow](https://www.gnu.org/software/stow/) symlinks the configuration files in `agents/` into the home directory.
