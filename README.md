@@ -39,11 +39,11 @@ Currently managed dotfiles:
   - a global [`APPEND_SYSTEM.md`](agents/pi/.pi/agent/APPEND_SYSTEM.md) for Pi-specific startup and questionnaire-steering behaviour
   - a `/plan` prompt at [`agents/pi/.pi/agent/prompts/plan.md`](agents/pi/.pi/agent/prompts/plan.md) for read-only planning before implementation.
   - a [Jujutsu-aware footer extension](agents/pi/.pi/agent/extensions/) that shows jj file counts, nearest bookmark distance, and cwd location in the TUI.
-    - extension documentation: [`docs/pi/jj-footer-extension.md`](docs/pi/jj-footer-extension.md)
-  - a questionnaire extension at [`agents/pi/.pi/agent/extensions/questionnaire.ts`](agents/pi/.pi/agent/extensions/questionnaire.ts) for bounded multi-question clarification flows
+    - extension documentation: [`jj-footer.md`](agents/pi/.pi/agent/extensions/jj-footer.md)
+  - a questionnaire extension at [`agents/pi/.pi/agent/extensions/questionnaire.ts`](agents/pi/.pi/agent/extensions/questionnaire.ts) for bounded multi-question clarification flows ([docs](agents/pi/.pi/agent/extensions/questionnaire.md))
   - a Brave search extension at [`agents/pi/.pi/agent/extensions/brave-search.ts`](agents/pi/.pi/agent/extensions/brave-search.ts) that registers `web_search`, `fetch_content`, and `get_fetched_content`
     - requires [Brave `bx`](https://github.com/brave/bx) on `PATH` with a configured API key
-    - extension documentation: [`docs/pi/brave-search-extension.md`](docs/pi/brave-search-extension.md)
+    - extension documentation: [`brave-search.md`](agents/pi/.pi/agent/extensions/brave-search.md)
   - [custom themes](agents/pi/.pi/agent/themes/)
 
 ## Tooling

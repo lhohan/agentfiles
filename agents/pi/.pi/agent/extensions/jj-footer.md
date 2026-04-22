@@ -20,12 +20,7 @@ When Pi runs in a Jujutsu repository, this extension *replaces* Pi's detached-HE
 
 ![Pi footer showing jj bookmark and status counts](with-jj-footer.png)
 
-## Where it is loaded from
-
-- Extension file: `agents/pi/.pi/agent/extensions/jj-footer.ts`
-- This document: `docs/pi/jj-footer-extension.md`
-
-We keep implementation details here (repo docs) while keeping a source-level pointer in the extension file.
+Implementation details are documented here, alongside the source file.
 
 ## Behaviour summary
 

@@ -2,6 +2,14 @@
 
 Pi-specific decisions are listed in reverse chronological order (most recent first).
 
+### pi-010: Colocate extension docs next to TypeScript files [Accepted]
+
+> **In the context of** extension documentation,
+> **facing** docs living in `docs/pi/` while the source files live in `agents/pi/.pi/agent/extensions/` increases the risk of documentation drift when code moves or changes,
+> **we decided** to keep each extension's `.md` file next to its `.ts` file in the same directory,
+> **to achieve** self-contained extension packages where code and docs move together.
+>
+
 ### pi-009: Replace pi-web-access with Brave bx plus local fetch tools [Accepted]
 
 > **In the context of** wanting reliable web search and content fetching in Pi,

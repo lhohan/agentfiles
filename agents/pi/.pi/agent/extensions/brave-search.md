@@ -1,6 +1,6 @@
 # Brave Search Extension
 
-Pi extension at `agents/pi/.pi/agent/extensions/brave-search.ts`.
+Pi extension that registers `web_search`, `fetch_content`, and `get_fetched_content` tools backed by the Brave `bx` CLI.
 
 Registered tools:
 - `web_search`
