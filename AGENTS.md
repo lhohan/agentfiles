@@ -9,6 +9,13 @@ Repository for agent configuration files. It uses [Mise](https://mise.jdx.dev) t
 - Edit files in this repository, not linked files in `~/`.
 - Preserve package directory layout; do not flatten nested files.
 - Keep JSON files valid when editing.
+
+## Additive setup gate
+
+- Before recommending a new skill, extension, agent, prompt, package, or automation, apply `less-is-more`: use existing setup first, and only suggest an addition for a concrete repeated need.
+
+## Decision logging
+
 - Log important package decisions in `docs/<package>/decisions.md` as you make them.
 
 ## Stow/Mise Workflow

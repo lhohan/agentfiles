@@ -1,5 +1,13 @@
 # decisions
 
+### AGF-011: Apply less-is-more before proposing setup additions [Accepted]
+
+> **In the context of** deciding whether to add a new skill, extension, agent, prompt, package, or automation to the agent setup,
+> **facing** the tendency to recommend additions before checking whether the current setup already solves the problem,
+> **we decided** to require `less-is-more` as the first filter for additive setup decisions: prefer the existing setup first and only suggest an addition for a concrete repeated need,
+> **to achieve** smaller, need-driven setup growth and fewer unnecessary installs,
+> **accepting** that some plausible additions will be rejected or deferred until the need is repeated and specific.
+
 ### AGF-010: Use canonical saved-plan location at docs/plans/ [Accepted]
 
 > **In the context of** `/plan` producing substantial implementation plans that should persist beyond the conversation,
