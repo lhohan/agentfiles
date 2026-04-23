@@ -55,6 +55,8 @@ Located in [Pi](agents/pi).
 
 - A [Questionnaire extension](agents/pi/.pi/agent/extensions/questionnaire.ts) for bounded multi-question clarification flows. [Documentation](agents/pi/.pi/agent/extensions/questionnaire.md).
 
+- A [Discovery tools extension](agents/pi/.pi/agent/extensions/discovery-tools.md) that keeps Pi's built-in `grep`, `find`, and `ls` tools active alongside the default coding tools. [Documentation](agents/pi/.pi/agent/extensions/discovery-tools.md).
+
 - A [Brave search extension](agents/pi/.pi/agent/extensions/brave-search.ts) that registers `web_search`, `fetch_content`, and `get_fetched_content`. [Documentation](agents/pi/.pi/agent/extensions/brave-search.md)
     - requires [Brave `bx`](https://github.com/brave/bx) on `PATH` with a configured API key
   

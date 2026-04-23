@@ -2,6 +2,13 @@
 
 Pi-specific decisions are listed in reverse chronological order (most recent first).
 
+### pi-011: Keep built-in discovery tools active by default [Accepted]
+
+> **In the context of** wanting fast read-only discovery without forcing shell commands for every search,
+> **we decided** to add a tiny startup extension that merges the built-in `grep`, `find`, and `ls` tools into Pi's active tool list on `session_start`,
+> **to achieve** quicker search and file discovery while preserving all currently active tools,
+> **accepting** that tool activation is now an explicit part of the Pi package rather than left to Pi's defaults.
+
 ### pi-010: Colocate extension docs next to TypeScript files [Accepted]
 
 > **In the context of** extension documentation,
