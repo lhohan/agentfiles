@@ -59,6 +59,7 @@ Located in [Pi](agents/pi).
 
 - A [Brave search extension](agents/pi/.pi/agent/extensions/brave-search.ts) that registers `web_search`, `fetch_content`, and `get_fetched_content`. [Documentation](agents/pi/.pi/agent/extensions/brave-search.md)
     - requires [Brave `bx`](https://github.com/brave/bx) on `PATH` with a configured API key
+
   
 ## Tooling
 

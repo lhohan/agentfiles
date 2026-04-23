@@ -2,6 +2,20 @@
 
 Pi-specific decisions are listed in reverse chronological order (most recent first).
 
+### pi-013: Remove pi-btw from the default Pi package list [Accepted]
+
+> **In the context of** a pinned side-conversation extension that proved unreliable in practice,
+> **facing** an extension whose focus toggle did not work consistently in the terminal and whose overlay could crash Pi's renderer,
+> **we decided** to remove `pi-btw` from the default Pi package list,
+
+### pi-012: Pin pi-btw for parallel side conversations [Accepted]
+
+> **In the context of** repeatedly wanting to ask a few questions while the main Pi thread keeps running,
+> **facing** the choice between ad-hoc steering messages and a dedicated side-conversation workflow,
+> **we decided** to install `pi-btw` as a pinned npm package at `0.3.7`,
+> **to achieve** a repeatable `/btw` side-thread workflow without relying on an unversioned package update,
+> **accepting** the extra trust surface of another third-party extension and the fact that side-conversation behaviour now lives in a separate package.
+
 ### pi-011: Keep built-in discovery tools active by default [Accepted]
 
 > **In the context of** wanting fast read-only discovery without forcing shell commands for every search,
