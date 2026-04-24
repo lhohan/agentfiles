@@ -2,6 +2,35 @@
 
 Pi-specific decisions are listed in reverse chronological order (most recent first).
 
+### pi-015: Distinguish `model_used` from `model_select` in usage stats [Accepted]
+
+> **In the context of** wanting usage statistics to reflect which models actually handled prompts,
+> **facing** the fact that `model_select` records every browsing and cycling action, inflating counts for models merely previewed before a different model was chosen,
+> **we decided** to add a new `model_used` event that fires once per `agent_start` on the first `before_provider_request`, using `ctx.model` as the definitive active model,
+> **to achieve** accurate per-prompt model usage counts while preserving raw `model_select` telemetry for ad hoc inspection,
+> **accepting** that:
+>   - historical logs will not contain `model_used` events until new sessions accumulate them
+>   - the count answers "which model handled this prompt?" rather than "how many provider round-trips did each model make?"
+>   - `ctx.model` must be available and accurate during `before_provider_request`
+>
+> **Rationale:** The `model_select` event remains useful for understanding browsing behavior, but it is the wrong source for usage summaries. Counting at `before_provider_request` guarantees the recorded model is the one actually sent to the provider. Resetting the flag on `agent_start` ensures exactly one count per user prompt even when tool calls trigger multiple provider requests.
+
+### pi-014: Add usage-stats extension and viewer for Pi usage analytics [Accepted]
+
+> **In the context of** wanting to understand which skills, prompts, extensions, and models are actually used day-to-day,
+> **facing** the lack of any built-in usage telemetry beyond anonymous install/update pings,
+> **we decided** to build a custom Pi extension (`usage-stats.ts`) that intercepts `input`, `tool_call`, `resources_discover`, `model_select`, and session lifecycle events, writing append-only JSONL to `~/.pi/agent/usage-stats.jsonl`, plus a standalone Node.js viewer script (`usage-stats-viewer.mjs`) that aggregates and displays the data,
+> **to achieve** local, private usage statistics without external services, with enough granularity to answer questions like "which skills do I invoke most?" and "which models do I switch to most often?",
+> **accepting** that:
+>   - implicit skill loads are inferred from `read` tool calls targeting `SKILL.md` files, not from an explicit "skill loaded" event
+>   - built-in tools are excluded from tracking to reduce noise
+>   - the stats file grows unbounded and may need occasional manual rotation
+>   - the viewer is a plain `.mjs` script without a TUI or web interface
+>
+> **Rationale:** The Pi extension API exposes all necessary events (`input`, `tool_call`, `resources_discover`, `model_select`, etc.) to build this without modifying Pi internals. JSONL was chosen for crash-safe append-only writes and easy line-by-line parsing. The viewer is plain JavaScript to avoid any build step or npm dependencies. Classification of slash commands uses `pi.getCommands()` to distinguish prompts from extension commands, giving accurate source attribution. A 2-second debounced flush balances durability with I/O overhead.
+>
+> **Scope limit:** The extension does not track built-in tool usage, per-project breakdowns, or time-spent metrics.
+
 ### pi-013: Remove pi-btw from the default Pi package list [Accepted]
 
 > **In the context of** a pinned side-conversation extension that proved unreliable in practice,
