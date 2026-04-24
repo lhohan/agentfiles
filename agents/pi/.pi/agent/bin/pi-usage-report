@@ -6,10 +6,10 @@
  * statistics for Pi sessions.
  *
  * Usage:
- *   node usage-stats-viewer.mjs
- *   node usage-stats-viewer.mjs --recent
- *   node usage-stats-viewer.mjs --event=skill_invoked
- *   node usage-stats-viewer.mjs --top=5
+ *   ~/.pi/agent/bin/pi-usage-report
+ *   ~/.pi/agent/bin/pi-usage-report --recent
+ *   ~/.pi/agent/bin/pi-usage-report --event=skill_invoked
+ *   ~/.pi/agent/bin/pi-usage-report --top=5
  */
 
 import { createReadStream } from "node:fs";

@@ -37,23 +37,23 @@ Each line is a self-contained JSON object with at minimum `t` (timestamp) and `e
 
 ## Viewer
 
-A standalone Node.js viewer is included:
+A standalone reporting executable is included:
 
 ```bash
 # Full summary
-node ~/.pi/agent/extensions/usage-stats-viewer.mjs
+~/.pi/agent/bin/pi-usage-report
 
 # Show last 50 raw events
-node ~/.pi/agent/extensions/usage-stats-viewer.mjs --recent
+~/.pi/agent/bin/pi-usage-report --recent
 
 # Show last N raw events
-node ~/.pi/agent/extensions/usage-stats-viewer.mjs --recent=100
+~/.pi/agent/bin/pi-usage-report --recent=100
 
 # Filter to one event type
-node ~/.pi/agent/extensions/usage-stats-viewer.mjs --event=skill_invoked
+~/.pi/agent/bin/pi-usage-report --event=skill_invoked
 
 # Limit table rows
-node ~/.pi/agent/extensions/usage-stats-viewer.mjs --top=5
+~/.pi/agent/bin/pi-usage-report --top=5
 ```
 
 ## Installation

@@ -2,6 +2,19 @@
 
 Pi-specific decisions are listed in reverse chronological order (most recent first).
 
+### pi-016: Place Pi usage-report executable under `bin/`, not `extensions/` [Accepted]
+
+> **In the context of** shipping a standalone usage-stats reporting utility alongside the Pi package,
+> **facing** confusion from keeping a non-extension executable inside `extensions/`,
+> **we decided** to install the reporter as `~/.pi/agent/bin/pi-usage-report` (source: `agents/pi/.pi/agent/bin/pi-usage-report`) and keep `extensions/` for extension assets only,
+> **to achieve** clearer package boundaries and direct executable invocation without PATH or wrapper scripts,
+> **accepting** that:
+>   - existing docs and references to `~/.pi/agent/extensions/usage-stats-viewer.mjs` must be updated
+>   - users invoke the reporter by explicit path (`~/.pi/agent/bin/pi-usage-report`) unless they add their own PATH entries
+>   - the usage-stats feature documentation remains at `agents/pi/.pi/agent/extensions/usage-stats.md`
+>
+> **Rationale:** The reporter is a standalone Node executable, not a Pi extension. Placing it in `bin/` matches user expectation and aligns with stowed package structure while preserving the current no-wrapper setup.
+
 ### pi-015: Distinguish `model_used` from `model_select` in usage stats [Accepted]
 
 > **In the context of** wanting usage statistics to reflect which models actually handled prompts,
