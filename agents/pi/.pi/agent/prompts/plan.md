@@ -1,7 +1,6 @@
 ---
 model: openai-codex/gpt-5.4,opencode-go/kimi-k2.6
 thinking: high
-skill: interrogate-plan
 restore: false
 ---
 
