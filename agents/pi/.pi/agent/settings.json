@@ -1,7 +1,7 @@
 {
-  "lastChangelogVersion": "0.69.0",
+  "lastChangelogVersion": "0.70.2",
   "defaultProvider": "opencode-go",
-  "defaultModel": "qwen3.6-plus",
+  "defaultModel": "kimi-k2.6",
   "defaultThinkingLevel": "high",
   "theme": "kanagawa-dragon",
   "terminal": {
