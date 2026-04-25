@@ -20,7 +20,7 @@ Collects anonymous usage statistics for Pi skills, prompt templates, loaded exte
 
 `model_used` counts the model actually invoked for a prompt. `model_select` records every browsing or cycling action, so the two can diverge when a user cycles through several models before sending a message.
 
-The `skill_loaded` event stores the raw `path`, but the viewer groups by the parent directory name (e.g., `detect-jujutsu/SKILL.md` → `detect-jujutsu`). Skills installed in multiple locations with the same directory name are collapsed into one row.
+The `skill_loaded` event stores the raw `path`, but the viewer groups by the parent directory name (e.g., `detect-jujutsu/SKILL.md` → `detect-jujutsu`). Each skill is counted only once, even if loaded repeatedly or from multiple paths.
 
 Built-in tools (`read`, `bash`, `edit`, `write`, `grep`, `find`, `ls`) are intentionally **not** tracked to reduce noise.
 
