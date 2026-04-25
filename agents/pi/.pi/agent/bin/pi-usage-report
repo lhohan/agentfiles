@@ -12,100 +12,18 @@
  *   ~/.pi/agent/bin/pi-usage-report --top=5
  */
 
-import { createReadStream } from "node:fs";
-import { createInterface } from "node:readline";
-import { basename, dirname } from "node:path";
+import {
+  STATS_PATH,
+  createCollector,
+  sortMap,
+  readStatsEntries,
+} from "./pi-usage-report-lib.mjs";
 
-const STATS_PATH = `${process.env.HOME}/.pi/agent/usage-stats.jsonl`;
-
-const counters = {
-  skillInvoked: new Map(),
-  promptInvoked: new Map(),
-  extensionCommandInvoked: new Map(),
-  skillCommandInvoked: new Map(),
-  customToolCalled: new Map(),
-  skillLoaded: new Map(),
-  modelUsed: new Map(),
-  modelSelect: new Map(),
-  sessionStart: 0,
-  resourcesDiscovered: { prompts: 0 },
-};
-
-const recent = [];
-
-function skillNameFromPath(path) {
-  if (!path || typeof path !== "string") return path;
-  const name = basename(dirname(path));
-  if (name && name !== ".") return name;
-  return path;
-}
-
-function processEntry(entry) {
-  recent.push(entry);
-  if (recent.length > 1000) recent.shift();
-
-  switch (entry.event) {
-    case "skill_loaded":
-      counters.skillLoaded.set(
-        skillNameFromPath(entry.path),
-        (counters.skillLoaded.get(skillNameFromPath(entry.path)) || 0) + 1,
-      );
-      break;
-    case "skill_invoked":
-      counters.skillInvoked.set(
-        entry.name,
-        (counters.skillInvoked.get(entry.name) || 0) + 1,
-      );
-      break;
-    case "prompt_invoked":
-      counters.promptInvoked.set(
-        entry.name,
-        (counters.promptInvoked.get(entry.name) || 0) + 1,
-      );
-      break;
-    case "extension_command_invoked":
-      counters.extensionCommandInvoked.set(
-        entry.name,
-        (counters.extensionCommandInvoked.get(entry.name) || 0) + 1,
-      );
-      break;
-    case "skill_command_invoked":
-      counters.skillCommandInvoked.set(
-        entry.name,
-        (counters.skillCommandInvoked.get(entry.name) || 0) + 1,
-      );
-      break;
-    case "custom_tool_called":
-      counters.customToolCalled.set(
-        entry.tool,
-        (counters.customToolCalled.get(entry.tool) || 0) + 1,
-      );
-      break;
-    case "model_used":
-      counters.modelUsed.set(
-        entry.model,
-        (counters.modelUsed.get(entry.model) || 0) + 1,
-      );
-      break;
-    case "model_select":
-      counters.modelSelect.set(
-        entry.model,
-        (counters.modelSelect.get(entry.model) || 0) + 1,
-      );
-      break;
-    case "session_start":
-      counters.sessionStart++;
-      break;
-    case "resources_discovered":
-      counters.resourcesDiscovered.prompts += entry.promptCount || 0;
-      break;
-  }
-}
+const { counters, recent, processEntry } = createCollector();
 
 function printTable(title, map, topN) {
-  const entries = Array.from(map.entries());
+  const entries = sortMap(map);
   if (entries.length === 0) return;
-  entries.sort((a, b) => b[1] - a[1]);
   const limited = topN ? entries.slice(0, topN) : entries;
   const maxKey = Math.max(...limited.map(([k]) => k.length), 4);
 
@@ -147,20 +65,10 @@ async function main() {
   let lineCount = 0;
 
   try {
-    const rl = createInterface({
-      input: createReadStream(STATS_PATH),
-      crlfDelay: Infinity,
-    });
-    for await (const line of rl) {
+    for await (const entry of readStatsEntries(STATS_PATH)) {
       lineCount++;
-      if (!line.trim()) continue;
-      try {
-        const entry = JSON.parse(line);
-        if (filterEvent && entry.event !== filterEvent) continue;
-        processEntry(entry);
-      } catch {
-        // skip malformed lines
-      }
+      if (filterEvent && entry.event !== filterEvent) continue;
+      processEntry(entry);
     }
   } catch (err) {
     if (err.code === "ENOENT") {

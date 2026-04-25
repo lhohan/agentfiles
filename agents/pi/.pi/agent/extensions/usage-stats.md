@@ -80,6 +80,32 @@ The HTML report is self-contained (no external dependencies) and includes:
 - Recent events log with colour-coded badges
 - Automatic dark/light mode based on system preference
 
+## Maintenance contract
+
+When adding or changing an event type in `usage-stats.ts`:
+
+1. Update `bin/pi-usage-report-lib.mjs` — this feeds both reporters.
+2. If the event needs visual treatment in the HTML report, add a CSS badge rule and any chart logic in `bin/pi-usage-report-html`.
+3. If the event needs a CLI table column or special formatting, update `bin/pi-usage-report`.
+4. Update the event table in this document.
+
+The shared library (`pi-usage-report-lib.mjs`) owns:
+- `STATS_PATH`
+- `createCollector()` — counters, `processEntry`, `recent` / `timeline` tracking
+- `skillNameFromPath()`
+- `sortMap()`
+- `readStatsEntries()` async generator
+
+The CLI reporter owns:
+- ASCII table formatting (`printTable`)
+- `--event` filtering
+- `--recent` plain-text dump
+
+The HTML reporter owns:
+- SVG chart generation (bar, donut, timeline)
+- CSS styling and badge colours
+- Self-contained HTML page assembly
+
 ## Installation
 
 The extension is auto-discovered by Pi when this package is stowed:

@@ -11,104 +11,19 @@
  *   ~/.pi/agent/bin/pi-usage-report-html --recent=200
  */
 
-import { createReadStream } from "node:fs";
-import { createInterface } from "node:readline";
-import { basename, dirname } from "node:path";
+import {
+  STATS_PATH,
+  createCollector,
+  sortMap,
+  readStatsEntries,
+} from "./pi-usage-report-lib.mjs";
 import { writeFileSync } from "node:fs";
 
-const STATS_PATH = `${process.env.HOME}/.pi/agent/usage-stats.jsonl`;
 const DEFAULT_OUTPUT = `${process.env.HOME}/.pi/agent/usage-report.html`;
 
-const counters = {
-  skillInvoked: new Map(),
-  promptInvoked: new Map(),
-  extensionCommandInvoked: new Map(),
-  skillCommandInvoked: new Map(),
-  customToolCalled: new Map(),
-  skillLoaded: new Map(),
-  modelUsed: new Map(),
-  modelSelect: new Map(),
-  sessionStart: 0,
-  resourcesDiscovered: { prompts: 0 },
-};
-
-const timeline = [];
-const recent = [];
-
-function skillNameFromPath(path) {
-  if (!path || typeof path !== "string") return path;
-  const name = basename(dirname(path));
-  if (name && name !== ".") return name;
-  return path;
-}
-
-function processEntry(entry) {
-  recent.push(entry);
-  if (recent.length > 1000) recent.shift();
-
-  timeline.push(entry);
-
-  switch (entry.event) {
-    case "skill_loaded":
-      counters.skillLoaded.set(
-        skillNameFromPath(entry.path),
-        (counters.skillLoaded.get(skillNameFromPath(entry.path)) || 0) + 1,
-      );
-      break;
-    case "skill_invoked":
-      counters.skillInvoked.set(
-        entry.name,
-        (counters.skillInvoked.get(entry.name) || 0) + 1,
-      );
-      break;
-    case "prompt_invoked":
-      counters.promptInvoked.set(
-        entry.name,
-        (counters.promptInvoked.get(entry.name) || 0) + 1,
-      );
-      break;
-    case "extension_command_invoked":
-      counters.extensionCommandInvoked.set(
-        entry.name,
-        (counters.extensionCommandInvoked.get(entry.name) || 0) + 1,
-      );
-      break;
-    case "skill_command_invoked":
-      counters.skillCommandInvoked.set(
-        entry.name,
-        (counters.skillCommandInvoked.get(entry.name) || 0) + 1,
-      );
-      break;
-    case "custom_tool_called":
-      counters.customToolCalled.set(
-        entry.tool,
-        (counters.customToolCalled.get(entry.tool) || 0) + 1,
-      );
-      break;
-    case "model_used":
-      counters.modelUsed.set(
-        entry.model,
-        (counters.modelUsed.get(entry.model) || 0) + 1,
-      );
-      break;
-    case "model_select":
-      counters.modelSelect.set(
-        entry.model,
-        (counters.modelSelect.get(entry.model) || 0) + 1,
-      );
-      break;
-    case "session_start":
-      counters.sessionStart++;
-      break;
-    case "resources_discovered":
-      counters.resourcesDiscovered.prompts += entry.promptCount || 0;
-      break;
-  }
-}
-
-function sortMap(map) {
-  return Array.from(map.entries()).sort((a, b) => b[1] - a[1]);
-}
+const { counters, recent, timeline, processEntry } = createCollector({
+  trackTimeline: true,
+});
 
 function generateBarChart(entries, maxBars = 10, color = "#6366f1") {
   const limited = entries.slice(0, maxBars);
@@ -127,7 +42,6 @@ function generateBarChart(entries, maxBars = 10, color = "#6366f1") {
     const [key, val] = limited[i];
     const y = gap + i * (barHeight + gap);
     const w = maxVal > 0 ? (val / maxVal) * barWidth : 0;
-    const pct = maxVal > 0 ? Math.round((val / maxVal) * 100) : 0;
     svg += `<text x="${labelWidth - 8}" y="${y + barHeight / 2 + 4}" text-anchor="end" class="label">${escapeHtml(key)}</text>`;
     svg += `<rect x="${labelWidth}" y="${y}" width="${w}" height="${barHeight}" rx="4" fill="${color}" opacity="0.85"/>`;
     svg += `<text x="${labelWidth + w + 8}" y="${y + barHeight / 2 + 4}" class="value">${val}</text>`;
@@ -218,13 +132,11 @@ function generateTimelineChart(timeline, maxPoints = 50) {
     points += `${x},${y} `;
   }
 
-  // area path
   const firstX = pad.left;
   const lastX = pad.left + chartW;
   const bottomY = pad.top + chartH;
   const areaPath = `M ${firstX} ${bottomY} L ${points.split(" ").filter(Boolean).join(" L ")} L ${lastX} ${bottomY} Z`;
 
-  // grid lines
   let grid = "";
   for (let i = 0; i <= 4; i++) {
     const y = pad.top + (chartH * i) / 4;
@@ -233,7 +145,6 @@ function generateTimelineChart(timeline, maxPoints = 50) {
     grid += `<text x="${pad.left - 6}" y="${y + 3}" text-anchor="end" class="axis">${val}</text>`;
   }
 
-  // x labels
   let xLabels = "";
   const labelCount = Math.min(sorted.length, 6);
   for (let i = 0; i < labelCount; i++) {
@@ -524,22 +435,9 @@ async function main() {
   const outputPath = args.find((a) => a.startsWith("--output="))?.slice(9) || DEFAULT_OUTPUT;
   const recentCount = Number(args.find((a) => a.startsWith("--recent="))?.slice(9) || 50);
 
-  let lineCount = 0;
-
   try {
-    const rl = createInterface({
-      input: createReadStream(STATS_PATH),
-      crlfDelay: Infinity,
-    });
-    for await (const line of rl) {
-      lineCount++;
-      if (!line.trim()) continue;
-      try {
-        const entry = JSON.parse(line);
-        processEntry(entry);
-      } catch {
-        // skip malformed lines
-      }
+    for await (const entry of readStatsEntries(STATS_PATH)) {
+      processEntry(entry);
     }
   } catch (err) {
     if (err.code === "ENOENT") {

@@ -9,6 +9,7 @@ Repository for agent configuration files. It uses [Mise](https://mise.jdx.dev) t
 - Edit files in this repository, not linked files in `~/`.
 - Preserve package directory layout; do not flatten nested files.
 - Keep JSON files valid when editing.
+- When working inside a package or extension subdirectory, check for a local `AGENTS.md` or `<feature>-AGENTS.md` file for package-specific constraints before making changes.
 
 ## Additive setup gate
 
