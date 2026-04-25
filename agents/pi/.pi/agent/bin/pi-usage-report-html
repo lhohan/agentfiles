@@ -181,11 +181,12 @@ function renderRecent(events, count) {
   let rows = "";
   for (const entry of subset) {
     const time = new Date(entry.t).toLocaleString();
+    const badgeClass = String(entry.event).toLowerCase();
     const detail = Object.entries(entry)
       .filter(([k]) => k !== "t" && k !== "event")
       .map(([k, v]) => `${k}=${JSON.stringify(v)}`)
       .join(" ");
-    rows += `<tr><td class="time">${time}</td><td><span class="badge ${entry.event}">${entry.event}</span></td><td class="detail">${escapeHtml(detail || "—")}</td></tr>`;
+    rows += `<tr><td class="time">${time}</td><td><span class="badge ${badgeClass}">${entry.event}</span></td><td class="detail">${escapeHtml(detail || "—")}</td></tr>`;
   }
   return `<table class="recent"><thead><tr><th>Time</th><th>Event</th><th>Details</th></tr></thead><tbody>${rows}</tbody></table>`;
 }
@@ -331,6 +332,7 @@ tbody tr:hover { background: rgba(99,102,241,0.05); }
 .badge.model_used { background: rgba(245,158,11,0.12); color: var(--warning); }
 .badge.custom_tool_called { background: rgba(244,63,94,0.12); color: var(--danger); }
 .badge.skill_loaded { background: rgba(139,92,246,0.12); color: var(--accent2); }
+.badge.extension_loaded { background: rgba(20,184,166,0.12); color: #14b8a6; }
 .badge.model_select { background: rgba(6,182,212,0.12); color: #06b6d4; }
 .badge { background: rgba(99,102,241,0.08); color: var(--text-muted); }
 
@@ -409,6 +411,11 @@ footer { text-align: center; color: var(--text-muted); font-size: 0.8rem; margin
 <section>
   <h2><span class="icon">⚡</span> Extension Commands</h2>
   ${renderTable(sortMap(counters.extensionCommandInvoked), ["Command", "Count"])}
+</section>
+
+<section>
+  <h2><span class="icon">🧩</span> Extensions loaded</h2>
+  ${renderTable(sortMap(counters.extensionLoaded), ["Extension", "Count"])}
 </section>
 
 <section>

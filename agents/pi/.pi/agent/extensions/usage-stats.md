@@ -1,6 +1,6 @@
 # Usage Statistics Extension
 
-Collects anonymous usage statistics for Pi skills, prompt templates, extension commands, custom tools, and model selections.
+Collects anonymous usage statistics for Pi skills, prompt templates, loaded extensions, extension commands, custom tools, and model selections.
 
 ## What is tracked
 
@@ -9,6 +9,7 @@ Collects anonymous usage statistics for Pi skills, prompt templates, extension c
 | `skill_invoked` | User types `/skill:name` | `name`, `args` |
 | `prompt_invoked` | User types `/templatename` | `name`, `args` |
 | `extension_command_invoked` | User types `/extcommand` | `name`, `args` |
+| `extension_loaded` | Agent loads an extension | `extension` |
 | `skill_command_invoked` | User types `/skill:name` (alternative form) | `name`, `args` |
 | `custom_tool_called` | Agent calls a non-built-in tool | `tool` |
 | `skill_loaded` | Agent `read`s a `SKILL.md` file | `path` |

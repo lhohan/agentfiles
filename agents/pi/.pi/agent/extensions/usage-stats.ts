@@ -6,7 +6,7 @@ import { dirname } from "node:path";
  * Usage Statistics Extension
  *
  * Collects anonymous usage statistics for skills, prompt templates,
- * extension commands, custom tools, and model selections.
+ * loaded extensions, extension commands, custom tools, and model selections.
  *
  * Data is written as append-only JSONL to ~/.pi/agent/usage-stats.jsonl.
  *
@@ -17,6 +17,7 @@ import { dirname } from "node:path";
  * - built-in tool exclusion list
  * - model_used vs model_select semantics
  * - skill_loaded grouping by skill name in viewer
+ * - extension_loaded grouping by extension name in viewer
  */
 
 const STATS_PATH = `${process.env.HOME}/.pi/agent/usage-stats.jsonl`;

@@ -21,11 +21,26 @@ export function skillNameFromPath(path) {
   return path;
 }
 
+function extensionNameFromEntry(entry) {
+  if (!entry || typeof entry !== "object") return "unknown";
+  if (typeof entry.extension === "string" && entry.extension) return entry.extension;
+  if (typeof entry.name === "string" && entry.name) return entry.name;
+  if (typeof entry.extensionName === "string" && entry.extensionName) return entry.extensionName;
+  if (typeof entry.extensionPath === "string" && entry.extensionPath) {
+    return basename(entry.extensionPath).replace(/\.[^.]+$/, "");
+  }
+  if (typeof entry.path === "string" && entry.path) {
+    return basename(entry.path).replace(/\.[^.]+$/, "");
+  }
+  return "unknown";
+}
+
 export function createCollector({ trackTimeline = false } = {}) {
   const counters = {
     skillInvoked: new Map(),
     promptInvoked: new Map(),
     extensionCommandInvoked: new Map(),
+    extensionLoaded: new Map(),
     skillCommandInvoked: new Map(),
     customToolCalled: new Map(),
     skillLoaded: new Map(),
@@ -71,6 +86,15 @@ export function createCollector({ trackTimeline = false } = {}) {
           (counters.extensionCommandInvoked.get(entry.name) || 0) + 1,
         );
         break;
+      case "extension_loaded":
+      case "EXTENSION_LOADED": {
+        const extension = extensionNameFromEntry(entry);
+        counters.extensionLoaded.set(
+          extension,
+          (counters.extensionLoaded.get(extension) || 0) + 1,
+        );
+        break;
+      }
       case "skill_command_invoked":
         counters.skillCommandInvoked.set(
           entry.name,

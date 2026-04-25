@@ -90,6 +90,7 @@ async function main() {
   printTable("Top Skills Invoked", counters.skillInvoked, topN);
   printTable("Top Prompts Invoked", counters.promptInvoked, topN);
   printTable("Top Extension Commands", counters.extensionCommandInvoked, topN);
+  printTable("Top Extensions loaded", counters.extensionLoaded, topN);
   printTable("Top Skill Commands", counters.skillCommandInvoked, topN);
   printTable("Top Custom Tools", counters.customToolCalled, topN);
   printTable("Top Models Used", counters.modelUsed, topN);

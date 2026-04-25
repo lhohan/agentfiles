@@ -60,7 +60,7 @@ Located in [Pi](agents/pi).
 - A [Brave search extension](agents/pi/.pi/agent/extensions/brave-search.ts) that registers `web_search`, `fetch_content`, and `get_fetched_content`. [Documentation](agents/pi/.pi/agent/extensions/brave-search.md)
     - requires [Brave `bx`](https://github.com/brave/bx) on `PATH` with a configured API key
 
-- A [Usage statistics extension](agents/pi/.pi/agent/extensions/usage-stats.ts) that tracks skill, prompt, command, and model usage into a local JSONL file, with a standalone reporting executable at [`~/.pi/agent/bin/pi-usage-report`](agents/pi/.pi/agent/bin/pi-usage-report). [Documentation](agents/pi/.pi/agent/extensions/usage-stats.md)
+- A [Usage statistics extension](agents/pi/.pi/agent/extensions/usage-stats.ts) that tracks skill, prompt, loaded extension, command, and model usage into a local JSONL file, with standalone reporting executables at [`~/.pi/agent/bin/pi-usage-report`](agents/pi/.pi/agent/bin/pi-usage-report) and [`~/.pi/agent/bin/pi-usage-report-html`](agents/pi/.pi/agent/bin/pi-usage-report-html). [Documentation](agents/pi/.pi/agent/extensions/usage-stats.md)
 
   
 ## Tooling
