@@ -62,9 +62,11 @@ export function createCollector({ trackTimeline = false } = {}) {
     }
 
     switch (entry.event) {
-      case "skill_loaded":
-        counters.skillLoaded.set(skillNameFromPath(entry.path), 1);
+      case "skill_loaded": {
+        const name = skillNameFromPath(entry.path);
+        counters.skillLoaded.set(name, (counters.skillLoaded.get(name) || 0) + 1);
         break;
+      }
       case "skill_invoked":
         counters.skillInvoked.set(
           entry.name,
