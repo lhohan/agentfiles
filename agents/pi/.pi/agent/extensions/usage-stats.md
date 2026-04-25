@@ -16,7 +16,6 @@ Collects anonymous usage statistics for Pi skills, prompt templates, loaded exte
 | `model_used` | First provider request of an agent run | `model` |
 | `model_select` | Model changes via `/model`, cycling, or restore | `model`, `previousModel`, `source` |
 | `session_start` | New, resume, fork, or reload | `reason`, `hasPreviousSession` |
-| `resources_discovered` | Startup or `/reload` | `reason`, `promptCount` |
 
 `model_used` counts the model actually invoked for a prompt. `model_select` records every browsing or cycling action, so the two can diverge when a user cycles through several models before sending a message.
 

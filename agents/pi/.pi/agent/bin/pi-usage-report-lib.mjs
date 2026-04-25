@@ -47,7 +47,6 @@ export function createCollector({ trackTimeline = false } = {}) {
     modelUsed: new Map(),
     modelSelect: new Map(),
     sessionStart: 0,
-    resourcesDiscovered: { prompts: 0 },
   };
 
   const recent = [];
@@ -120,9 +119,6 @@ export function createCollector({ trackTimeline = false } = {}) {
         break;
       case "session_start":
         counters.sessionStart++;
-        break;
-      case "resources_discovered":
-        counters.resourcesDiscovered.prompts += entry.promptCount || 0;
         break;
     }
   }

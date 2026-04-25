@@ -213,16 +213,6 @@ export default function usageStatsExtension(pi: ExtensionAPI) {
     }
   });
 
-  // --- Resources discovered at startup / reload ---
-  pi.on("resources_discover", async (event) => {
-    refreshPromptIndex();
-
-    collector.record("resources_discovered", {
-      reason: event.reason,
-      promptCount: promptIndex.names.size,
-    });
-  });
-
   // --- Model usage (once per agent run) ---
   let modelUsedRecorded = false;
 

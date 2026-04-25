@@ -377,10 +377,6 @@ footer { text-align: center; color: var(--text-muted); font-size: 0.8rem; margin
     <div class="metric-value">${totalModels}</div>
     <div class="metric-label">Models Tried</div>
   </div>
-  <div class="metric">
-    <div class="metric-value">${counters.resourcesDiscovered.prompts.toLocaleString()}</div>
-    <div class="metric-label">Prompts Discovered</div>
-  </div>
 </div>
 
 <section>
