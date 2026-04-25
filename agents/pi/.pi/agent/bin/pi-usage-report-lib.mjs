@@ -37,11 +37,9 @@ function extensionNameFromEntry(entry) {
 
 export function createCollector({ trackTimeline = false } = {}) {
   const counters = {
-    skillInvoked: new Map(),
     promptInvoked: new Map(),
     extensionCommandInvoked: new Map(),
     extensionLoaded: new Map(),
-    skillCommandInvoked: new Map(),
     customToolCalled: new Map(),
     skillLoaded: new Map(),
     modelUsed: new Map(),
@@ -67,9 +65,9 @@ export function createCollector({ trackTimeline = false } = {}) {
         break;
       }
       case "skill_invoked":
-        counters.skillInvoked.set(
+        counters.skillLoaded.set(
           entry.name,
-          (counters.skillInvoked.get(entry.name) || 0) + 1,
+          (counters.skillLoaded.get(entry.name) || 0) + 1,
         );
         break;
       case "prompt_invoked":
@@ -94,9 +92,9 @@ export function createCollector({ trackTimeline = false } = {}) {
         break;
       }
       case "skill_command_invoked":
-        counters.skillCommandInvoked.set(
+        counters.skillLoaded.set(
           entry.name,
-          (counters.skillCommandInvoked.get(entry.name) || 0) + 1,
+          (counters.skillLoaded.get(entry.name) || 0) + 1,
         );
         break;
       case "custom_tool_called":
