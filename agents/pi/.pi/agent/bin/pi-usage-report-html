@@ -1,0 +1,558 @@
+#!/usr/bin/env node
+/**
+ * Usage Statistics HTML Report Generator
+ *
+ * Reads ~/.pi/agent/usage-stats.jsonl and generates a beautiful,
+ * self-contained HTML report with charts and visualisations.
+ *
+ * Usage:
+ *   ~/.pi/agent/bin/pi-usage-report-html
+ *   ~/.pi/agent/bin/pi-usage-report-html --output=/path/to/report.html
+ *   ~/.pi/agent/bin/pi-usage-report-html --recent=200
+ */
+
+import { createReadStream } from "node:fs";
+import { createInterface } from "node:readline";
+import { basename, dirname } from "node:path";
+import { writeFileSync } from "node:fs";
+
+const STATS_PATH = `${process.env.HOME}/.pi/agent/usage-stats.jsonl`;
+const DEFAULT_OUTPUT = `${process.env.HOME}/.pi/agent/usage-report.html`;
+
+const counters = {
+  skillInvoked: new Map(),
+  promptInvoked: new Map(),
+  extensionCommandInvoked: new Map(),
+  skillCommandInvoked: new Map(),
+  customToolCalled: new Map(),
+  skillLoaded: new Map(),
+  modelUsed: new Map(),
+  modelSelect: new Map(),
+  sessionStart: 0,
+  resourcesDiscovered: { prompts: 0 },
+};
+
+const timeline = [];
+const recent = [];
+
+function skillNameFromPath(path) {
+  if (!path || typeof path !== "string") return path;
+  const name = basename(dirname(path));
+  if (name && name !== ".") return name;
+  return path;
+}
+
+function processEntry(entry) {
+  recent.push(entry);
+  if (recent.length > 1000) recent.shift();
+
+  timeline.push(entry);
+
+  switch (entry.event) {
+    case "skill_loaded":
+      counters.skillLoaded.set(
+        skillNameFromPath(entry.path),
+        (counters.skillLoaded.get(skillNameFromPath(entry.path)) || 0) + 1,
+      );
+      break;
+    case "skill_invoked":
+      counters.skillInvoked.set(
+        entry.name,
+        (counters.skillInvoked.get(entry.name) || 0) + 1,
+      );
+      break;
+    case "prompt_invoked":
+      counters.promptInvoked.set(
+        entry.name,
+        (counters.promptInvoked.get(entry.name) || 0) + 1,
+      );
+      break;
+    case "extension_command_invoked":
+      counters.extensionCommandInvoked.set(
+        entry.name,
+        (counters.extensionCommandInvoked.get(entry.name) || 0) + 1,
+      );
+      break;
+    case "skill_command_invoked":
+      counters.skillCommandInvoked.set(
+        entry.name,
+        (counters.skillCommandInvoked.get(entry.name) || 0) + 1,
+      );
+      break;
+    case "custom_tool_called":
+      counters.customToolCalled.set(
+        entry.tool,
+        (counters.customToolCalled.get(entry.tool) || 0) + 1,
+      );
+      break;
+    case "model_used":
+      counters.modelUsed.set(
+        entry.model,
+        (counters.modelUsed.get(entry.model) || 0) + 1,
+      );
+      break;
+    case "model_select":
+      counters.modelSelect.set(
+        entry.model,
+        (counters.modelSelect.get(entry.model) || 0) + 1,
+      );
+      break;
+    case "session_start":
+      counters.sessionStart++;
+      break;
+    case "resources_discovered":
+      counters.resourcesDiscovered.prompts += entry.promptCount || 0;
+      break;
+  }
+}
+
+function sortMap(map) {
+  return Array.from(map.entries()).sort((a, b) => b[1] - a[1]);
+}
+
+function generateBarChart(entries, maxBars = 10, color = "#6366f1") {
+  const limited = entries.slice(0, maxBars);
+  if (limited.length === 0) return "<p class=\"empty\">No data</p>";
+  const maxVal = Math.max(...limited.map(([, v]) => v));
+  const maxLabelLen = Math.max(...limited.map(([k]) => k.length));
+  const barWidth = 300;
+  const barHeight = 24;
+  const gap = 12;
+  const labelWidth = Math.min(maxLabelLen * 8 + 8, 180);
+  const totalWidth = labelWidth + barWidth + 60;
+  const totalHeight = limited.length * (barHeight + gap) + gap;
+
+  let svg = `<svg viewBox="0 0 ${totalWidth} ${totalHeight}" class="bar-chart">`;
+  for (let i = 0; i < limited.length; i++) {
+    const [key, val] = limited[i];
+    const y = gap + i * (barHeight + gap);
+    const w = maxVal > 0 ? (val / maxVal) * barWidth : 0;
+    const pct = maxVal > 0 ? Math.round((val / maxVal) * 100) : 0;
+    svg += `<text x="${labelWidth - 8}" y="${y + barHeight / 2 + 4}" text-anchor="end" class="label">${escapeHtml(key)}</text>`;
+    svg += `<rect x="${labelWidth}" y="${y}" width="${w}" height="${barHeight}" rx="4" fill="${color}" opacity="0.85"/>`;
+    svg += `<text x="${labelWidth + w + 8}" y="${y + barHeight / 2 + 4}" class="value">${val}</text>`;
+  }
+  svg += "</svg>";
+  return svg;
+}
+
+function generateDonutChart(entries, maxSlices = 8) {
+  const total = entries.reduce((s, [, v]) => s + v, 0);
+  if (total === 0) return "<p class=\"empty\">No data</p>";
+
+  const colors = [
+    "#6366f1", "#8b5cf6", "#ec4899", "#f43f5e",
+    "#f59e0b", "#10b981", "#06b6d4", "#3b82f6",
+    "#84cc16", "#d946ef", "#f97316", "#ef4444",
+  ];
+
+  let sorted = entries.slice().sort((a, b) => b[1] - a[1]);
+  let slices = sorted.slice(0, maxSlices);
+  const otherSum = sorted.slice(maxSlices).reduce((s, [, v]) => s + v, 0);
+  if (otherSum > 0) slices.push(["Other", otherSum]);
+
+  const r = 80;
+  const cx = 120;
+  const cy = 100;
+  const innerR = 50;
+
+  let angle = -Math.PI / 2;
+  let paths = "";
+  let legend = "";
+
+  for (let i = 0; i < slices.length; i++) {
+    const [key, val] = slices[i];
+    const sliceAngle = (val / total) * 2 * Math.PI;
+    const x1 = cx + r * Math.cos(angle);
+    const y1 = cy + r * Math.sin(angle);
+    const x2 = cx + r * Math.cos(angle + sliceAngle);
+    const y2 = cy + r * Math.sin(angle + sliceAngle);
+    const x3 = cx + innerR * Math.cos(angle + sliceAngle);
+    const y3 = cy + innerR * Math.sin(angle + sliceAngle);
+    const x4 = cx + innerR * Math.cos(angle);
+    const y4 = cy + innerR * Math.sin(angle);
+    const largeArc = sliceAngle > Math.PI ? 1 : 0;
+
+    const d = `M ${x1} ${y1} A ${r} ${r} 0 ${largeArc} 1 ${x2} ${y2} L ${x3} ${y3} A ${innerR} ${innerR} 0 ${largeArc} 0 ${x4} ${y4} Z`;
+    paths += `<path d="${d}" fill="${colors[i % colors.length]}" stroke="var(--card-bg)" stroke-width="2"/>`;
+
+    const midAngle = angle + sliceAngle / 2;
+    const labelR = r + 22;
+    const lx = cx + labelR * Math.cos(midAngle);
+    const ly = cy + labelR * Math.sin(midAngle);
+    const pct = Math.round((val / total) * 100);
+
+    legend += `<div class="legend-item"><span class="swatch" style="background:${colors[i % colors.length]}"></span><span class="legend-label">${escapeHtml(key)}</span><span class="legend-pct">${pct}%</span></div>`;
+
+    angle += sliceAngle;
+  }
+
+  return `<div class="donut-wrap"><svg viewBox="0 0 240 200" class="donut">${paths}<text x="${cx}" y="${cy + 5}" text-anchor="middle" class="donut-total">${total}</text></svg><div class="legend">${legend}</div></div>`;
+}
+
+function generateTimelineChart(timeline, maxPoints = 50) {
+  const bucketMs = 1000 * 60 * 60 * 24; // daily buckets
+  const buckets = new Map();
+  for (const entry of timeline) {
+    const bucket = Math.floor(entry.t / bucketMs) * bucketMs;
+    buckets.set(bucket, (buckets.get(bucket) || 0) + 1);
+  }
+  const sorted = Array.from(buckets.entries()).sort((a, b) => a[0] - b[0]);
+  if (sorted.length < 2) return "<p class=\"empty\">Not enough timeline data</p>";
+
+  const maxVal = Math.max(...sorted.map(([, v]) => v));
+  const w = 600;
+  const h = 160;
+  const pad = { top: 10, right: 10, bottom: 30, left: 40 };
+  const chartW = w - pad.left - pad.right;
+  const chartH = h - pad.top - pad.bottom;
+
+  const minT = sorted[0][0];
+  const maxT = sorted[sorted.length - 1][0];
+
+  let points = "";
+  for (let i = 0; i < sorted.length; i++) {
+    const [t, val] = sorted[i];
+    const x = pad.left + ((t - minT) / (maxT - minT || 1)) * chartW;
+    const y = pad.top + chartH - (val / maxVal) * chartH;
+    points += `${x},${y} `;
+  }
+
+  // area path
+  const firstX = pad.left;
+  const lastX = pad.left + chartW;
+  const bottomY = pad.top + chartH;
+  const areaPath = `M ${firstX} ${bottomY} L ${points.split(" ").filter(Boolean).join(" L ")} L ${lastX} ${bottomY} Z`;
+
+  // grid lines
+  let grid = "";
+  for (let i = 0; i <= 4; i++) {
+    const y = pad.top + (chartH * i) / 4;
+    const val = Math.round(maxVal * (1 - i / 4));
+    grid += `<line x1="${pad.left}" y1="${y}" x2="${w - pad.right}" y2="${y}" class="grid"/>`;
+    grid += `<text x="${pad.left - 6}" y="${y + 3}" text-anchor="end" class="axis">${val}</text>`;
+  }
+
+  // x labels
+  let xLabels = "";
+  const labelCount = Math.min(sorted.length, 6);
+  for (let i = 0; i < labelCount; i++) {
+    const idx = Math.floor((i / (labelCount - 1)) * (sorted.length - 1));
+    const [t] = sorted[idx];
+    const x = pad.left + ((t - minT) / (maxT - minT || 1)) * chartW;
+    const date = new Date(t).toLocaleDateString(undefined, { month: "short", day: "numeric" });
+    xLabels += `<text x="${x}" y="${h - 6}" text-anchor="middle" class="axis">${date}</text>`;
+  }
+
+  return `<svg viewBox="0 0 ${w} ${h}" class="timeline-chart"><defs><linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#6366f1" stop-opacity="0.3"/><stop offset="100%" stop-color="#6366f1" stop-opacity="0"/></linearGradient></defs>${grid}<path d="${areaPath}" fill="url(#areaGrad)"/><polyline points="${points}" fill="none" stroke="#6366f1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>${xLabels}</svg>`;
+}
+
+function escapeHtml(str) {
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
+
+function renderTable(entries, headers) {
+  if (entries.length === 0) return "<p class=\"empty\">No data</p>";
+  let rows = "";
+  for (const [key, val] of entries.slice(0, 20)) {
+    rows += `<tr><td>${escapeHtml(key)}</td><td class="num">${val}</td></tr>`;
+  }
+  return `<table><thead><tr>${headers.map((h) => `<th>${h}</th>`).join("")}</tr></thead><tbody>${rows}</tbody></table>`;
+}
+
+function renderRecent(events, count) {
+  const subset = events.slice(-count).reverse();
+  let rows = "";
+  for (const entry of subset) {
+    const time = new Date(entry.t).toLocaleString();
+    const detail = Object.entries(entry)
+      .filter(([k]) => k !== "t" && k !== "event")
+      .map(([k, v]) => `${k}=${JSON.stringify(v)}`)
+      .join(" ");
+    rows += `<tr><td class="time">${time}</td><td><span class="badge ${entry.event}">${entry.event}</span></td><td class="detail">${escapeHtml(detail || "—")}</td></tr>`;
+  }
+  return `<table class="recent"><thead><tr><th>Time</th><th>Event</th><th>Details</th></tr></thead><tbody>${rows}</tbody></table>`;
+}
+
+function generateReport(outputPath, recentCount) {
+  const totalEvents = timeline.length;
+  const totalSkills = counters.skillInvoked.size;
+  const totalModels = counters.modelUsed.size;
+  const firstEvent = timeline.length > 0 ? new Date(timeline[0].t).toLocaleDateString() : "—";
+  const lastEvent = timeline.length > 0 ? new Date(timeline[timeline.length - 1].t).toLocaleDateString() : "—";
+
+  const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pi Usage Report</title>
+<style>
+:root {
+  --bg: #0f0f13;
+  --card-bg: #1a1a23;
+  --card-border: #272730;
+  --text: #e2e2e8;
+  --text-muted: #8b8b9a;
+  --accent: #6366f1;
+  --accent2: #8b5cf6;
+  --success: #10b981;
+  --warning: #f59e0b;
+  --danger: #f43f5e;
+  --radius: 14px;
+  --shadow: 0 4px 24px rgba(0,0,0,0.35);
+}
+@media (prefers-color-scheme: light) {
+  :root {
+    --bg: #f5f5f7;
+    --card-bg: #ffffff;
+    --card-border: #e2e2e8;
+    --text: #1a1a23;
+    --text-muted: #6b6b7b;
+    --shadow: 0 4px 24px rgba(0,0,0,0.08);
+  }
+}
+* { box-sizing: border-box; }
+body {
+  margin: 0;
+  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  line-height: 1.5;
+}
+.container { max-width: 1100px; margin: 0 auto; padding: 32px 20px; }
+header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 32px;
+  flex-wrap: wrap;
+  gap: 12px;
+}
+h1 { font-size: 1.8rem; font-weight: 700; margin: 0; letter-spacing: -0.02em; }
+h1 span { color: var(--accent); }
+.subtitle { color: var(--text-muted); font-size: 0.95rem; margin-top: 4px; }
+.timestamp { color: var(--text-muted); font-size: 0.85rem; }
+
+.metrics {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+  gap: 16px;
+  margin-bottom: 32px;
+}
+.metric {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  padding: 20px;
+  box-shadow: var(--shadow);
+  transition: transform 0.15s ease;
+}
+.metric:hover { transform: translateY(-2px); }
+.metric-value {
+  font-size: 2rem;
+  font-weight: 700;
+  background: linear-gradient(135deg, var(--accent), var(--accent2));
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+.metric-label { font-size: 0.85rem; color: var(--text-muted); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.04em; }
+
+section {
+  background: var(--card-bg);
+  border: 1px solid var(--card-border);
+  border-radius: var(--radius);
+  padding: 24px;
+  margin-bottom: 24px;
+  box-shadow: var(--shadow);
+}
+h2 { font-size: 1.15rem; font-weight: 600; margin: 0 0 16px 0; display: flex; align-items: center; gap: 8px; }
+h2 .icon { font-size: 1.3rem; }
+
+.grid-2 {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+  gap: 24px;
+}
+
+.bar-chart { width: 100%; height: auto; }
+.bar-chart .label { font-size: 11px; fill: var(--text-muted); }
+.bar-chart .value { font-size: 11px; fill: var(--text); font-weight: 600; }
+
+.donut-wrap { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; }
+.donut { width: 240px; height: 200px; flex-shrink: 0; }
+.donut-total { font-size: 22px; font-weight: 700; fill: var(--text); }
+.legend { display: flex; flex-direction: column; gap: 8px; }
+.legend-item { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; }
+.swatch { width: 12px; height: 12px; border-radius: 3px; flex-shrink: 0; }
+.legend-label { color: var(--text); }
+.legend-pct { color: var(--text-muted); margin-left: auto; font-variant-numeric: tabular-nums; }
+
+.timeline-chart { width: 100%; height: auto; }
+.timeline-chart .grid { stroke: var(--card-border); stroke-width: 1; }
+.timeline-chart .axis { font-size: 10px; fill: var(--text-muted); }
+
+table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+th { text-align: left; padding: 10px 12px; color: var(--text-muted); font-weight: 500; border-bottom: 1px solid var(--card-border); }
+td { padding: 10px 12px; border-bottom: 1px solid var(--card-border); }
+td.num { font-variant-numeric: tabular-nums; font-weight: 600; color: var(--accent); text-align: right; }
+tbody tr:hover { background: rgba(99,102,241,0.05); }
+.recent td.time { color: var(--text-muted); font-size: 0.82rem; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.recent td.detail { color: var(--text-muted); font-size: 0.85rem; word-break: break-all; }
+
+.badge {
+  display: inline-block;
+  padding: 2px 10px;
+  border-radius: 999px;
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+}
+.badge.session_start { background: rgba(16,185,129,0.12); color: var(--success); }
+.badge.skill_invoked { background: rgba(99,102,241,0.12); color: var(--accent); }
+.badge.model_used { background: rgba(245,158,11,0.12); color: var(--warning); }
+.badge.custom_tool_called { background: rgba(244,63,94,0.12); color: var(--danger); }
+.badge.skill_loaded { background: rgba(139,92,246,0.12); color: var(--accent2); }
+.badge.model_select { background: rgba(6,182,212,0.12); color: #06b6d4; }
+.badge { background: rgba(99,102,241,0.08); color: var(--text-muted); }
+
+.empty { color: var(--text-muted); font-style: italic; text-align: center; padding: 24px; }
+
+footer { text-align: center; color: var(--text-muted); font-size: 0.8rem; margin-top: 12px; }
+
+@media (max-width: 640px) {
+  .container { padding: 16px; }
+  h1 { font-size: 1.4rem; }
+  .metric-value { font-size: 1.5rem; }
+  .donut-wrap { justify-content: center; }
+}
+</style>
+</head>
+<body>
+<div class="container">
+<header>
+  <div>
+    <h1><span>Pi</span> Usage Report</h1>
+    <div class="subtitle">${totalEvents.toLocaleString()} events &middot; ${firstEvent} – ${lastEvent}</div>
+  </div>
+  <div class="timestamp">Generated ${new Date().toLocaleString()}</div>
+</header>
+
+<div class="metrics">
+  <div class="metric">
+    <div class="metric-value">${counters.sessionStart.toLocaleString()}</div>
+    <div class="metric-label">Sessions</div>
+  </div>
+  <div class="metric">
+    <div class="metric-value">${totalEvents.toLocaleString()}</div>
+    <div class="metric-label">Total Events</div>
+  </div>
+  <div class="metric">
+    <div class="metric-value">${totalSkills}</div>
+    <div class="metric-label">Unique Skills</div>
+  </div>
+  <div class="metric">
+    <div class="metric-value">${totalModels}</div>
+    <div class="metric-label">Models Tried</div>
+  </div>
+  <div class="metric">
+    <div class="metric-value">${counters.resourcesDiscovered.prompts.toLocaleString()}</div>
+    <div class="metric-label">Prompts Discovered</div>
+  </div>
+</div>
+
+<section>
+  <h2><span class="icon">📈</span> Activity Timeline</h2>
+  ${generateTimelineChart(timeline)}
+</section>
+
+<div class="grid-2">
+  <section>
+    <h2><span class="icon">🎯</span> Top Skills Invoked</h2>
+    ${generateBarChart(sortMap(counters.skillInvoked), 10, "#6366f1")}
+  </section>
+  <section>
+    <h2><span class="icon">🤖</span> Models Used</h2>
+    ${generateDonutChart(sortMap(counters.modelUsed))}
+  </section>
+</div>
+
+<div class="grid-2">
+  <section>
+    <h2><span class="icon">🔧</span> Custom Tools</h2>
+    ${generateBarChart(sortMap(counters.customToolCalled), 8, "#f43f5e")}
+  </section>
+  <section>
+    <h2><span class="icon">📝</span> Top Prompts</h2>
+    ${generateBarChart(sortMap(counters.promptInvoked), 8, "#10b981")}
+  </section>
+</div>
+
+<section>
+  <h2><span class="icon">⚡</span> Extension Commands</h2>
+  ${renderTable(sortMap(counters.extensionCommandInvoked), ["Command", "Count"])}
+</section>
+
+<section>
+  <h2><span class="icon">📦</span> Skills Loaded</h2>
+  ${renderTable(sortMap(counters.skillLoaded), ["Skill", "Count"])}
+</section>
+
+<section>
+  <h2><span class="icon">🕒</span> Recent Events</h2>
+  ${renderRecent(recent, recentCount)}
+</section>
+
+<footer>Generated by pi-usage-report-html &middot; Data from ~/.pi/agent/usage-stats.jsonl</footer>
+</div>
+</body>
+</html>`;
+
+  writeFileSync(outputPath, html, "utf-8");
+  return outputPath;
+}
+
+async function main() {
+  const args = process.argv.slice(2);
+  const outputPath = args.find((a) => a.startsWith("--output="))?.slice(9) || DEFAULT_OUTPUT;
+  const recentCount = Number(args.find((a) => a.startsWith("--recent="))?.slice(9) || 50);
+
+  let lineCount = 0;
+
+  try {
+    const rl = createInterface({
+      input: createReadStream(STATS_PATH),
+      crlfDelay: Infinity,
+    });
+    for await (const line of rl) {
+      lineCount++;
+      if (!line.trim()) continue;
+      try {
+        const entry = JSON.parse(line);
+        processEntry(entry);
+      } catch {
+        // skip malformed lines
+      }
+    }
+  } catch (err) {
+    if (err.code === "ENOENT") {
+      console.error(`Stats file not found: ${STATS_PATH}`);
+      console.error("Run Pi with the usage-stats extension first.");
+      process.exit(1);
+    }
+    throw err;
+  }
+
+  const path = generateReport(outputPath, recentCount);
+  console.log(`✅ HTML report written to ${path}`);
+  console.log(`   Open it: open ${path}`);
+}
+
+main();

@@ -56,6 +56,30 @@ A standalone reporting executable is included:
 ~/.pi/agent/bin/pi-usage-report --top=5
 ```
 
+### HTML Report
+
+A visually rich HTML report with charts and interactive tables is also available:
+
+```bash
+# Generate report and open in browser
+~/.pi/agent/bin/pi-usage-report-html
+
+# Custom output path
+~/.pi/agent/bin/pi-usage-report-html --output=/path/to/report.html
+
+# Include more recent events
+~/.pi/agent/bin/pi-usage-report-html --recent=200
+```
+
+The HTML report is self-contained (no external dependencies) and includes:
+- Summary metric cards
+- Activity timeline chart
+- Bar charts for skills, tools, and prompts
+- Donut chart for model distribution
+- Sortable data tables
+- Recent events log with colour-coded badges
+- Automatic dark/light mode based on system preference
+
 ## Installation
 
 The extension is auto-discovered by Pi when this package is stowed:
