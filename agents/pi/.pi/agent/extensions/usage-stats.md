@@ -97,9 +97,15 @@ The shared library (`pi-usage-report-lib.mjs`) owns:
 - `readStatsEntries()` async generator
 
 The CLI reporter owns:
+- Report header, summary block, section headings, and dividers
 - ASCII table formatting (`printTable`)
-- `--event` filtering
-- `--recent` plain-text dump
+- `--event` filtering (ingestion-time)
+- `--recent` timeline dump with aligned timestamps and event names
+
+The CLI report is structured in three visual sections:
+- **Summary** — line count, matched events, sessions started
+- **Breakdown** — per-category tables (prompts, extension commands, extensions, tools, models, skills)
+- **Timeline** — optional recent events log, shown only with `--recent`
 
 The HTML reporter owns:
 - SVG chart generation (bar, donut, timeline)

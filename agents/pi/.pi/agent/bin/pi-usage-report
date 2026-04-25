@@ -21,38 +21,64 @@ import {
 
 const { counters, recent, processEntry } = createCollector();
 
+// ── Formatting helpers ──────────────────────────────────────────────
+
+const DIVIDER = "─".repeat(50);
+
+function printHeader(text) {
+  console.log(`\n${DIVIDER}`);
+  console.log(text);
+  console.log(DIVIDER);
+}
+
+function printSection(text) {
+  console.log(`\n▸ ${text}`);
+}
+
+function printSummaryLine(label, value, labelWidth) {
+  console.log(`  ${label.padEnd(labelWidth)}  ${value}`);
+}
+
+// ── Table rendering ─────────────────────────────────────────────────
+
 function printTable(title, map, topN) {
   const entries = sortMap(map);
   if (entries.length === 0) return;
+
   const limited = topN ? entries.slice(0, topN) : entries;
   const maxKey = Math.max(...limited.map(([k]) => k.length), 4);
 
-  console.log(`\n${title}`);
-  console.log(`${"Item".padEnd(maxKey)}  Count`);
-  console.log(`${"-".repeat(maxKey)}  -----`);
+  printSection(title);
+  console.log(`  ${"Item".padEnd(maxKey)}  Count`);
+  console.log(`  ${"-".repeat(maxKey)}  ${"-".repeat(5)}`);
   for (const [key, count] of limited) {
-    console.log(`${key.padEnd(maxKey)}  ${count}`);
+    console.log(`  ${key.padEnd(maxKey)}  ${count}`);
   }
   if (entries.length > limited.length) {
-    console.log(`... and ${entries.length - limited.length} more`);
+    console.log(`  … and ${entries.length - limited.length} more`);
   }
 }
 
-
+// ── Recent events ───────────────────────────────────────────────────
 
 function printRecent(count) {
   if (recent.length === 0) return;
-  console.log(`\n--- Recent Events (last ${Math.min(count, recent.length)}) ---`);
-  for (const entry of recent.slice(-count)) {
-    const time = new Date(entry.t).toISOString();
-    const detail = JSON.stringify(
-      Object.fromEntries(
-        Object.entries(entry).filter(([k]) => k !== "t" && k !== "event"),
-      ),
-    );
-    console.log(`[${time}] ${entry.event} ${detail}`);
+
+  const subset = recent.slice(-count);
+  printSection(`Recent Events (last ${Math.min(count, recent.length)})`);
+
+  for (const entry of subset) {
+    const time = new Date(entry.t).toISOString().replace("T", " ").replace(/\.\d+$/, "");
+    const name = entry.event.padEnd(32);
+    const detail = Object.entries(entry)
+      .filter(([k]) => k !== "t" && k !== "event")
+      .map(([k, v]) => `${k}=${JSON.stringify(v)}`)
+      .join(" ");
+    console.log(`  ${time}  ${name}  ${detail}`);
   }
 }
+
+// ── Main ────────────────────────────────────────────────────────────
 
 async function main() {
   const args = process.argv.slice(2);
@@ -81,22 +107,34 @@ async function main() {
     throw err;
   }
 
-  console.log("=== Pi Usage Statistics ===\n");
-  console.log(`Lines processed: ${lineCount}`);
-  console.log(`Events matched:  ${recent.length}`);
-  console.log();
-  console.log(`Sessions started: ${counters.sessionStart}`);
+  // Header
+  console.log("");
+  console.log("  ╔══════════════════════════════════════════════════╗");
+  console.log("  ║            Pi Usage Statistics                   ║");
+  console.log("  ╚══════════════════════════════════════════════════╝");
 
-  printTable("Top Prompts Invoked", counters.promptInvoked, topN);
-  printTable("Top Extension Commands", counters.extensionCommandInvoked, topN);
-  printTable("Top Extensions loaded", counters.extensionLoaded, topN);
-  printTable("Top Custom Tools", counters.customToolCalled, topN);
-  printTable("Top Models Used", counters.modelUsed, topN);
+  // Summary
+  printHeader("  Summary");
+  printSummaryLine("Lines processed", lineCount, 16);
+  printSummaryLine("Events matched", recent.length, 16);
+  printSummaryLine("Sessions started", counters.sessionStart, 16);
+
+  // Breakdown tables
+  printHeader("  Breakdown");
+  printTable("Prompts Invoked", counters.promptInvoked, topN);
+  printTable("Extension Commands", counters.extensionCommandInvoked, topN);
+  printTable("Extensions Loaded", counters.extensionLoaded, topN);
+  printTable("Custom Tools Called", counters.customToolCalled, topN);
+  printTable("Models Used", counters.modelUsed, topN);
   printTable("Skills Loaded", counters.skillLoaded, topN);
 
+  // Recent events (optional)
   if (showRecent) {
+    printHeader("  Timeline");
     printRecent(recentCount);
   }
+
+  console.log("");
 }
 
 main();
