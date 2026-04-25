@@ -2,6 +2,16 @@
 
 Pi-specific decisions are listed in reverse chronological order (most recent first).
 
+### pi-017: Do not track frontmatter-injected skills in usage-stats [Accepted]
+
+> **In the context of** wanting the `usage-stats` extension to record skill loads triggered by the `skill:` frontmatter field in `pi-prompt-template-model` prompts,
+> **facing** the fact that `pi-prompt-template-model` resolves and injects skills internally via `before_agent_start`, bypassing both `/skill:name` commands and the agent `read` tool,
+> **we decided** to keep the extension bounded to Pi's native extension API and **not** parse prompt-template frontmatter or peek into `pi-prompt-template-model`'s internal behavior,
+> **to achieve** a clean separation where `usage-stats` depends only on Pi's out-of-the-box events (`input`, `tool_call`, `before_agent_start`, etc.) and remains agnostic to third-party extension internals,
+> **accepting** that skills loaded via prompt-template frontmatter will not appear in `skill_loaded` telemetry and will only be visible indirectly through `prompt_invoked` events.
+>
+> **Rationale:** Tracking frontmatter-injected skills would require `usage-stats` to know the `skill:` field schema, the YAML frontmatter format, and the file-resolution logic of another extension. That coupling makes `usage-stats` brittle to upstream changes in `pi-prompt-template-model` and violates the principle that each extension should interact through Pi's public API surface. If `pi-prompt-template-model` later emits its own event for skill injection, `usage-stats` can listen for that event without any structural coupling.
+
 ### pi-016: Place Pi usage-report executable under `bin/`, not `extensions/` [Accepted]
 
 > **In the context of** shipping a standalone usage-stats reporting utility alongside the Pi package,
