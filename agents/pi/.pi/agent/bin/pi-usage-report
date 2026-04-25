@@ -87,7 +87,6 @@ async function main() {
   console.log();
   console.log(`Sessions started: ${counters.sessionStart}`);
 
-  printTable("Top Skills Invoked", counters.skillInvoked, topN);
   printTable("Top Prompts Invoked", counters.promptInvoked, topN);
   printTable("Top Extension Commands", counters.extensionCommandInvoked, topN);
   printTable("Top Extensions loaded", counters.extensionLoaded, topN);
