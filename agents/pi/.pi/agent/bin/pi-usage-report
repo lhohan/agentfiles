@@ -16,7 +16,6 @@ import {
   STATS_PATH,
   createCollector,
   sortMap,
-  sortSet,
   readStatsEntries,
 } from "./pi-usage-report-lib.mjs";
 
@@ -39,18 +38,7 @@ function printTable(title, map, topN) {
   }
 }
 
-function printList(title, items, topN) {
-  if (items.length === 0) return;
-  const limited = topN ? items.slice(0, topN) : items;
 
-  console.log(`\n${title}`);
-  for (const item of limited) {
-    console.log(`  ${item}`);
-  }
-  if (items.length > limited.length) {
-    console.log(`... and ${items.length - limited.length} more`);
-  }
-}
 
 function printRecent(count) {
   if (recent.length === 0) return;
@@ -108,7 +96,7 @@ async function main() {
   printTable("Top Skill Commands", counters.skillCommandInvoked, topN);
   printTable("Top Custom Tools", counters.customToolCalled, topN);
   printTable("Top Models Used", counters.modelUsed, topN);
-  printList("Skills Loaded", sortSet(counters.skillLoaded), topN);
+  printTable("Skills Loaded", counters.skillLoaded, topN);
 
   if (showRecent) {
     printRecent(recentCount);

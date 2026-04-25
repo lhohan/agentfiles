@@ -43,7 +43,7 @@ export function createCollector({ trackTimeline = false } = {}) {
     extensionLoaded: new Map(),
     skillCommandInvoked: new Map(),
     customToolCalled: new Map(),
-    skillLoaded: new Set(),
+    skillLoaded: new Map(),
     modelUsed: new Map(),
     modelSelect: new Map(),
     sessionStart: 0,
@@ -63,7 +63,7 @@ export function createCollector({ trackTimeline = false } = {}) {
 
     switch (entry.event) {
       case "skill_loaded":
-        counters.skillLoaded.add(skillNameFromPath(entry.path));
+        counters.skillLoaded.set(skillNameFromPath(entry.path), 1);
         break;
       case "skill_invoked":
         counters.skillInvoked.set(
@@ -132,9 +132,7 @@ export function sortMap(map) {
   return Array.from(map.entries()).sort((a, b) => b[1] - a[1]);
 }
 
-export function sortSet(set) {
-  return Array.from(set).sort((a, b) => a.localeCompare(b));
-}
+
 
 /**
  * Read the stats file line-by-line, yielding parsed entries.

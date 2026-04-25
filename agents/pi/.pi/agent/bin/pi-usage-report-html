@@ -15,7 +15,6 @@ import {
   STATS_PATH,
   createCollector,
   sortMap,
-  sortSet,
   readStatsEntries,
 } from "./pi-usage-report-lib.mjs";
 import { writeFileSync } from "node:fs";
@@ -177,14 +176,7 @@ function renderTable(entries, headers) {
   return `<table><thead><tr>${headers.map((h) => `<th>${h}</th>`).join("")}</tr></thead><tbody>${rows}</tbody></table>`;
 }
 
-function renderList(items, header) {
-  if (items.length === 0) return "<p class=\"empty\">No data</p>";
-  let rows = "";
-  for (const item of items.slice(0, 50)) {
-    rows += `<tr><td>${escapeHtml(item)}</td></tr>`;
-  }
-  return `<table><thead><tr><th>${escapeHtml(header)}</th></tr></thead><tbody>${rows}</tbody></table>`;
-}
+
 
 function renderRecent(events, count) {
   const subset = events.slice(-count).reverse();
@@ -424,7 +416,7 @@ footer { text-align: center; color: var(--text-muted); font-size: 0.8rem; margin
 
 <section>
   <h2><span class="icon">📦</span> Skills Loaded</h2>
-  ${renderList(sortSet(counters.skillLoaded), "Skill")}
+  ${renderTable(sortMap(counters.skillLoaded), ["Skill", "Count"])}
 </section>
 
 <section>
