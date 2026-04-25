@@ -1,6 +1,7 @@
 import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
-import { mkdirSync, readFileSync } from "node:fs";
-import { dirname } from "node:path";
+import { existsSync, mkdirSync, readdirSync, readFileSync, realpathSync, statSync } from "node:fs";
+import { homedir } from "node:os";
+import { basename, dirname, join, resolve } from "node:path";
 
 /**
  * Usage Statistics Extension
@@ -18,6 +19,7 @@ import { dirname } from "node:path";
  * - model_used vs model_select semantics
  * - skill_loaded grouping by skill name in viewer
  * - extension_loaded grouping by extension name in viewer
+ * - extension_inventory / extension_used semantics
  */
 
 const STATS_PATH = `${process.env.HOME}/.pi/agent/usage-stats.jsonl`;
@@ -81,6 +83,20 @@ class StatsCollector {
   }
 }
 
+function extensionNameFromPath(path: string): string | undefined {
+  if (!path) return undefined;
+  const parts = path.split(/[\\/]/);
+  const extIdx = parts.indexOf("extensions");
+  if (extIdx !== -1 && extIdx + 1 < parts.length) {
+    return parts[extIdx + 1].replace(/\.[^.]+$/, "");
+  }
+  const nmIdx = parts.indexOf("node_modules");
+  if (nmIdx !== -1 && nmIdx + 1 < parts.length) {
+    return parts[nmIdx + 1];
+  }
+  return basename(path).replace(/\.[^.]+$/, "");
+}
+
 function stripFrontmatter(markdown: string): string {
   if (!markdown.startsWith("---\n")) return markdown.trim();
   const end = markdown.indexOf("\n---\n", 4);
@@ -92,38 +108,169 @@ function normalizeText(text: string): string {
   return text.replace(/\r\n/g, "\n").replace(/\s+/g, " ").trim();
 }
 
+interface PromptEntry {
+  name: string;
+  prefix: string;
+  sourceInfo?: { path?: string; source?: string; scope?: string; origin?: string };
+}
+
 type PromptIndex = {
   names: Set<string>;
-  signatures: Array<{ name: string; prefix: string }>;
+  prompts: Map<string, PromptEntry>;
+  signatures: Array<PromptEntry>;
 };
 
 function buildPromptIndex(pi: ExtensionAPI): PromptIndex {
   const names = new Set<string>();
-  const signatures: Array<{ name: string; prefix: string }> = [];
+  const prompts = new Map<string, PromptEntry>();
+  const signatures: Array<PromptEntry> = [];
 
   for (const cmd of pi.getCommands()) {
     if (cmd.source !== "prompt") continue;
     names.add(cmd.name);
 
-    try {
-      const raw = readFileSync(cmd.sourceInfo.path, "utf-8");
-      const body = stripFrontmatter(raw);
-      const normalized = normalizeText(body);
-      if (normalized.length > 0) {
-        signatures.push({ name: cmd.name, prefix: normalized.slice(0, 180) });
+    const entry: PromptEntry = {
+      name: cmd.name,
+      prefix: "",
+      sourceInfo: cmd.sourceInfo,
+    };
+
+    if (cmd.sourceInfo?.path) {
+      try {
+        const raw = readFileSync(cmd.sourceInfo.path, "utf-8");
+        const body = stripFrontmatter(raw);
+        const normalized = normalizeText(body);
+        if (normalized.length > 0) {
+          entry.prefix = normalized.slice(0, 180);
+          signatures.push(entry);
+        }
+      } catch {
+        // ignore unreadable prompt files
       }
+    }
+
+    prompts.set(cmd.name, entry);
+  }
+
+  return { names, prompts, signatures };
+}
+
+function scanPromptDir(
+  dir: string,
+  scope: "user" | "project",
+  visitedDirectories = new Set<string>(),
+): Array<{ name: string; path: string; prefix: string; scope: "user" | "project" }> {
+  const results: Array<{ name: string; path: string; prefix: string; scope: "user" | "project" }> = [];
+  if (!existsSync(dir)) return results;
+
+  let canonicalDir: string;
+  try {
+    canonicalDir = realpathSync(dir);
+  } catch {
+    return results;
+  }
+  if (visitedDirectories.has(canonicalDir)) return results;
+  visitedDirectories.add(canonicalDir);
+
+  let entries;
+  try {
+    entries = readdirSync(dir, { withFileTypes: true });
+  } catch {
+    return results;
+  }
+
+  for (const entry of entries) {
+    const fullPath = join(dir, entry.name);
+    let isFile = entry.isFile();
+    let isDirectory = entry.isDirectory();
+
+    if (entry.isSymbolicLink()) {
+      try {
+        const stats = statSync(fullPath);
+        isFile = stats.isFile();
+        isDirectory = stats.isDirectory();
+      } catch {
+        continue;
+      }
+    }
+
+    if (isDirectory) {
+      results.push(...scanPromptDir(fullPath, scope, visitedDirectories));
+      continue;
+    }
+    if (!isFile || !entry.name.endsWith(".md")) continue;
+
+    try {
+      const raw = readFileSync(fullPath, "utf-8");
+      if (!raw.startsWith("---\n")) continue;
+      const end = raw.indexOf("\n---\n", 4);
+      if (end === -1) continue;
+
+      const frontmatter = raw.slice(4, end);
+      const hasManagedField = /^(model|chain|skill|thinking|fresh|loop|converge|parallel|worktree|subagent|inheritContext|rotate|workers|reviewers|finalApplier|bestOfN|cwd)\s*:/m.test(frontmatter);
+      if (!hasManagedField) continue;
+
+      const body = raw.slice(end + 5);
+      const normalized = normalizeText(body);
+      if (normalized.length === 0) continue;
+
+      results.push({
+        name: entry.name.slice(0, -3),
+        path: fullPath,
+        prefix: normalized.slice(0, 180),
+        scope,
+      });
     } catch {
-      // ignore unreadable prompt files
+      // ignore unreadable files
     }
   }
 
-  return { names, signatures };
+  return results;
+}
+
+function buildExtensionManagedPromptIndex(): PromptIndex {
+  const names = new Set<string>();
+  const prompts = new Map<string, PromptEntry>();
+  const signatures: Array<PromptEntry> = [];
+
+  const globalDir = join(homedir(), ".pi", "agent", "prompts");
+  const projectDir = resolve(process.cwd(), ".pi", "prompts");
+
+  for (const { name, path, prefix, scope } of scanPromptDir(globalDir, "user")) {
+    names.add(name);
+    const entry: PromptEntry = {
+      name,
+      prefix,
+      sourceInfo: { path, source: "prompt", scope, origin: "pi-prompt-template-model" },
+    };
+    prompts.set(name, entry);
+    if (prefix.length >= 32) signatures.push(entry);
+  }
+
+  for (const { name, path, prefix, scope } of scanPromptDir(projectDir, "project")) {
+    names.add(name);
+    const entry: PromptEntry = {
+      name,
+      prefix,
+      sourceInfo: { path, source: "prompt", scope, origin: "pi-prompt-template-model" },
+    };
+    // Project overrides user
+    prompts.set(name, entry);
+    if (prefix.length >= 32) {
+      const existingIdx = signatures.findIndex((s) => s.name === name);
+      if (existingIdx !== -1) signatures.splice(existingIdx, 1);
+      signatures.push(entry);
+    }
+  }
+
+  return { names, prompts, signatures };
 }
 
 export default function usageStatsExtension(pi: ExtensionAPI) {
   const collector = new StatsCollector(STATS_PATH);
-  let promptIndex: PromptIndex = { names: new Set<string>(), signatures: [] };
+  let promptIndex: PromptIndex = { names: new Set<string>(), prompts: new Map<string, PromptEntry>(), signatures: [] };
   const recentPromptInvocations = new Map<string, number>();
+  let allToolsCache: Array<{ name: string; sourceInfo?: { path?: string; source?: string } }> = [];
 
   const rememberPromptInvocation = (name: string) => {
     recentPromptInvocations.set(name, Date.now());
@@ -135,8 +282,66 @@ export default function usageStatsExtension(pi: ExtensionAPI) {
     return Date.now() - seenAt < windowMs;
   };
 
+  const recordPromptInvocation = (
+    name: string,
+    opts: { sourceInfo?: { path?: string; source?: string; scope?: string; origin?: string }; args?: string; inferred?: boolean; extension?: string } = {},
+  ) => {
+    const detail: Record<string, unknown> = { name };
+    if (opts.sourceInfo) {
+      detail.sourceInfo = opts.sourceInfo;
+    }
+    if (opts.args) {
+      detail.args = opts.args;
+    }
+    if (opts.inferred) {
+      detail.inferred = true;
+    }
+    if (opts.extension) {
+      detail.extension = opts.extension;
+    }
+    collector.record("prompt_invoked", detail);
+    rememberPromptInvocation(name);
+  };
+
   const refreshPromptIndex = () => {
     promptIndex = buildPromptIndex(pi);
+  };
+
+  let extManagedPromptIndex: PromptIndex = { names: new Set<string>(), prompts: new Map<string, PromptEntry>(), signatures: [] };
+
+  const refreshExtManagedPromptIndex = () => {
+    extManagedPromptIndex = buildExtensionManagedPromptIndex();
+  };
+
+  const refreshToolsCache = () => {
+    try {
+      allToolsCache = pi.getAllTools();
+    } catch {
+      allToolsCache = [];
+    }
+  };
+
+  const recordExtensionInventory = () => {
+    const seen = new Set<string>();
+
+    for (const cmd of pi.getCommands()) {
+      if (cmd.source === "extension" && cmd.sourceInfo?.path) {
+        const name = extensionNameFromPath(cmd.sourceInfo.path);
+        if (name) seen.add(name);
+      }
+    }
+
+    for (const tool of allToolsCache) {
+      const src = tool.sourceInfo?.source;
+      if (src && src !== "builtin" && src !== "sdk" && tool.sourceInfo?.path) {
+        const name = extensionNameFromPath(tool.sourceInfo.path);
+        if (name) seen.add(name);
+      }
+    }
+
+    for (const name of seen) {
+      collector.record("extension_inventory", { extension: name });
+    }
   };
 
   collector.record("extension_loaded", { extension: "usage-stats" });
@@ -161,8 +366,8 @@ export default function usageStatsExtension(pi: ExtensionAPI) {
     }
 
     if (promptIndex.names.has(name)) {
-      collector.record("prompt_invoked", { name, args });
-      rememberPromptInvocation(name);
+      const entry = promptIndex.prompts.get(name);
+      recordPromptInvocation(name, { sourceInfo: entry?.sourceInfo, args });
       return;
     }
 
@@ -174,15 +379,19 @@ export default function usageStatsExtension(pi: ExtensionAPI) {
     if (cmd) {
       switch (cmd.source) {
         case "prompt":
-          collector.record("prompt_invoked", { name: cmd.name, args });
-          rememberPromptInvocation(cmd.name);
+          recordPromptInvocation(cmd.name, { sourceInfo: cmd.sourceInfo, args });
           break;
-        case "extension":
+        case "extension": {
+          const extName = cmd.sourceInfo?.path
+            ? extensionNameFromPath(cmd.sourceInfo.path)
+            : undefined;
           collector.record("extension_command_invoked", {
             name: cmd.name,
             args,
+            extension: extName,
           });
           break;
+        }
         case "skill":
           collector.record("skill_command_invoked", {
             name: cmd.name,
@@ -209,7 +418,15 @@ export default function usageStatsExtension(pi: ExtensionAPI) {
     }
 
     if (!BUILTIN_TOOLS.has(event.toolName)) {
-      collector.record("custom_tool_called", { tool: event.toolName });
+      if (allToolsCache.length === 0) refreshToolsCache();
+      const tool = allToolsCache.find((t) => t.name === event.toolName);
+      const extName = tool?.sourceInfo?.path
+        ? extensionNameFromPath(tool.sourceInfo.path)
+        : undefined;
+      collector.record("custom_tool_called", {
+        tool: event.toolName,
+        extension: extName,
+      });
     }
   });
 
@@ -244,6 +461,9 @@ export default function usageStatsExtension(pi: ExtensionAPI) {
   // --- Session lifecycle ---
   pi.on("session_start", async (event) => {
     refreshPromptIndex();
+    refreshExtManagedPromptIndex();
+    refreshToolsCache();
+    recordExtensionInventory();
 
     collector.record("session_start", {
       reason: event.reason,
@@ -255,9 +475,13 @@ export default function usageStatsExtension(pi: ExtensionAPI) {
   // Some extension-command flows can bypass `input` interception.
   // This fallback inspects the final prompt text before the agent starts and
   // matches it against known prompt template prefixes.
+  // Native Pi prompts are checked first; extension-managed prompts second.
   pi.on("before_agent_start", async (event) => {
     if (promptIndex.signatures.length === 0) {
       refreshPromptIndex();
+    }
+    if (extManagedPromptIndex.signatures.length === 0) {
+      refreshExtManagedPromptIndex();
     }
 
     const normalizedPrompt = normalizeText(event.prompt);
@@ -268,12 +492,24 @@ export default function usageStatsExtension(pi: ExtensionAPI) {
       if (!normalizedPrompt.startsWith(sig.prefix)) continue;
       if (wasPromptRecentlyRecorded(sig.name)) continue;
 
-      collector.record("prompt_invoked", {
-        name: sig.name,
+      recordPromptInvocation(sig.name, {
+        sourceInfo: sig.sourceInfo,
         inferred: true,
       });
-      rememberPromptInvocation(sig.name);
-      break;
+      return;
+    }
+
+    for (const sig of extManagedPromptIndex.signatures) {
+      if (!sig.prefix || sig.prefix.length < 32) continue;
+      if (!normalizedPrompt.startsWith(sig.prefix)) continue;
+      if (wasPromptRecentlyRecorded(sig.name)) continue;
+
+      recordPromptInvocation(sig.name, {
+        sourceInfo: sig.sourceInfo,
+        extension: "pi-prompt-template-model",
+        inferred: true,
+      });
+      return;
     }
   });
 

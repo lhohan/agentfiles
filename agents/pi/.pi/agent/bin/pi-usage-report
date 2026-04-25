@@ -17,6 +17,7 @@ import {
   createCollector,
   sortMap,
   readStatsEntries,
+  formatPromptDetail,
 } from "./pi-usage-report-lib.mjs";
 
 const { counters, recent, processEntry } = createCollector();
@@ -59,6 +60,39 @@ function printTable(title, map, topN) {
   }
 }
 
+function printExtensionUsage(counters, topN) {
+  const used = sortMap(counters.extensionUsed);
+  const installed = new Set(counters.extensionInstalled.keys());
+
+  printSection("Extensions Used");
+  console.log(`  ${"Item".padEnd(12)}  Count`);
+  console.log(`  ${"-".repeat(12)}  ${"-".repeat(5)}`);
+
+  if (used.length === 0) {
+    console.log("  (none observed)");
+  } else {
+    const limited = topN ? used.slice(0, topN) : used;
+    const maxKey = Math.max(...limited.map(([k]) => k.length), 12);
+    for (const [key, count] of limited) {
+      console.log(`  ${key.padEnd(maxKey)}  ${count}`);
+    }
+    if (used.length > limited.length) {
+      console.log(`  … and ${used.length - limited.length} more`);
+    }
+  }
+
+  const unused = Array.from(installed)
+    .filter((k) => !counters.extensionUsed.has(k))
+    .sort();
+
+  if (unused.length > 0) {
+    printSection("Installed but not used");
+    for (const name of unused) {
+      console.log(`  - ${name}`);
+    }
+  }
+}
+
 // ── Recent events ───────────────────────────────────────────────────
 
 function printRecent(count) {
@@ -70,10 +104,12 @@ function printRecent(count) {
   for (const entry of subset) {
     const time = new Date(entry.t).toISOString().replace("T", " ").replace(/\.\d+$/, "");
     const name = entry.event.padEnd(32);
-    const detail = Object.entries(entry)
-      .filter(([k]) => k !== "t" && k !== "event")
-      .map(([k, v]) => `${k}=${JSON.stringify(v)}`)
-      .join(" ");
+    const detail = entry.event === "prompt_invoked"
+      ? formatPromptDetail(entry)
+      : Object.entries(entry)
+        .filter(([k]) => k !== "t" && k !== "event")
+        .map(([k, v]) => `${k}=${JSON.stringify(v)}`)
+        .join(" ");
     console.log(`  ${time}  ${name}  ${detail}`);
   }
 }
@@ -123,7 +159,7 @@ async function main() {
   printHeader("  Breakdown");
   printTable("Prompts Invoked", counters.promptInvoked, topN);
   printTable("Extension Commands", counters.extensionCommandInvoked, topN);
-  printTable("Extensions Loaded", counters.extensionLoaded, topN);
+  printExtensionUsage(counters, topN);
   printTable("Custom Tools Called", counters.customToolCalled, topN);
   printTable("Models Used", counters.modelUsed, topN);
   printTable("Skills Loaded", counters.skillLoaded, topN);

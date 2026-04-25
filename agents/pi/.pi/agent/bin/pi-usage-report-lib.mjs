@@ -40,6 +40,8 @@ export function createCollector({ trackTimeline = false } = {}) {
     promptInvoked: new Map(),
     extensionCommandInvoked: new Map(),
     extensionLoaded: new Map(),
+    extensionInstalled: new Map(),
+    extensionUsed: new Map(),
     customToolCalled: new Map(),
     skillLoaded: new Map(),
     modelUsed: new Map(),
@@ -75,12 +77,30 @@ export function createCollector({ trackTimeline = false } = {}) {
           entry.name,
           (counters.promptInvoked.get(entry.name) || 0) + 1,
         );
+        {
+          const ext = entry.extension;
+          if (ext && ext !== "unknown") {
+            counters.extensionUsed.set(
+              ext,
+              (counters.extensionUsed.get(ext) || 0) + 1,
+            );
+          }
+        }
         break;
       case "extension_command_invoked":
         counters.extensionCommandInvoked.set(
           entry.name,
           (counters.extensionCommandInvoked.get(entry.name) || 0) + 1,
         );
+        {
+          const ext = entry.extension || extensionNameFromEntry(entry);
+          if (ext && ext !== "unknown") {
+            counters.extensionUsed.set(
+              ext,
+              (counters.extensionUsed.get(ext) || 0) + 1,
+            );
+          }
+        }
         break;
       case "extension_loaded":
       case "EXTENSION_LOADED": {
@@ -89,6 +109,14 @@ export function createCollector({ trackTimeline = false } = {}) {
           extension,
           (counters.extensionLoaded.get(extension) || 0) + 1,
         );
+        counters.extensionUsed.set(
+          extension,
+          (counters.extensionUsed.get(extension) || 0) + 1,
+        );
+        break;
+      }
+      case "extension_inventory": {
+        counters.extensionInstalled.set(entry.extension, true);
         break;
       }
       case "skill_command_invoked":
@@ -102,6 +130,15 @@ export function createCollector({ trackTimeline = false } = {}) {
           entry.tool,
           (counters.customToolCalled.get(entry.tool) || 0) + 1,
         );
+        {
+          const ext = entry.extension || extensionNameFromEntry(entry);
+          if (ext && ext !== "unknown") {
+            counters.extensionUsed.set(
+              ext,
+              (counters.extensionUsed.get(ext) || 0) + 1,
+            );
+          }
+        }
         break;
       case "model_used":
         counters.modelUsed.set(
@@ -126,6 +163,24 @@ export function createCollector({ trackTimeline = false } = {}) {
 
 export function sortMap(map) {
   return Array.from(map.entries()).sort((a, b) => b[1] - a[1]);
+}
+
+export function promptDisplayFromEntry(entry) {
+  return {
+    name: entry.name || "unknown",
+    provenance: entry.sourceInfo?.path,
+    extension: entry.extension,
+  };
+}
+
+export function formatPromptDetail(entry) {
+  const parts = [];
+  parts.push(`name="${entry.name || "unknown"}"`);
+  if (entry.args) parts.push(`args=${JSON.stringify(entry.args)}`);
+  if (entry.sourceInfo?.path) parts.push(`path="${entry.sourceInfo.path}"`);
+  if (entry.extension) parts.push(`extension="${entry.extension}"`);
+  if (entry.inferred) parts.push("inferred=true");
+  return parts.join(" ");
 }
 
 

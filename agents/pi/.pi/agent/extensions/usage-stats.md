@@ -7,11 +7,12 @@ Collects anonymous usage statistics for Pi skills, prompt templates, loaded exte
 | Event | Trigger | Fields |
 |---|---|---|
 | `skill_invoked` | User types `/skill:name` | `name`, `args` |
-| `prompt_invoked` | User types `/templatename` | `name`, `args` |
-| `extension_command_invoked` | User types `/extcommand` | `name`, `args` |
+| `prompt_invoked` | User types `/templatename` | `name`, `args`, `sourceInfo`, `inferred`, `extension` |
+| `extension_command_invoked` | User types `/extcommand` | `name`, `args`, `extension` |
 | `extension_loaded` | Agent loads an extension | `extension` |
+| `extension_inventory` | Session start discovers extension-backed commands/tools | `extension` |
 | `skill_command_invoked` | User types `/skill:name` (alternative form) | `name`, `args` |
-| `custom_tool_called` | Agent calls a non-built-in tool | `tool` |
+| `custom_tool_called` | Agent calls a non-built-in tool | `tool`, `extension` |
 | `skill_loaded` | Agent `read`s a `SKILL.md` file | `path` |
 | `model_used` | First provider request of an agent run | `model` |
 | `model_select` | Model changes via `/model`, cycling, or restore | `model`, `previousModel`, `source` |
@@ -24,6 +25,13 @@ The report merges `skill_loaded`, `skill_invoked`, and `skill_command_invoked` i
 Built-in tools (`read`, `bash`, `edit`, `write`, `grep`, `find`, `ls`) are intentionally **not** tracked to reduce noise.
 
 Prompt templates are identified from `pi.getCommands()` (`source: "prompt"`) and additionally inferred in `before_agent_start` by matching the expanded prompt text against prompt-template prefixes. This covers flows where prompt invocations bypass `input` interception.
+
+Extension-managed prompts (e.g. `/plan` via `pi-prompt-template-model`) are discovered by scanning `~/.pi/agent/prompts` and `<cwd>/.pi/prompts` recursively for Markdown files with frontmatter indicating they are managed by `pi-prompt-template-model`. When an extension-managed prompt is inferred, the `prompt_invoked` entry includes:
+- `extension: "pi-prompt-template-model"`
+- `inferred: true`
+- `sourceInfo` with `path`, `source`, `scope`, and `origin` pointing at the prompt template file
+
+Native Pi prompts take precedence over extension-managed prompts when both could match. The shared reporter counts `prompt_invoked` entries with an `extension` field toward that extension's usage.
 
 ## Data file
 

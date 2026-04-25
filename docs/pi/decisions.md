@@ -2,6 +2,20 @@
 
 Pi-specific decisions are listed in reverse chronological order (most recent first).
 
+### pi-018: Bounded coupling to `pi-prompt-template-model` for prompt telemetry [Accepted]
+
+> **In the context of** wanting `usage-stats` to record prompt invocations for extension-managed prompts like `/plan`,
+> **facing** the fact that `pi-prompt-template-model` registers prompts as extension commands that bypass Pi's native `input` event,
+> **we decided** to add a second prompt index in `usage-stats` that scans the same discovery directories as `pi-prompt-template-model` (`~/.pi/agent/prompts` and `<cwd>/.pi/prompts`) and performs prefix matching in `before_agent_start` as a fallback,
+> **to achieve** prompt telemetry for `/plan` and other managed prompts with provenance and extension attribution,
+> **accepting** that:
+>   - this creates deliberate, bounded coupling to `pi-prompt-template-model`'s discovery semantics and frontmatter conventions
+>   - prefix-based inference in `before_agent_start` can still misattribute manually pasted text or near-identical prompt bodies
+>   - native Pi prompts take precedence over extension-managed prompts when both could match
+>   - generalisation to arbitrary third-party prompt-wrapper extensions is explicitly out of scope
+>
+> **Rationale:** The `before_agent_start` fallback is the only available interception point for extension-managed prompt commands, because Pi does not expose a generic post-dispatch "extension command executed" event. Synthesising `sourceInfo` from the prompt file path keeps reporter logic consistent without special-casing extension-managed prompts everywhere. The coupling is bounded to discovery directory scanning and a simple frontmatter heuristic, not deep integration with `pi-prompt-template-model`'s runtime.
+
 ### pi-017: Do not track frontmatter-injected skills in usage-stats [Accepted]
 
 > **In the context of** wanting the `usage-stats` extension to record skill loads triggered by the `skill:` frontmatter field in `pi-prompt-template-model` prompts,
