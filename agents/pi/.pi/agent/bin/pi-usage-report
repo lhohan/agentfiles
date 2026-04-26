@@ -158,7 +158,7 @@ async function main() {
   // Breakdown tables
   printHeader("  Breakdown");
   printTable("Prompts Invoked", counters.promptInvoked, topN);
-  printTable("Extension Commands", counters.extensionCommandInvoked, topN);
+  printTable("Extension Slash Commands", counters.extensionCommandInvoked, topN);
   printExtensionUsage(counters, topN);
   printTable("Custom Tools Called", counters.customToolCalled, topN);
   printTable("Models Used", counters.modelUsed, topN);

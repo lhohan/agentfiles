@@ -83,6 +83,14 @@ class StatsCollector {
   }
 }
 
+function normalizePath(path: string): string {
+  try {
+    return realpathSync(path);
+  } catch {
+    return resolve(path);
+  }
+}
+
 function extensionNameFromPath(path: string): string | undefined {
   if (!path) return undefined;
   const parts = path.split(/[\\/]/);
@@ -266,6 +274,27 @@ function buildExtensionManagedPromptIndex(): PromptIndex {
   return { names, prompts, signatures };
 }
 
+function isManagedPromptCommand(
+  cmd: { name: string; sourceInfo?: { path?: string; origin?: string } },
+  entry?: PromptEntry,
+): boolean {
+  if (!entry) return false;
+  if (cmd.name !== entry.name && !cmd.name.startsWith(`${entry.name}:`)) return false;
+  if (cmd.sourceInfo?.origin && cmd.sourceInfo.origin !== entry.sourceInfo?.origin) return false;
+  if (!cmd.sourceInfo?.path || !entry.sourceInfo?.path) return false;
+  return normalizePath(cmd.sourceInfo.path) === normalizePath(entry.sourceInfo.path);
+}
+
+function findManagedPromptEntryForCommand(
+  cmd: { name: string; sourceInfo?: { path?: string; origin?: string } },
+  index: PromptIndex,
+): PromptEntry | undefined {
+  for (const entry of index.prompts.values()) {
+    if (isManagedPromptCommand(cmd, entry)) return entry;
+  }
+  return undefined;
+}
+
 export default function usageStatsExtension(pi: ExtensionAPI) {
   const collector = new StatsCollector(STATS_PATH);
   let promptIndex: PromptIndex = { names: new Set<string>(), prompts: new Map<string, PromptEntry>(), signatures: [] };
@@ -364,6 +393,9 @@ export default function usageStatsExtension(pi: ExtensionAPI) {
     if (promptIndex.names.size === 0) {
       refreshPromptIndex();
     }
+    if (extManagedPromptIndex.names.size === 0) {
+      refreshExtManagedPromptIndex();
+    }
 
     if (promptIndex.names.has(name)) {
       const entry = promptIndex.prompts.get(name);
@@ -377,6 +409,18 @@ export default function usageStatsExtension(pi: ExtensionAPI) {
     );
 
     if (cmd) {
+      // Only attribute a managed prompt when the resolved command metadata
+      // matches one scanned pi-prompt-template-model entry.
+      const managedEntry = findManagedPromptEntryForCommand(cmd, extManagedPromptIndex);
+      if (managedEntry) {
+        recordPromptInvocation(managedEntry.name, {
+          sourceInfo: managedEntry.sourceInfo,
+          args,
+          extension: "pi-prompt-template-model",
+        });
+        return;
+      }
+
       switch (cmd.source) {
         case "prompt":
           recordPromptInvocation(cmd.name, { sourceInfo: cmd.sourceInfo, args });

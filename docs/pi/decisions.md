@@ -39,6 +39,8 @@ Pi-specific decisions are listed in reverse chronological order (most recent fir
 >
 > **Rationale:** The `before_agent_start` fallback is the only available interception point for extension-managed prompt commands, because Pi does not expose a generic post-dispatch "extension command executed" event. Synthesising `sourceInfo` from the prompt file path keeps reporter logic consistent without special-casing extension-managed prompts everywhere. The coupling is bounded to discovery directory scanning and a simple frontmatter heuristic, not deep integration with `pi-prompt-template-model`'s runtime.
 
+**Amendment (2026-04-26):** `usage-stats` now resolves the command first and only records an extension-managed prompt from `input` when the resolved command metadata confirms the scanned `pi-prompt-template-model` entry. This avoids attributing stale scans or command-name collisions as managed prompts while leaving `before_agent_start` fallback inference unchanged.
+
 ### pi-017: Do not track frontmatter-injected skills in usage-stats [Accepted]
 
 > **In the context of** wanting the `usage-stats` extension to record skill loads triggered by the `skill:` frontmatter field in `pi-prompt-template-model` prompts,
