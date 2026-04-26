@@ -1,5 +1,13 @@
 # decisions
 
+### AGF-013: Calibrate less-is-more to catch setup wiring without broadening into docs/reporting [Accepted]
+
+> **In the context of** a repo-local `less-is-more` skill that missed several setup-adjacent changes,
+> **facing** uncertainty about where the useful trigger boundary sits while the skill is still being exercised,
+> **we decided** to broaden the trigger to include changes that add, remove, move, rename, or materially change skills, prompts/templates, agents, extensions, or agent-setup packages, plus the wiring that discovers, loads, injects, scopes, enables, attributes, or gates them,
+> **to achieve** a skill that catches setup growth without firing on ordinary documentation, metrics, reporting, or unrelated feature work,
+> **accepting** that this is an active calibration and may need further tightening or loosening after more usage.
+
 ### AGF-012: Keep saved `/plan` files local-only under `docs/plans/` [Accepted]
 
 > **In the context of** `/plan` ending with an offer to save substantial planning output,

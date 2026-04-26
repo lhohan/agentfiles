@@ -1,11 +1,11 @@
 ---
 name: less-is-more
-description: Discourage unnecessary setup growth in this repository. Use when adding new extensions, agents, skills, prompts, packages, or automation.
+description: "Discourage unnecessary setup growth in this repository. Use when changing agent-setup artefacts or the wiring around them: skills, prompts/templates, agents, extensions, packages, or automation."
 ---
 
 # Less Is More
 
-When the user considers adding something to their agent setup, apply this skill.
+When the user considers changing their agent setup, apply this skill.
 
 ## Rules
 
@@ -19,7 +19,12 @@ When the user considers adding something to their agent setup, apply this skill.
 
 5. **Record the reason.** For meaningful setup changes, encourage an explicit decision record so the motivation is visible later. Use `docs/<package>/decisions.md` for package-local choices and `docs/decisions.md` for repo-wide or cross-cutting choices. This is a recommendation, not a gate — but absence of one should prompt the user to justify the addition.
 
+## What to use this for
+
+Use `less-is-more` when a change adds, removes, moves, renames, or materially changes a skill, prompt/template, agent, extension, or agent-setup package, or changes how those artefacts are discovered, loaded, injected, scoped, enabled, attributed, or gated.
+
 ## What not to do
 
 - Do not package everything upfront. Solve the immediate problem cleanly and let the setup grow organically.
 - Do not add infrastructure, extensions, or skills "just in case."
+- Do not trigger this for ordinary documentation updates, reporting or metrics work, generic product features, or refactors that do not affect setup or its wiring.
