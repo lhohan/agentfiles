@@ -2,6 +2,21 @@
 
 Pi-specific decisions are listed in reverse chronological order (most recent first).
 
+### pi-020: Use `/plan` as the structural reference for `/review` read-only governance [Accepted]
+
+> **In the context of** making `/review` explicitly read-only and structurally consistent with other enhanced prompts,
+> **facing** the choice between duplicating read-only governance locally in each prompt or extracting a shared mechanism,
+> **we decided** to duplicate the read-only governance shape from `/plan` directly in `/review`,
+> **to achieve** explicit, self-contained prompts that are easy to read and reason about without hidden shared machinery,
+> **accepting** that:
+>   - the read-only prohibitions and governance language will be duplicated between `/plan` and `/review`
+>   - future changes to the shared read-only contract must be applied to both prompts
+>   - drift risk is small while there are only two enhanced prompts using this pattern
+
+**Rationale:** With only `/plan` and `/review` in the enhanced prompt set, a shared mechanism (include, template, or frontmatter-driven injection) would add complexity disproportionate to the benefit. Keeping the read-only contract explicit in each prompt body follows the precedent of `pi-019` (explicit skill delegation in prompt text) and makes each prompt independently understandable.
+
+**Scope limit:** This decision applies only to read-only governance and structural alignment between `/plan` and `/review`. It does not constrain future prompts from adopting a shared mechanism if the number of read-only prompts grows.
+
 ### pi-019: Keep `/review` skill loading explicit in prompt body [Accepted]
 
 > **In the context of** adding a reusable `/review` prompt under `agents/pi/.pi/agent/prompts/enhanced/`,
