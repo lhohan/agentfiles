@@ -1,7 +1,7 @@
 ---
 name: code-review
 description: >
-  Use when performing structured code reviews of open changes that need operational verification, project-rule checks, and actionable findings across bugs, security, quality, and compliance.
+  Use when reviewing code changes (diffs, PRs, or commits) that need operational verification, project-rule checks, and actionable findings across bugs, security, quality, and compliance.
 ---
 
 # Code Review Skill
@@ -11,9 +11,16 @@ Use this skill when performing code reviews that require thorough analysis beyon
 ## When to Use
 
 - Reviewing uncommitted changes before commit
-- Interactive code review sessions (not automated post-execution reviews)
-- Deep-dive reviews requiring project-specific compliance checks
+- Pull request reviews
+- Historical commit or branch inspection
+- Interactive code review sessions
 - Reviews needing operational verification (build/test status)
+
+## Prerequisites
+
+- Access to the code to review (diff, PR, commit, or working tree)
+- Build toolchain for the project (for STEP 0 verification)
+- Test suite available (if tests don't exist, note that as a finding)
 
 ## Table of Contents
 
@@ -28,25 +35,22 @@ Use this skill when performing code reviews that require thorough analysis beyon
 
 Before analyzing code, verify it actually works:
 
-1. Identify project type (look at Cargo.toml, package.json, pyproject.toml, go.mod, etc.)
-2. Run build: `cargo build`, `npm run build`, `go build ./...`, etc.
-3. Run tests: `cargo test`, `npm test`, `pytest`, `go test ./...`, etc.
-4. **If build or tests fail:**
-   - Log this as Critical Issue #1 with the exact error
-   - "Tests exist" ≠ "Tests work" - always verify execution
+1. Load the code to review — uncommitted diff, PR, commit, or pasted code. Inspect the changes using the project's version control system (AGENTS.md governs which VCS to use).
+2. If no changes are present, report "Nothing to review" and stop.
+3. Identify project type (look at Cargo.toml, package.json, pyproject.toml, go.mod, etc.)
+4. Run build: see project commands first, if not found then `cargo build`, `npm run build`, `go build ./...`, etc.
+5. Run tests: see project commands first, if not found then `cargo test`, `npm test`, `pytest`, `go test ./...`, etc.
+6. **If build or tests fail:** log as Critical Issue #1 with the exact error and stop.
 
-### Code Inspection
+If the build environment is not available (e.g. reviewing a PR remotely), note this limitation and proceed with analysis only.
 
-1. Inspect uncommitted changes:
-   - `jj st` - Check status
-   - `jj diff` - View changes (prefer jj over git in this repo)
-   - `jj log` - View relevant context
-   - `jj show` - Inspect specific commits when needed
+### Scope Summary
 
-2. Summarize scope:
-   - Files touched
-   - Rough size of changes
-   - Key areas impacted
+Summarize scope:
+
+1. Files touched
+2. Rough size of changes
+3. Key areas impacted
 
 ### Review Axes (Cover All)
 
@@ -74,10 +78,10 @@ Review along these 4 axes, always addressing each even if "no issues found":
 - Performance footguns (avoid micro-nitpicks)
 
 **4. Compliance (Project Rules)**
-- jj-only workflow (no git commands)
-- No secret files committed
-- nix/shell style conventions
-- Conventional commits guidance when relevant
+- Project style and naming conventions
+- No secrets or credentials in committed files
+- Shell and scripting conventions (e.g. nix/shell style)
+- Commit message quality and conventions when relevant
 
 ### Issue Format
 
@@ -129,13 +133,13 @@ For each issue found:
 ## Constraints
 
 - Read-only mode — do not edit files during review
-- Prefer jj commands; avoid git commands in this repo
 - Avoid nitpicks unless they prevent bugs or reduce maintenance cost
 - Every issue must be actionable with a concrete fix
 
 ## Example Usage
 
-```
 User: "Review my changes before I commit"
-→ Load skill, follow STEP 0, inspect changes, review 4 axes, output structured findings
-```
+→ Load skill, run STEP 0 to verify build and tests, inspect the diff, review across all 4 axes, output structured findings with severity and concrete fixes.
+
+User: "Review this PR — tests pass but something feels off"
+→ Skip STEP 0 build verification (already passing in CI), focus on Security and Quality axes, look for subtle logic errors or API boundary issues.
