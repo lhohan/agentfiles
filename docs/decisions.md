@@ -1,5 +1,15 @@
 # decisions
 
+### AGF-012: Keep saved `/plan` files local-only under `docs/plans/` [Accepted]
+
+> **In the context of** `/plan` ending with an offer to save substantial planning output,
+> **facing** the need for a predictable save path without growing committed repo noise,
+> **we decided** to keep `docs/plans/YYYY-MM-DD-<topic>.md` as a local working location and ignore `docs/plans/` in version control,
+> **to achieve** consistent plan save ergonomics while keeping day-to-day planning artefacts ephemeral,
+> **accepting** that plans intended for long-term/shared reference must be promoted manually into tracked documentation.
+>
+> **Supersedes:** AGF-010.
+
 ### AGF-011: Apply less-is-more before proposing setup additions [Accepted]
 
 > **In the context of** deciding whether to add a new skill, extension, agent, prompt, package, or automation to the agent setup,
@@ -8,7 +18,7 @@
 > **to achieve** smaller, need-driven setup growth and fewer unnecessary installs,
 > **accepting** that some plausible additions will be rejected or deferred until the need is repeated and specific.
 
-### AGF-010: Use canonical saved-plan location at docs/plans/ [Accepted]
+### AGF-010: Use canonical saved-plan location at docs/plans/ [Superseded by AGF-012]
 
 > **In the context of** `/plan` producing substantial implementation plans that should persist beyond the conversation,
 > **facing** ad-hoc plan storage and no predictable location for saved plans,

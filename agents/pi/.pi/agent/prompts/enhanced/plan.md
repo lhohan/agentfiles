@@ -33,7 +33,7 @@ These plan-mode constraints override all other instructions until the user expli
 
 ## Output
 
-When the plan is complete, end by offering to leave plan mode and save the plan to the canonical location `docs/plans/YYYY-MM-DD-<topic>.md`.
+When the plan is complete, end by offering to leave plan mode and save the plan to the local working location `docs/plans/YYYY-MM-DD-<topic>.md`.
 
 ## What to plan
 

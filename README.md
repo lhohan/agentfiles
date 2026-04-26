@@ -46,7 +46,8 @@ Agent configuration files are managed with Mise and GNU Stow.
 Located in [Pi](agents/pi).
 
   - A global [`APPEND_SYSTEM.md`](agents/pi/.pi/agent/APPEND_SYSTEM.md) for Pi-specific startup and questionnaire-steering behaviour
-  - A `/plan` prompt at [`agents/pi/.pi/agent/prompts/plan.md`](agents/pi/.pi/agent/prompts/plan.md) for read-only planning before implementation.
+  - A `/plan` prompt at [`agents/pi/.pi/agent/prompts/enhanced/plan.md`](agents/pi/.pi/agent/prompts/enhanced/plan.md) for read-only planning before implementation.
+  - A `/review` prompt at [`agents/pi/.pi/agent/prompts/enhanced/review.md`](agents/pi/.pi/agent/prompts/enhanced/review.md) for read-only code review.
   - [custom themes](agents/pi/.pi/agent/themes/)
   
 ### Extensions

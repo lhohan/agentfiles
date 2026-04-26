@@ -2,6 +2,14 @@
 
 Pi-specific decisions are listed in reverse chronological order (most recent first).
 
+### pi-019: Keep `/review` skill loading explicit in prompt body [Accepted]
+
+> **In the context of** adding a reusable `/review` prompt under `agents/pi/.pi/agent/prompts/enhanced/`,
+> **facing** the choice between frontmatter-driven `skill:` injection and explicit workflow delegation in prompt text,
+> **we decided** to keep frontmatter limited to model controls (`model`, `thinking`, `restore`) and invoke `code-review` explicitly from the prompt body,
+> **to achieve** behaviour that stays aligned with the documented frontmatter scope while keeping skill usage visible in prompt instructions,
+> **accepting** that prompt authors must keep explicit skill-call wording up to date when workflow expectations change.
+
 ### pi-018: Bounded coupling to `pi-prompt-template-model` for prompt telemetry [Accepted]
 
 > **In the context of** wanting `usage-stats` to record prompt invocations for extension-managed prompts like `/plan`,
@@ -140,13 +148,13 @@ Pi-specific decisions are listed in reverse chronological order (most recent fir
 >
 > **Rationale:** The extension provides exactly the needed capability (frontmatter-declared model, automatic restore) without custom code. We limit the feature surface to `model`, `thinking`, and default `restore` behavior only. The package is pinned at `0.7.3` following the same pattern as `pi-web-access` (pi-003).
 >
-> **Scope limit:** Only `agents/pi/.pi/agent/prompts/plan.md` uses frontmatter initially. Future prompts may adopt the same pattern without further extension changes.
+> **Scope limit:** Only `agents/pi/.pi/agent/prompts/enhanced/plan.md` uses frontmatter initially. Future prompts may adopt the same pattern without further extension changes.
 
 ### pi-005: Add a lightweight read-only `/plan` prompt [Accepted]
 
 > **In the context of** adding prompt templates to the Pi package,
 > **facing** the need for a planning mode that stays clearly separate from execution,
-> **we decided** to add a lightweight read-only `/plan` prompt at `agents/pi/.pi/agent/prompts/plan.md`,
+> **we decided** to add a lightweight read-only `/plan` prompt at `agents/pi/.pi/agent/prompts/enhanced/plan.md`,
 > **to achieve** repo-first planning that surfaces unresolved decisions before implementation,
 > **accepting** an extra clarification round when material decisions remain unresolved and an explicit handoff before any execution begins.
 
