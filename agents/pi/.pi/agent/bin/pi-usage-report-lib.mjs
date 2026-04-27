@@ -95,20 +95,6 @@ export function skillNameFromPath(path) {
   return path;
 }
 
-function extensionNameFromEntry(entry) {
-  if (!entry || typeof entry !== "object") return "unknown";
-  if (typeof entry.extension === "string" && entry.extension) return entry.extension;
-  if (typeof entry.name === "string" && entry.name) return entry.name;
-  if (typeof entry.extensionName === "string" && entry.extensionName) return entry.extensionName;
-  if (typeof entry.extensionPath === "string" && entry.extensionPath) {
-    return basename(entry.extensionPath).replace(/\.[^.]+$/, "");
-  }
-  if (typeof entry.path === "string" && entry.path) {
-    return basename(entry.path).replace(/\.[^.]+$/, "");
-  }
-  return "unknown";
-}
-
 function eventExtensionName(entry) {
   if (!entry || typeof entry !== "object") return undefined;
   if (typeof entry.extension === "string" && entry.extension) return entry.extension;
@@ -147,9 +133,6 @@ export function createCollector({ trackTimeline = false } = {}) {
   const counters = {
     promptInvoked: new Map(),
     extensionCommandInvoked: new Map(),
-    extensionLoaded: new Map(),
-    extensionInstalled: new Map(),
-    extensionUsed: new Map(),
     customToolCalled: new Map(),
     customToolExtensions: new Map(),
     skillLoaded: new Map(),
@@ -187,49 +170,18 @@ export function createCollector({ trackTimeline = false } = {}) {
           entry.name,
           (counters.promptInvoked.get(entry.name) || 0) + 1,
         );
-        {
-          const ext = entry.extension;
-          if (ext && ext !== "unknown") {
-            counters.extensionUsed.set(
-              ext,
-              (counters.extensionUsed.get(ext) || 0) + 1,
-            );
-          }
-        }
         break;
       case "extension_command_invoked":
         counters.extensionCommandInvoked.set(
           entry.name,
           (counters.extensionCommandInvoked.get(entry.name) || 0) + 1,
         );
-        {
-          const ext = eventExtensionName(entry);
-          rememberExtensionOwner(counters.extensionCommandExtensions, entry.name, ext);
-          if (ext) {
-            counters.extensionUsed.set(
-              ext,
-              (counters.extensionUsed.get(ext) || 0) + 1,
-            );
-          }
-        }
-        break;
-      case "extension_loaded":
-      case "EXTENSION_LOADED": {
-        const extension = extensionNameFromEntry(entry);
-        counters.extensionLoaded.set(
-          extension,
-          (counters.extensionLoaded.get(extension) || 0) + 1,
-        );
-        counters.extensionUsed.set(
-          extension,
-          (counters.extensionUsed.get(extension) || 0) + 1,
+        rememberExtensionOwner(
+          counters.extensionCommandExtensions,
+          entry.name,
+          eventExtensionName(entry),
         );
         break;
-      }
-      case "extension_inventory": {
-        counters.extensionInstalled.set(entry.extension, true);
-        break;
-      }
       case "skill_command_invoked":
         counters.skillLoaded.set(
           entry.name,
@@ -241,16 +193,11 @@ export function createCollector({ trackTimeline = false } = {}) {
           entry.tool,
           (counters.customToolCalled.get(entry.tool) || 0) + 1,
         );
-        {
-          const ext = eventExtensionName(entry);
-          rememberExtensionOwner(counters.customToolExtensions, entry.tool, ext);
-          if (ext) {
-            counters.extensionUsed.set(
-              ext,
-              (counters.extensionUsed.get(ext) || 0) + 1,
-            );
-          }
-        }
+        rememberExtensionOwner(
+          counters.customToolExtensions,
+          entry.tool,
+          eventExtensionName(entry),
+        );
         break;
       case "model_used":
         counters.modelUsed.set(
