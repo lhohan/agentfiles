@@ -2,6 +2,20 @@
 
 Pi-specific decisions are listed in reverse chronological order (most recent first).
 
+### pi-021: Build usage-stats artifact rankings from report-time inventory [Accepted]
+
+> **In the context of** making usage-stats show consistent most-used, least-used, and full-list views for prompts, skills, custom tools, and enabled models,
+> **facing** the choice between recording inventory snapshots at Pi startup or rediscovering current inventory when reports are generated,
+> **we decided** to keep runtime telemetry usage-only and discover available artifacts in the shared reporting library,
+> **to achieve** lightweight startup behaviour while keeping CLI and HTML reports aligned through one ranking implementation,
+> **accepting** that:
+>   - zero-use rows reflect the current installed/configured inventory, not historical inventory at event time
+>   - custom-tool zero-use rows appear only for tools rediscovered from local extension source files
+>   - enabled-model zero-use rows are skipped when `enabledModels` is absent or empty
+>   - least-used top-10 lists may be shorter than ten rows to avoid overlap with the most-used top-10 list
+>
+> **Rationale:** Usage capture should remain cheap and append-only. Report-time discovery is sufficient for the question these reports answer: which currently available artifacts are used, under-used, or unused. Keeping discovery and ranking in `pi-usage-report-lib.mjs` prevents the CLI and HTML reporters from drifting.
+
 ### pi-020: Use `/plan` as the structural reference for `/review` read-only governance [Accepted]
 
 > **In the context of** making `/review` explicitly read-only and structurally consistent with other enhanced prompts,

@@ -20,7 +20,7 @@ Collects anonymous usage statistics for Pi skills, prompt templates, loaded exte
 
 `model_used` counts the model actually invoked for a prompt. `model_select` records every browsing or cycling action, so the two can diverge when a user cycles through several models before sending a message.
 
-The report merges `skill_loaded`, `skill_invoked`, and `skill_command_invoked` into a single **Skills Loaded** view. `skill_loaded` entries are grouped by parent directory name (e.g., `detect-jujutsu/SKILL.md` → `detect-jujutsu`). Skills loaded from multiple paths are aggregated into one row, while repeated loads, invocations, and commands all contribute to the same per-skill count.
+The report merges `skill_loaded`, `skill_invoked`, and `skill_command_invoked` into a single **Skills** artifact view. `skill_loaded` entries are grouped by parent directory name (e.g., `detect-jujutsu/SKILL.md` → `detect-jujutsu`). Skills loaded from multiple paths are aggregated into one row, while repeated loads, invocations, and commands all contribute to the same per-skill count.
 
 Built-in tools (`read`, `bash`, `edit`, `write`, `grep`, `find`, `ls`) are intentionally **not** tracked to reduce noise.
 
@@ -62,9 +62,31 @@ A standalone reporting executable is included:
 # Filter to one event type
 ~/.pi/agent/bin/pi-usage-report --event=skill_invoked
 
-# Limit table rows
+# Limit legacy non-artifact table rows
 ~/.pi/agent/bin/pi-usage-report --top=5
 ```
+
+The CLI report has fixed artifact sections for:
+
+- **Prompts** (`prompt_invoked` counts)
+- **Skills** (`skill_loaded`, `skill_invoked`, and `skill_command_invoked` counts)
+- **Custom Tools** (`custom_tool_called` counts)
+- **Enabled Models** (`model_used` counts)
+
+Each artifact section shows:
+
+1. Top 10 most-used rows.
+2. Top 10 least-used rows.
+3. The full ranked list.
+
+The top 10 least-used list excludes any row already shown in the top 10 most-used list, so the least-used list can contain fewer than ten rows for small inventories. Full rankings sort by usage count descending, then artifact name ascending. Least-used rankings sort by usage count ascending, then artifact name ascending.
+
+Artifact inventory is discovered at report time by `bin/pi-usage-report-lib.mjs`; the telemetry extension does not write inventory snapshots for these artifact views. Zero-use rows are included only when current inventory can be rediscovered reliably:
+
+- Prompts are rediscovered from Pi prompt locations, including native prompt templates and extension-managed prompt files matching the existing `pi-prompt-template-model` frontmatter heuristic.
+- Skills are rediscovered from Pi skill locations such as `~/.pi/agent/skills/`, `~/.agents/skills/`, `.pi/skills/`, and project `.agents/skills/` directories.
+- Custom tools are rediscovered from local Pi extension source files by scanning `pi.registerTool({ name: ... })` calls. If no local custom-tool inventory is found, the report falls back to observed usage only.
+- Enabled Models are read from `enabledModels` in Pi settings. If `enabledModels` is absent or empty, enabled-model zero-use and inventory-backed least-used rows are skipped.
 
 ### HTML Report
 
@@ -83,10 +105,11 @@ A visually rich HTML report with charts and interactive tables is also available
 
 The HTML report is self-contained (no external dependencies) and includes:
 - Summary metric cards
-- Activity timeline chart
-- Bar charts for skills, tools, and prompts
-- Donut chart for model distribution
-- Sortable data tables
+- An activity timeline near the top of the page
+- A compact 2×2 top 5 artifact-usage summary for prompts, skills, custom tools, and enabled models, with horizontal bars for quick comparison
+- Donut charts for model and skill distribution
+- Full artifact sections with top 10 most-used, top 10 least-used, and full ranked lists
+- Data tables
 - Recent events log with colour-coded badges
 - Automatic dark/light mode based on system preference
 
@@ -104,6 +127,8 @@ The shared library (`pi-usage-report-lib.mjs`) owns:
 - `createCollector()` — counters, `processEntry`, `recent` / `timeline` tracking
 - `skillNameFromPath()`
 - `sortMap()`
+- `createArtifactReports()` and `createArtifactReport()` — shared artifact ranking shape used by both reporters
+- Report-time inventory discovery for prompts, skills, custom tools, and enabled models
 - `readStatsEntries()` async generator
 
 The CLI reporter owns:
@@ -114,7 +139,7 @@ The CLI reporter owns:
 
 The CLI report is structured in three visual sections:
 - **Summary** — line count, matched events, sessions started
-- **Breakdown** — per-category tables (prompts, extension slash commands, extensions, tools, models, skills)
+- **Breakdown** — artifact rankings first, then legacy extension slash-command, extension-usage, and model-selection tables
 - **Timeline** — optional recent events log, shown only with `--recent`
 
 The HTML reporter owns:

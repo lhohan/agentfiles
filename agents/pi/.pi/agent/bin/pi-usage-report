@@ -18,6 +18,7 @@ import {
   sortMap,
   readStatsEntries,
   formatPromptDetail,
+  createArtifactReports,
 } from "./pi-usage-report-lib.mjs";
 
 const { counters, recent, processEntry } = createCollector();
@@ -58,6 +59,46 @@ function printTable(title, map, topN) {
   if (entries.length > limited.length) {
     console.log(`  … and ${entries.length - limited.length} more`);
   }
+}
+
+function printArtifactRows(title, rows, itemLabel, emptyMessage = "No data") {
+  printSection(title);
+  if (rows.length === 0) {
+    console.log(`  (${emptyMessage})`);
+    return;
+  }
+
+  const maxKey = Math.max(...rows.map((row) => row.name.length), itemLabel.length);
+  console.log(`  ${itemLabel.padEnd(maxKey)}  Count`);
+  console.log(`  ${"-".repeat(maxKey)}  ${"-".repeat(5)}`);
+  for (const row of rows) {
+    console.log(`  ${row.name.padEnd(maxKey)}  ${row.count}`);
+  }
+}
+
+function printArtifactReport(report) {
+  printSection(report.label);
+  const source = report.includesZeroUse
+    ? "inventory-backed; zero-use rows included"
+    : "usage-only; zero-use rows are not inferred";
+  console.log(`  ${source}`);
+
+  printArtifactRows(
+    `Top 10 Most-Used ${report.label}`,
+    report.most,
+    report.itemLabel,
+  );
+  printArtifactRows(
+    `Top 10 Least-Used ${report.label}`,
+    report.least,
+    report.itemLabel,
+    "no distinct least-used rows after excluding the most-used list",
+  );
+  printArtifactRows(
+    `Full ${report.label} Ranking`,
+    report.full,
+    report.itemLabel,
+  );
 }
 
 function printExtensionUsage(counters, topN) {
@@ -127,11 +168,13 @@ async function main() {
   const topN = Number(args.find((a) => a.startsWith("--top="))?.slice(6) || 20);
 
   let lineCount = 0;
+  let matchedCount = 0;
 
   try {
     for await (const entry of readStatsEntries(STATS_PATH)) {
       lineCount++;
       if (filterEvent && entry.event !== filterEvent) continue;
+      matchedCount++;
       processEntry(entry);
     }
   } catch (err) {
@@ -152,17 +195,17 @@ async function main() {
   // Summary
   printHeader("  Summary");
   printSummaryLine("Lines processed", lineCount, 16);
-  printSummaryLine("Events matched", recent.length, 16);
+  printSummaryLine("Events matched", matchedCount, 16);
   printSummaryLine("Sessions started", counters.sessionStart, 16);
 
   // Breakdown tables
   printHeader("  Breakdown");
-  printTable("Prompts Invoked", counters.promptInvoked, topN);
+  for (const report of createArtifactReports(counters)) {
+    printArtifactReport(report);
+  }
   printTable("Extension Slash Commands", counters.extensionCommandInvoked, topN);
   printExtensionUsage(counters, topN);
-  printTable("Custom Tools Called", counters.customToolCalled, topN);
-  printTable("Models Used", counters.modelUsed, topN);
-  printTable("Skills Loaded", counters.skillLoaded, topN);
+  printTable("Models Selected", counters.modelSelect, topN);
 
   // Recent events (optional)
   if (showRecent) {

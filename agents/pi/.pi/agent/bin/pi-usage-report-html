@@ -17,6 +17,7 @@ import {
   sortMap,
   readStatsEntries,
   formatPromptDetail,
+  createArtifactReports,
 } from "./pi-usage-report-lib.mjs";
 import { writeFileSync } from "node:fs";
 
@@ -168,13 +169,78 @@ function escapeHtml(str) {
     .replace(/'/g, "&#039;");
 }
 
-function renderTable(entries, headers) {
+function renderTable(entries, headers, limit = 20) {
   if (entries.length === 0) return "<p class=\"empty\">No data</p>";
+  const visible = limit ? entries.slice(0, limit) : entries;
   let rows = "";
-  for (const [key, val] of entries.slice(0, 20)) {
+  for (const [key, val] of visible) {
     rows += `<tr><td>${escapeHtml(key)}</td><td class="num">${val}</td></tr>`;
   }
   return `<table><thead><tr>${headers.map((h) => `<th>${h}</th>`).join("")}</tr></thead><tbody>${rows}</tbody></table>`;
+}
+
+function renderArtifactRows(rows, itemLabel, emptyMessage = "No data") {
+  if (rows.length === 0) return `<p class="empty">${escapeHtml(emptyMessage)}</p>`;
+  let html = "";
+  for (const row of rows) {
+    html += `<tr><td>${escapeHtml(row.name)}</td><td class="num">${row.count}</td></tr>`;
+  }
+  return `<table><thead><tr><th>${escapeHtml(itemLabel)}</th><th>Count</th></tr></thead><tbody>${html}</tbody></table>`;
+}
+
+function renderArtifactSummary(reports) {
+  const cards = reports.map((report) => {
+    const rows = report.most.slice(0, 5);
+    const maxCount = Math.max(...rows.map((row) => row.count), 0);
+    const body = rows.length === 0
+      ? `<p class="empty compact">No usage observed</p>`
+      : `<div class="summary-bars">${rows.map((row) => {
+        const width = maxCount > 0 ? Math.max((row.count / maxCount) * 100, 3) : 3;
+        return `<div class="summary-bar-row">
+          <div class="summary-bar-meta"><span>${escapeHtml(row.name)}</span><strong>${row.count}</strong></div>
+          <div class="summary-bar-track"><div class="summary-bar-fill" style="width:${width.toFixed(1)}%"></div></div>
+        </div>`;
+      }).join("")}</div>`;
+    return `<div class="summary-card ${report.id}"><h3>${artifactIcon(report.id)} ${escapeHtml(report.label)}</h3>${body}</div>`;
+  }).join("");
+
+  return `<section>
+  <h2><span class="icon">🏁</span> Artifact Usage at a Glance</h2>
+  <div class="artifact-summary">${cards}</div>
+</section>`;
+}
+
+function renderArtifactReport(report) {
+  const source = report.includesZeroUse
+    ? "Inventory-backed; zero-use rows included."
+    : "Usage-only; zero-use rows are not inferred.";
+
+  return `<section class="artifact-report">
+  <h2><span class="icon">${artifactIcon(report.id)}</span> ${escapeHtml(report.label)}</h2>
+  <p class="source-note">${source}</p>
+  <div class="grid-2">
+    <div>
+      <h3>Top 10 Most-Used</h3>
+      ${renderArtifactRows(report.most, report.itemLabel)}
+    </div>
+    <div>
+      <h3>Top 10 Least-Used</h3>
+      ${renderArtifactRows(report.least, report.itemLabel, "No distinct least-used rows after excluding the most-used list")}
+    </div>
+  </div>
+  <h3 class="full-ranking-heading">Full Ranking</h3>
+  ${renderArtifactRows(report.full, report.itemLabel)}
+</section>`;
+}
+
+function artifactIcon(id) {
+  switch (id) {
+    case "prompts": return "📝";
+    case "skills": return "📦";
+    case "customTools": return "🔧";
+    case "enabledModels": return "🤖";
+    default: return "📊";
+  }
 }
 
 function renderExtensionUsage(counters) {
@@ -219,6 +285,7 @@ function renderRecent(events, count) {
 }
 
 function generateReport(outputPath, recentCount) {
+  const artifactReports = createArtifactReports(counters);
   const totalEvents = timeline.length;
   const totalSkills = counters.skillLoaded.size;
   const totalModels = counters.modelUsed.size;
@@ -320,6 +387,36 @@ h2 .icon { font-size: 1.3rem; }
   gap: 24px;
 }
 
+.artifact-summary {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 16px;
+}
+.summary-card {
+  border: 1px solid var(--card-border);
+  border-radius: 12px;
+  padding: 16px;
+  background: linear-gradient(180deg, rgba(99,102,241,0.08), rgba(99,102,241,0.025));
+}
+.summary-card.prompts { background: linear-gradient(180deg, rgba(16,185,129,0.10), rgba(16,185,129,0.025)); }
+.summary-card.skills { background: linear-gradient(180deg, rgba(139,92,246,0.10), rgba(139,92,246,0.025)); }
+.summary-card.customTools { background: linear-gradient(180deg, rgba(244,63,94,0.10), rgba(244,63,94,0.025)); }
+.summary-card.enabledModels { background: linear-gradient(180deg, rgba(245,158,11,0.10), rgba(245,158,11,0.025)); }
+h3 { font-size: 0.95rem; margin: 0 0 10px 0; color: var(--text); }
+.summary-bars { display: flex; flex-direction: column; gap: 10px; }
+.summary-bar-meta { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; font-size: 0.86rem; }
+.summary-bar-meta span { color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.summary-bar-meta strong { color: var(--accent); font-variant-numeric: tabular-nums; }
+.summary-bar-track { height: 7px; overflow: hidden; border-radius: 999px; background: rgba(139,139,154,0.16); }
+.summary-bar-fill { height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--accent), var(--accent2)); }
+.summary-card.prompts .summary-bar-fill { background: linear-gradient(90deg, #10b981, #34d399); }
+.summary-card.skills .summary-bar-fill { background: linear-gradient(90deg, #8b5cf6, #a78bfa); }
+.summary-card.customTools .summary-bar-fill { background: linear-gradient(90deg, #f43f5e, #fb7185); }
+.summary-card.enabledModels .summary-bar-fill { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
+.source-note { margin-top: -4px; margin-bottom: 18px; color: var(--text-muted); font-size: 0.85rem; }
+.full-ranking-heading { margin-top: 22px; }
+.empty.compact { padding: 0; text-align: left; }
+
 .bar-chart { width: 100%; height: auto; }
 .bar-chart .label { font-size: 11px; fill: var(--text-muted); }
 .bar-chart .value { font-size: 11px; fill: var(--text); font-weight: 600; }
@@ -370,6 +467,9 @@ tbody tr:hover { background: rgba(99,102,241,0.05); }
 
 footer { text-align: center; color: var(--text-muted); font-size: 0.8rem; margin-top: 12px; }
 
+@media (max-width: 720px) {
+  .artifact-summary { grid-template-columns: 1fr; }
+}
 @media (max-width: 640px) {
   .container { padding: 16px; }
   h1 { font-size: 1.4rem; }
@@ -412,21 +512,20 @@ footer { text-align: center; color: var(--text-muted); font-size: 0.8rem; margin
   ${generateTimelineChart(timeline)}
 </section>
 
-<section>
-  <h2><span class="icon">🤖</span> Models Used</h2>
-  ${generateDonutChart(sortMap(counters.modelUsed))}
-</section>
+${renderArtifactSummary(artifactReports)}
 
 <div class="grid-2">
   <section>
-    <h2><span class="icon">🔧</span> Custom Tools</h2>
-    ${generateBarChart(sortMap(counters.customToolCalled), 8, "#f43f5e")}
+    <h2><span class="icon">🤖</span> Models Used</h2>
+    ${generateDonutChart(sortMap(counters.modelUsed))}
   </section>
   <section>
-    <h2><span class="icon">📝</span> Top Prompts</h2>
-    ${generateBarChart(sortMap(counters.promptInvoked), 8, "#10b981")}
+    <h2><span class="icon">📦</span> Skills Used</h2>
+    ${generateDonutChart(sortMap(counters.skillLoaded))}
   </section>
 </div>
+
+${artifactReports.map(renderArtifactReport).join("\n")}
 
 ${counters.extensionCommandInvoked.size > 0 ? `<section>
   <h2><span class="icon">⚡</span> Extension Slash Commands</h2>
@@ -436,11 +535,6 @@ ${counters.extensionCommandInvoked.size > 0 ? `<section>
 <section>
   <h2><span class="icon">🧩</span> Extensions Used</h2>
   ${renderExtensionUsage(counters)}
-</section>
-
-<section>
-  <h2><span class="icon">📦</span> Skills Loaded</h2>
-  ${renderTable(sortMap(counters.skillLoaded), ["Skill", "Count"])}
 </section>
 
 <section>
