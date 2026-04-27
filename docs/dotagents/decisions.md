@@ -2,6 +2,14 @@
 
 Dotagents-specific decisions are listed in reverse chronological order (most recent first).
 
+### dotagents-004: Delegate `/implement` to vendored implementation skills [Accepted]
+
+> **In the context of** replacing the stub `/implement` prompt with reusable implementation guidance,
+> **facing** the choice between embedding implementation rules directly in the prompt or delegating to reusable skills,
+> **we decided** to keep `/implement` as a thin prompt that delegates to vendored `build-walking-skeleton` for implementation strategy and vendored `verification-before-completion` for completion claims, with `test-driven-development` maintained as a sub-skill dependency of `build-walking-skeleton`,
+> **to achieve** reusable, inspectable implementation guidance without prompt bloat,
+> **accepting** that the shared skills package now owns and maintains these vendored implementation skills.
+
 ### dotagents-003: Add planning skills interrogate-plan and write-implementation-plan [Accepted]
 
 > **In the context of** Pi's `/plan` prompt,
