@@ -18,9 +18,10 @@ import {
   createCollector,
   sortMap,
   readStatsEntries,
-  formatPromptDetail,
   createArtifactReports,
   entryMatchesTimeInterval,
+  extensionOwnedEntries,
+  formatEventDetail,
   normalizeTimeInterval,
 } from "./pi-usage-report-lib.mjs";
 import { writeFileSync } from "node:fs";
@@ -255,25 +256,6 @@ function renderArtifactReport(report) {
 </section>`;
 }
 
-function renderExtensionUsage(counters) {
-  const used = sortMap(counters.extensionUsed);
-  const installed = Array.from(counters.extensionInstalled.keys()).sort();
-  const unused = installed.filter((k) => !counters.extensionUsed.has(k));
-
-  let html = used.length === 0
-    ? `<p class="empty">No extension usage observed</p>`
-    : renderTable(used, ["Extension", "Count"]);
-
-  if (unused.length > 0) {
-    html += `<h3 style="margin-top:16px;font-size:0.95rem;color:var(--text-muted);">Installed but not used</h3>`;
-    html += `<ul style="margin:8px 0 0 0;padding-left:20px;color:var(--text-muted);font-size:0.85rem;">`;
-    for (const name of unused) html += `<li>${escapeHtml(name)}</li>`;
-    html += `</ul>`;
-  }
-
-  return html;
-}
-
 function renderRecent(events, count) {
   if (events.length === 0) return `<p class="empty">No events in this interval</p>`;
   const subset = events.slice(-count).reverse();
@@ -281,12 +263,7 @@ function renderRecent(events, count) {
   for (const entry of subset) {
     const time = new Date(entry.t).toLocaleString();
     const badgeClass = String(entry.event).toLowerCase();
-    const detail = entry.event === "prompt_invoked"
-      ? formatPromptDetail(entry)
-      : Object.entries(entry)
-        .filter(([k]) => k !== "t" && k !== "event")
-        .map(([k, v]) => `${k}=${JSON.stringify(v)}`)
-        .join(" ");
+    const detail = formatEventDetail(entry);
     rows += `<tr><td class="time">${time}</td><td><span class="badge ${badgeClass}">${escapeHtml(entry.event)}</span></td><td class="detail">${escapeHtml(detail || "—")}</td></tr>`;
   }
   return `<table class="recent"><thead><tr><th>Time</th><th>Event</th><th>Details</th></tr></thead><tbody>${rows}</tbody></table>`;
@@ -334,13 +311,11 @@ ${artifactReports.map(renderArtifactReport).join("\n")}
 
 ${counters.extensionCommandInvoked.size > 0 ? `<section>
   <h2><span class="icon">⚡</span> Extension Slash Commands</h2>
-  ${renderTable(sortMap(counters.extensionCommandInvoked), ["Command", "Count"])}
+  ${renderTable(extensionOwnedEntries(
+    counters.extensionCommandInvoked,
+    counters.extensionCommandExtensions,
+  ), ["Command", "Count"])}
 </section>` : ""}
-
-<section>
-  <h2><span class="icon">🧩</span> Extensions Used</h2>
-  ${renderExtensionUsage(counters)}
-</section>
 
 <section>
   <h2><span class="icon">🕒</span> Recent Events</h2>

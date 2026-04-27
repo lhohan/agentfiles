@@ -2,6 +2,19 @@
 
 Pi-specific decisions are listed in reverse chronological order (most recent first).
 
+### pi-022: Show usage-stats extension context inline [Accepted]
+
+> **In the context of** making usage-stats reports explain which extension contributed a tool call or slash command,
+> **facing** a standalone "Extensions Used" summary that repeated aggregate counts without showing where the extension affected a session,
+> **we decided** to remove the standalone extension-usage report section and display extension ownership inline for custom tools and extension slash commands,
+> **to achieve** more actionable context near the relevant report rows and recent events,
+> **accepting** that:
+>   - loaded and inventoried extension events remain available in the raw event log rather than as a dedicated summary section
+>   - extension usage is no longer presented as a separate top-level ranking
+>   - zero-use custom-tool inventory rows can only show an owner when usage telemetry has recorded one
+>
+> **Rationale:** A separate extension summary requires extra scrolling and does not show which command or tool made the extension relevant. Inline labels such as `web_search (bx)` keep the extension context next to the user-facing action while preserving raw `extension_loaded` and `extension_inventory` events for audit/debug use.
+
 ### pi-021: Build usage-stats artifact rankings from report-time inventory [Accepted]
 
 > **In the context of** making usage-stats show consistent most-used, least-used, and full-list views for prompts, skills, custom tools, and enabled models,

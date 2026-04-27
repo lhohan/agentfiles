@@ -81,6 +81,8 @@ The CLI report has fixed artifact sections for:
 - **Custom Tools** (`custom_tool_called` counts)
 - **Enabled Models** (`model_used` counts)
 
+Custom-tool rows display their owning extension inline when known, for example `web_search (bx)`. Extension slash-command rows use the same inline owner format, for example `/review (pi-prompt-template-model)`. The reports do not include a standalone extension-usage summary; extension context is shown beside the event or artifact that used it.
+
 Each artifact section shows:
 
 1. Top 10 most-used rows.
@@ -123,8 +125,8 @@ The HTML report is self-contained (no external dependencies) and includes:
 - A compact 2×2 top 5 artifact-usage summary for prompts, skills, custom tools, and enabled models, with horizontal bars for quick comparison
 - Donut charts for model and skill distribution
 - Full artifact sections with top 10 most-used, top 10 least-used, and full ranked lists
-- Data tables
-- Recent events log with colour-coded badges
+- Extension slash-command tables with owning extension names inline
+- Recent events log with colour-coded badges and inline extension ownership for custom-tool calls and extension slash commands
 - Automatic dark/light mode based on system preference
 
 ## Maintenance contract
@@ -139,11 +141,12 @@ When adding or changing an event type in `usage-stats.ts`:
 The shared library (`pi-usage-report-lib.mjs`) owns:
 - `STATS_PATH`
 - `TIME_INTERVAL_OPTIONS`, `normalizeTimeInterval()`, and `entryMatchesTimeInterval()` — shared interval validation and filtering
-- `createCollector()` — counters, `processEntry`, `recent` / `timeline` tracking
+- `createCollector()` — counters, extension owner maps, `processEntry`, `recent` / `timeline` tracking
 - `skillNameFromPath()`
 - `sortMap()`
-- `createArtifactReports()` and `createArtifactReport()` — shared artifact ranking shape used by both reporters
+- `createArtifactReports()` and `createArtifactReport()` — shared artifact ranking shape used by both reporters, including custom-tool owner display names
 - Report-time inventory discovery for prompts, skills, custom tools, and enabled models
+- `extensionOwnedEntries()` and `formatEventDetail()` — shared display formatting for extension-owned commands/tools and recent event details
 - `readStatsEntries()` async generator
 
 The CLI reporter owns:
@@ -154,7 +157,7 @@ The CLI reporter owns:
 
 The CLI report is structured in three visual sections:
 - **Summary** — line count, matched events, sessions started
-- **Breakdown** — artifact rankings first, then legacy extension slash-command, extension-usage, and model-selection tables
+- **Breakdown** — artifact rankings first, then extension slash-command and model-selection tables
 - **Timeline** — optional recent events log, shown only with `--recent`
 
 The HTML reporter owns:

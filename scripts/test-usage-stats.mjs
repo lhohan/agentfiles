@@ -1,17 +1,39 @@
 #!/usr/bin/env node
 import assert from "node:assert/strict";
-import { readFileSync, rmSync } from "node:fs";
+import { mkdirSync, mkdtempSync, readFileSync, rmSync, writeFileSync } from "node:fs";
+import { tmpdir } from "node:os";
+import { join } from "node:path";
 import { execFileSync } from "node:child_process";
 import {
   TIME_INTERVAL_OPTIONS,
   createArtifactReport,
   createArtifactReports,
+  createCollector,
   entryMatchesTimeInterval,
+  formatEventDetail,
   normalizeTimeInterval,
 } from "../agents/pi/.pi/agent/bin/pi-usage-report-lib.mjs";
 
 function names(rows) {
   return rows.map((row) => row.name);
+}
+
+function usageFixtureHome() {
+  const home = mkdtempSync(join(tmpdir(), "pi-usage-report-test-"));
+  const agentDir = join(home, ".pi", "agent");
+  mkdirSync(agentDir, { recursive: true });
+  const now = Date.parse("2026-04-27T12:00:00Z");
+  const entries = [
+    { t: now - 3000, event: "session_start", reason: "new" },
+    { t: now - 2000, event: "custom_tool_called", tool: "web_search", extension: "bx" },
+    { t: now - 1000, event: "extension_command_invoked", name: "/review", extension: "pi-prompt-template-model", args: "foo" },
+    { t: now, event: "extension_inventory", extension: "unused-extension" },
+  ];
+  writeFileSync(
+    join(agentDir, "usage-stats.jsonl"),
+    `${entries.map((entry) => JSON.stringify(entry)).join("\n")}\n`,
+  );
+  return home;
 }
 
 {
@@ -137,13 +159,39 @@ function names(rows) {
 }
 
 {
+  const { counters, processEntry } = createCollector();
+  processEntry({ event: "custom_tool_called", tool: "web_search", extension: "bx" });
+  processEntry({ event: "extension_command_invoked", name: "/review", extension: "pi-prompt-template-model" });
+
+  const reports = createArtifactReports(counters, {
+    inventories: {
+      prompts: [],
+      skills: [],
+      customTools: ["web_search"],
+      enabledModels: [],
+    },
+    discovered: {
+      prompts: false,
+      skills: false,
+      customTools: true,
+      enabledModels: false,
+    },
+  });
+
+  assert.deepEqual(names(reports.find((r) => r.id === "customTools").full), ["web_search (bx)"]);
+  assert.equal(formatEventDetail({ event: "custom_tool_called", tool: "web_search", extension: "bx" }), 'tool="web_search (bx)"');
+  assert.equal(formatEventDetail({ event: "extension_command_invoked", name: "/review", extension: "pi-prompt-template-model" }), 'name="/review (pi-prompt-template-model)"');
+}
+
+{
+  const home = usageFixtureHome();
   const outputPath = "/tmp/pi-usage-report-layout-test.html";
   rmSync(outputPath, { force: true });
   execFileSync("node", [
     "agents/pi/.pi/agent/bin/pi-usage-report-html",
     `--output=${outputPath}`,
     "--recent=5",
-  ], { stdio: "ignore" });
+  ], { env: { ...process.env, HOME: home }, stdio: "ignore" });
   const html = readFileSync(outputPath, "utf-8");
 
   assert.match(html, /Artifact Usage at a Glance/);
@@ -152,11 +200,28 @@ function names(rows) {
   assert.match(html, /<option value="last 7 days">last 7 days<\/option>/);
   assert.match(html, /data-interval-panel="last 7 days"/);
   assert.match(html, /grid-template-columns: repeat\(2, minmax\(0, 1fr\)\)/);
+  assert.match(html, /web_search \(bx\)/);
+  assert.match(html, /\/review \(pi-prompt-template-model\)/);
+  assert.equal(html.includes("Extensions Used"), false);
   assert.equal(html.includes("<h2><span class=\"icon\">📝</span> Top Prompts</h2>"), false);
   assert.ok(html.indexOf("Activity Timeline") < html.indexOf("Artifact Usage at a Glance"));
   assert.ok(html.indexOf("Models Used") < html.indexOf("Top 10 Most-Used"));
   assert.ok(html.indexOf("Skills Used") > html.indexOf("Models Used"));
   assert.ok(html.indexOf("Skills Used") < html.indexOf("Top 10 Most-Used"));
+  rmSync(home, { recursive: true, force: true });
+}
+
+{
+  const home = usageFixtureHome();
+  const report = execFileSync("node", [
+    "agents/pi/.pi/agent/bin/pi-usage-report",
+    "--recent=5",
+  ], { env: { ...process.env, HOME: home }, encoding: "utf-8" });
+
+  assert.match(report, /web_search \(bx\)/);
+  assert.match(report, /\/review \(pi-prompt-template-model\)/);
+  assert.equal(report.includes("Extensions Used"), false);
+  rmSync(home, { recursive: true, force: true });
 }
 
 {

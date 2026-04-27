@@ -109,6 +109,40 @@ function extensionNameFromEntry(entry) {
   return "unknown";
 }
 
+function eventExtensionName(entry) {
+  if (!entry || typeof entry !== "object") return undefined;
+  if (typeof entry.extension === "string" && entry.extension) return entry.extension;
+  if (typeof entry.extensionName === "string" && entry.extensionName) return entry.extensionName;
+  if (typeof entry.extensionPath === "string" && entry.extensionPath) {
+    return basename(entry.extensionPath).replace(/\.[^.]+$/, "");
+  }
+  if (typeof entry.path === "string" && entry.path) {
+    return basename(entry.path).replace(/\.[^.]+$/, "");
+  }
+  return undefined;
+}
+
+function rememberExtensionOwner(owners, name, extension) {
+  if (typeof name !== "string" || !name.trim()) return;
+  if (typeof extension !== "string" || !extension.trim()) return;
+  owners.set(name, extension);
+}
+
+export function formatExtensionOwnedName(name, extension) {
+  const base = typeof name === "string" && name.trim() ? name.trim() : "unknown";
+  if (typeof extension !== "string" || !extension.trim() || extension === "unknown") return base;
+  return `${base} (${extension.trim()})`;
+}
+
+export function extensionOwnedEntries(counts, owners = new Map()) {
+  const displayCounts = new Map();
+  for (const [name, count] of counts.entries()) {
+    const displayName = formatExtensionOwnedName(name, owners.get(name));
+    displayCounts.set(displayName, (displayCounts.get(displayName) || 0) + count);
+  }
+  return sortMap(displayCounts);
+}
+
 export function createCollector({ trackTimeline = false } = {}) {
   const counters = {
     promptInvoked: new Map(),
@@ -117,9 +151,11 @@ export function createCollector({ trackTimeline = false } = {}) {
     extensionInstalled: new Map(),
     extensionUsed: new Map(),
     customToolCalled: new Map(),
+    customToolExtensions: new Map(),
     skillLoaded: new Map(),
     modelUsed: new Map(),
     modelSelect: new Map(),
+    extensionCommandExtensions: new Map(),
     sessionStart: 0,
   };
 
@@ -167,8 +203,9 @@ export function createCollector({ trackTimeline = false } = {}) {
           (counters.extensionCommandInvoked.get(entry.name) || 0) + 1,
         );
         {
-          const ext = entry.extension || extensionNameFromEntry(entry);
-          if (ext && ext !== "unknown") {
+          const ext = eventExtensionName(entry);
+          rememberExtensionOwner(counters.extensionCommandExtensions, entry.name, ext);
+          if (ext) {
             counters.extensionUsed.set(
               ext,
               (counters.extensionUsed.get(ext) || 0) + 1,
@@ -205,8 +242,9 @@ export function createCollector({ trackTimeline = false } = {}) {
           (counters.customToolCalled.get(entry.tool) || 0) + 1,
         );
         {
-          const ext = entry.extension || extensionNameFromEntry(entry);
-          if (ext && ext !== "unknown") {
+          const ext = eventExtensionName(entry);
+          rememberExtensionOwner(counters.customToolExtensions, entry.tool, ext);
+          if (ext) {
             counters.extensionUsed.set(
               ext,
               (counters.extensionUsed.get(ext) || 0) + 1,
@@ -274,6 +312,7 @@ export function createArtifactReport({
   inventoryDiscovered = false,
   mostLimit = 10,
   leastLimit = 10,
+  displayNameForName = (name) => name,
 }) {
   const names = stringSet(inventory);
   for (const name of counts.keys()) {
@@ -281,7 +320,7 @@ export function createArtifactReport({
   }
 
   const rows = Array.from(names, (name) => ({
-    name,
+    name: displayNameForName(name),
     count: counts.get(name) || 0,
   }));
 
@@ -335,6 +374,10 @@ export function createArtifactReports(counters, options = {}) {
       counts: counters.customToolCalled,
       inventory: inventories.customTools || [],
       inventoryDiscovered: !!discovered.customTools,
+      displayNameForName: (name) => formatExtensionOwnedName(
+        name,
+        counters.customToolExtensions?.get(name),
+      ),
     }),
     createArtifactReport({
       id: "enabledModels",
@@ -698,6 +741,37 @@ export function formatPromptDetail(entry) {
   if (entry.extension) parts.push(`extension="${entry.extension}"`);
   if (entry.inferred) parts.push("inferred=true");
   return parts.join(" ");
+}
+
+export function formatEventDetail(entry) {
+  if (entry.event === "prompt_invoked") return formatPromptDetail(entry);
+
+  if (entry.event === "custom_tool_called") {
+    const parts = [
+      `tool=${JSON.stringify(formatExtensionOwnedName(entry.tool, eventExtensionName(entry)))}`,
+    ];
+    for (const [key, value] of Object.entries(entry)) {
+      if (["t", "event", "tool", "extension"].includes(key)) continue;
+      parts.push(`${key}=${JSON.stringify(value)}`);
+    }
+    return parts.join(" ");
+  }
+
+  if (entry.event === "extension_command_invoked") {
+    const parts = [
+      `name=${JSON.stringify(formatExtensionOwnedName(entry.name, eventExtensionName(entry)))}`,
+    ];
+    for (const [key, value] of Object.entries(entry)) {
+      if (["t", "event", "name", "extension"].includes(key)) continue;
+      parts.push(`${key}=${JSON.stringify(value)}`);
+    }
+    return parts.join(" ");
+  }
+
+  return Object.entries(entry)
+    .filter(([key]) => key !== "t" && key !== "event")
+    .map(([key, value]) => `${key}=${JSON.stringify(value)}`)
+    .join(" ");
 }
 
 /**
