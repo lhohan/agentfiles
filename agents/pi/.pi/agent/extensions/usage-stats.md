@@ -62,9 +62,17 @@ A standalone reporting executable is included:
 # Filter to one event type
 ~/.pi/agent/bin/pi-usage-report --event=skill_invoked
 
+# Filter all counters and tables to a time interval
+~/.pi/agent/bin/pi-usage-report --interval="last 7 days"
+
+# Show documented options and interval values
+~/.pi/agent/bin/pi-usage-report --help
+
 # Limit legacy non-artifact table rows
 ~/.pi/agent/bin/pi-usage-report --top=5
 ```
+
+Both reporters support these time intervals: `today`, `last 3 days`, `last 7 days`, `last 10 days`, `last 30 days`, `last 90 days`, `last year`, and `all`. The default is `all`, preserving the previous full-history behaviour. Time-interval filtering happens before aggregation, so events outside the selected interval are excluded from counters, tables, timelines, and recent-event lists. The CLI `--event` filter and `--interval` filter both apply during ingestion.
 
 The CLI report has fixed artifact sections for:
 
@@ -101,11 +109,17 @@ A visually rich HTML report with charts and interactive tables is also available
 
 # Include more recent events
 ~/.pi/agent/bin/pi-usage-report-html --recent=200
+
+# Choose the initially selected interval in the generated report
+~/.pi/agent/bin/pi-usage-report-html --interval="last 30 days"
 ```
+
+The generated HTML report precomputes every supported interval and includes a self-contained selector for switching between them. The selector also honours an `?interval=...` query parameter, for example `usage-report.html?interval=last%207%20days`.
 
 The HTML report is self-contained (no external dependencies) and includes:
 - Summary metric cards
 - An activity timeline near the top of the page
+- An interactive time-interval selector for switching between the supported intervals without regenerating the report
 - A compact 2×2 top 5 artifact-usage summary for prompts, skills, custom tools, and enabled models, with horizontal bars for quick comparison
 - Donut charts for model and skill distribution
 - Full artifact sections with top 10 most-used, top 10 least-used, and full ranked lists
@@ -124,6 +138,7 @@ When adding or changing an event type in `usage-stats.ts`:
 
 The shared library (`pi-usage-report-lib.mjs`) owns:
 - `STATS_PATH`
+- `TIME_INTERVAL_OPTIONS`, `normalizeTimeInterval()`, and `entryMatchesTimeInterval()` — shared interval validation and filtering
 - `createCollector()` — counters, `processEntry`, `recent` / `timeline` tracking
 - `skillNameFromPath()`
 - `sortMap()`
@@ -134,7 +149,7 @@ The shared library (`pi-usage-report-lib.mjs`) owns:
 The CLI reporter owns:
 - Report header, summary block, section headings, and dividers
 - ASCII table formatting (`printTable`)
-- `--event` filtering (ingestion-time)
+- `--event` and `--interval` filtering (ingestion-time)
 - `--recent` timeline dump with aligned timestamps and event names
 
 The CLI report is structured in three visual sections:

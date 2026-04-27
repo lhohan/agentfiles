@@ -9,16 +9,20 @@
  *   ~/.pi/agent/bin/pi-usage-report
  *   ~/.pi/agent/bin/pi-usage-report --recent
  *   ~/.pi/agent/bin/pi-usage-report --event=skill_invoked
+ *   ~/.pi/agent/bin/pi-usage-report --interval="last 7 days"
  *   ~/.pi/agent/bin/pi-usage-report --top=5
  */
 
 import {
   STATS_PATH,
+  TIME_INTERVAL_OPTIONS,
   createCollector,
   sortMap,
   readStatsEntries,
   formatPromptDetail,
   createArtifactReports,
+  entryMatchesTimeInterval,
+  normalizeTimeInterval,
 } from "./pi-usage-report-lib.mjs";
 
 const { counters, recent, processEntry } = createCollector();
@@ -39,6 +43,32 @@ function printSection(text) {
 
 function printSummaryLine(label, value, labelWidth) {
   console.log(`  ${label.padEnd(labelWidth)}  ${value}`);
+}
+
+function optionValue(args, name) {
+  const prefix = `${name}=`;
+  const inline = args.find((arg) => arg.startsWith(prefix));
+  if (inline) return inline.slice(prefix.length);
+
+  const index = args.indexOf(name);
+  if (index !== -1 && args[index + 1] && !args[index + 1].startsWith("--")) {
+    return args[index + 1];
+  }
+  return undefined;
+}
+
+function printUsage() {
+  console.log(`Usage: pi-usage-report [options]
+
+Options:
+  --recent[=<count>]       Show the last raw events after filtering (default: 50)
+  --event=<event>          Include only one event type during ingestion
+  --interval=<interval>    Include only events in a time interval (default: all)
+  --top=<count>            Limit legacy non-artifact table rows (default: 20)
+  -h, --help               Show this help
+
+Intervals:
+  ${TIME_INTERVAL_OPTIONS.map((option) => option.value).join(", ")}`);
 }
 
 // ── Table rendering ─────────────────────────────────────────────────
@@ -159,13 +189,24 @@ function printRecent(count) {
 
 async function main() {
   const args = process.argv.slice(2);
+  if (args.includes("--help") || args.includes("-h")) {
+    printUsage();
+    return;
+  }
+
   const showRecent =
     args.includes("--recent") || args.some((a) => a.startsWith("--recent="));
-  const recentCount = Number(
-    args.find((a) => a.startsWith("--recent="))?.slice(9) || 50,
-  );
-  const filterEvent = args.find((a) => a.startsWith("--event="))?.slice(8);
-  const topN = Number(args.find((a) => a.startsWith("--top="))?.slice(6) || 20);
+  const recentCount = Number(optionValue(args, "--recent") || 50);
+  const filterEvent = optionValue(args, "--event");
+  const topN = Number(optionValue(args, "--top") || 20);
+  let interval;
+  try {
+    interval = normalizeTimeInterval(optionValue(args, "--interval"));
+  } catch (err) {
+    console.error(err.message);
+    process.exit(2);
+  }
+  const now = Date.now();
 
   let lineCount = 0;
   let matchedCount = 0;
@@ -174,6 +215,7 @@ async function main() {
     for await (const entry of readStatsEntries(STATS_PATH)) {
       lineCount++;
       if (filterEvent && entry.event !== filterEvent) continue;
+      if (!entryMatchesTimeInterval(entry, interval, now)) continue;
       matchedCount++;
       processEntry(entry);
     }
@@ -196,6 +238,7 @@ async function main() {
   printHeader("  Summary");
   printSummaryLine("Lines processed", lineCount, 16);
   printSummaryLine("Events matched", matchedCount, 16);
+  printSummaryLine("Interval", interval, 16);
   printSummaryLine("Sessions started", counters.sessionStart, 16);
 
   // Breakdown tables

@@ -3,12 +3,42 @@ import assert from "node:assert/strict";
 import { readFileSync, rmSync } from "node:fs";
 import { execFileSync } from "node:child_process";
 import {
+  TIME_INTERVAL_OPTIONS,
   createArtifactReport,
   createArtifactReports,
+  entryMatchesTimeInterval,
+  normalizeTimeInterval,
 } from "../agents/pi/.pi/agent/bin/pi-usage-report-lib.mjs";
 
 function names(rows) {
   return rows.map((row) => row.name);
+}
+
+{
+  assert.deepEqual(TIME_INTERVAL_OPTIONS.map((option) => option.value), [
+    "today",
+    "last 3 days",
+    "last 7 days",
+    "last 10 days",
+    "last 30 days",
+    "last 90 days",
+    "last year",
+    "all",
+  ]);
+  assert.equal(normalizeTimeInterval(), "all");
+  assert.equal(normalizeTimeInterval("LAST 7 DAYS"), "last 7 days");
+  assert.throws(() => normalizeTimeInterval("last week"), /Invalid time interval/);
+}
+
+{
+  const now = Date.parse("2026-04-27T12:00:00Z");
+  const inside = { t: now - 6 * 24 * 60 * 60 * 1000 };
+  const outside = { t: now - 8 * 24 * 60 * 60 * 1000 };
+
+  assert.equal(entryMatchesTimeInterval(inside, "last 7 days", now), true);
+  assert.equal(entryMatchesTimeInterval(outside, "last 7 days", now), false);
+  assert.equal(entryMatchesTimeInterval(outside, "all", now), true);
+  assert.equal(entryMatchesTimeInterval({ event: "missing_timestamp" }, "last 7 days", now), false);
 }
 
 {
@@ -118,12 +148,25 @@ function names(rows) {
 
   assert.match(html, /Artifact Usage at a Glance/);
   assert.match(html, /summary-bar-fill/);
+  assert.match(html, /<select id="interval-selector"/);
+  assert.match(html, /<option value="last 7 days">last 7 days<\/option>/);
+  assert.match(html, /data-interval-panel="last 7 days"/);
   assert.match(html, /grid-template-columns: repeat\(2, minmax\(0, 1fr\)\)/);
   assert.equal(html.includes("<h2><span class=\"icon\">📝</span> Top Prompts</h2>"), false);
   assert.ok(html.indexOf("Activity Timeline") < html.indexOf("Artifact Usage at a Glance"));
   assert.ok(html.indexOf("Models Used") < html.indexOf("Top 10 Most-Used"));
   assert.ok(html.indexOf("Skills Used") > html.indexOf("Models Used"));
   assert.ok(html.indexOf("Skills Used") < html.indexOf("Top 10 Most-Used"));
+}
+
+{
+  const help = execFileSync("node", [
+    "agents/pi/.pi/agent/bin/pi-usage-report",
+    "--help",
+  ], { encoding: "utf-8" });
+
+  assert.match(help, /--interval=<interval>/);
+  assert.match(help, /last 3 days, last 7 days, last 10 days/);
 }
 
 console.log("usage-stats reporter tests passed");

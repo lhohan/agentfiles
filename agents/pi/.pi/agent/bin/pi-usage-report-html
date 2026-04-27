@@ -2,30 +2,61 @@
 /**
  * Usage Statistics HTML Report Generator
  *
- * Reads ~/.pi/agent/usage-stats.jsonl and generates a beautiful,
- * self-contained HTML report with charts and visualisations.
+ * Reads ~/.pi/agent/usage-stats.jsonl and generates a self-contained
+ * interactive HTML report.
  *
  * Usage:
  *   ~/.pi/agent/bin/pi-usage-report-html
  *   ~/.pi/agent/bin/pi-usage-report-html --output=/path/to/report.html
  *   ~/.pi/agent/bin/pi-usage-report-html --recent=200
+ *   ~/.pi/agent/bin/pi-usage-report-html --interval="last 7 days"
  */
 
 import {
   STATS_PATH,
+  TIME_INTERVAL_OPTIONS,
   createCollector,
   sortMap,
   readStatsEntries,
   formatPromptDetail,
   createArtifactReports,
+  entryMatchesTimeInterval,
+  normalizeTimeInterval,
 } from "./pi-usage-report-lib.mjs";
 import { writeFileSync } from "node:fs";
 
 const DEFAULT_OUTPUT = `${process.env.HOME}/.pi/agent/usage-report.html`;
 
-const { counters, recent, timeline, processEntry } = createCollector({
-  trackTimeline: true,
-});
+function optionValue(args, name) {
+  const prefix = `${name}=`;
+  const inline = args.find((arg) => arg.startsWith(prefix));
+  if (inline) return inline.slice(prefix.length);
+
+  const index = args.indexOf(name);
+  if (index !== -1 && args[index + 1] && !args[index + 1].startsWith("--")) {
+    return args[index + 1];
+  }
+  return undefined;
+}
+
+function collectEntries(entries, interval, now) {
+  const collector = createCollector({ trackTimeline: true });
+  for (const entry of entries) {
+    if (entryMatchesTimeInterval(entry, interval, now)) {
+      collector.processEntry(entry);
+    }
+  }
+  return collector;
+}
+
+function escapeHtml(str) {
+  return String(str)
+    .replace(/&/g, "&amp;")
+    .replace(/</g, "&lt;")
+    .replace(/>/g, "&gt;")
+    .replace(/"/g, "&quot;")
+    .replace(/'/g, "&#039;");
+}
 
 function generateBarChart(entries, maxBars = 10, color = "#6366f1") {
   const limited = entries.slice(0, maxBars);
@@ -62,8 +93,8 @@ function generateDonutChart(entries, maxSlices = 8) {
     "#84cc16", "#d946ef", "#f97316", "#ef4444",
   ];
 
-  let sorted = entries.slice().sort((a, b) => b[1] - a[1]);
-  let slices = sorted.slice(0, maxSlices);
+  const sorted = entries.slice().sort((a, b) => b[1] - a[1]);
+  const slices = sorted.slice(0, maxSlices);
   const otherSum = sorted.slice(maxSlices).reduce((s, [, v]) => s + v, 0);
   if (otherSum > 0) slices.push(["Other", otherSum]);
 
@@ -71,7 +102,6 @@ function generateDonutChart(entries, maxSlices = 8) {
   const cx = 120;
   const cy = 100;
   const innerR = 50;
-
   let angle = -Math.PI / 2;
   let paths = "";
   let legend = "";
@@ -88,26 +118,19 @@ function generateDonutChart(entries, maxSlices = 8) {
     const x4 = cx + innerR * Math.cos(angle);
     const y4 = cy + innerR * Math.sin(angle);
     const largeArc = sliceAngle > Math.PI ? 1 : 0;
-
+    const color = colors[i % colors.length];
     const d = `M ${x1} ${y1} A ${r} ${r} 0 ${largeArc} 1 ${x2} ${y2} L ${x3} ${y3} A ${innerR} ${innerR} 0 ${largeArc} 0 ${x4} ${y4} Z`;
-    paths += `<path d="${d}" fill="${colors[i % colors.length]}" stroke="var(--card-bg)" stroke-width="2"/>`;
-
-    const midAngle = angle + sliceAngle / 2;
-    const labelR = r + 22;
-    const lx = cx + labelR * Math.cos(midAngle);
-    const ly = cy + labelR * Math.sin(midAngle);
+    paths += `<path d="${d}" fill="${color}" stroke="var(--card-bg)" stroke-width="2"/>`;
     const pct = Math.round((val / total) * 100);
-
-    legend += `<div class="legend-item"><span class="swatch" style="background:${colors[i % colors.length]}"></span><span class="legend-label">${escapeHtml(key)}</span><span class="legend-pct">${pct}%</span></div>`;
-
+    legend += `<div class="legend-item"><span class="swatch" style="background:${color}"></span><span class="legend-label">${escapeHtml(key)}</span><span class="legend-pct">${pct}%</span></div>`;
     angle += sliceAngle;
   }
 
   return `<div class="donut-wrap"><svg viewBox="0 0 240 200" class="donut">${paths}<text x="${cx}" y="${cy + 5}" text-anchor="middle" class="donut-total">${total}</text></svg><div class="legend">${legend}</div></div>`;
 }
 
-function generateTimelineChart(timeline, maxPoints = 50) {
-  const bucketMs = 1000 * 60 * 60 * 24; // daily buckets
+function generateTimelineChart(timeline) {
+  const bucketMs = 1000 * 60 * 60 * 24;
   const buckets = new Map();
   for (const entry of timeline) {
     const bucket = Math.floor(entry.t / bucketMs) * bucketMs;
@@ -122,22 +145,15 @@ function generateTimelineChart(timeline, maxPoints = 50) {
   const pad = { top: 10, right: 10, bottom: 30, left: 40 };
   const chartW = w - pad.left - pad.right;
   const chartH = h - pad.top - pad.bottom;
-
   const minT = sorted[0][0];
   const maxT = sorted[sorted.length - 1][0];
 
   let points = "";
-  for (let i = 0; i < sorted.length; i++) {
-    const [t, val] = sorted[i];
+  for (const [t, val] of sorted) {
     const x = pad.left + ((t - minT) / (maxT - minT || 1)) * chartW;
     const y = pad.top + chartH - (val / maxVal) * chartH;
     points += `${x},${y} `;
   }
-
-  const firstX = pad.left;
-  const lastX = pad.left + chartW;
-  const bottomY = pad.top + chartH;
-  const areaPath = `M ${firstX} ${bottomY} L ${points.split(" ").filter(Boolean).join(" L ")} L ${lastX} ${bottomY} Z`;
 
   let grid = "";
   for (let i = 0; i <= 4; i++) {
@@ -157,16 +173,12 @@ function generateTimelineChart(timeline, maxPoints = 50) {
     xLabels += `<text x="${x}" y="${h - 6}" text-anchor="middle" class="axis">${date}</text>`;
   }
 
-  return `<svg viewBox="0 0 ${w} ${h}" class="timeline-chart"><defs><linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#6366f1" stop-opacity="0.3"/><stop offset="100%" stop-color="#6366f1" stop-opacity="0"/></linearGradient></defs>${grid}<path d="${areaPath}" fill="url(#areaGrad)"/><polyline points="${points}" fill="none" stroke="#6366f1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>${xLabels}</svg>`;
-}
+  const firstX = pad.left;
+  const lastX = pad.left + chartW;
+  const bottomY = pad.top + chartH;
+  const areaPath = `M ${firstX} ${bottomY} L ${points.split(" ").filter(Boolean).join(" L ")} L ${lastX} ${bottomY} Z`;
 
-function escapeHtml(str) {
-  return String(str)
-    .replace(/&/g, "&amp;")
-    .replace(/</g, "&lt;")
-    .replace(/>/g, "&gt;")
-    .replace(/"/g, "&quot;")
-    .replace(/'/g, "&#039;");
+  return `<svg viewBox="0 0 ${w} ${h}" class="timeline-chart"><defs><linearGradient id="areaGrad" x1="0" y1="0" x2="0" y2="1"><stop offset="0%" stop-color="#6366f1" stop-opacity="0.3"/><stop offset="100%" stop-color="#6366f1" stop-opacity="0"/></linearGradient></defs>${grid}<path d="${areaPath}" fill="url(#areaGrad)"/><polyline points="${points}" fill="none" stroke="#6366f1" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/>${xLabels}</svg>`;
 }
 
 function renderTable(entries, headers, limit = 20) {
@@ -176,7 +188,7 @@ function renderTable(entries, headers, limit = 20) {
   for (const [key, val] of visible) {
     rows += `<tr><td>${escapeHtml(key)}</td><td class="num">${val}</td></tr>`;
   }
-  return `<table><thead><tr>${headers.map((h) => `<th>${h}</th>`).join("")}</tr></thead><tbody>${rows}</tbody></table>`;
+  return `<table><thead><tr>${headers.map((h) => `<th>${escapeHtml(h)}</th>`).join("")}</tr></thead><tbody>${rows}</tbody></table>`;
 }
 
 function renderArtifactRows(rows, itemLabel, emptyMessage = "No data") {
@@ -186,6 +198,16 @@ function renderArtifactRows(rows, itemLabel, emptyMessage = "No data") {
     html += `<tr><td>${escapeHtml(row.name)}</td><td class="num">${row.count}</td></tr>`;
   }
   return `<table><thead><tr><th>${escapeHtml(itemLabel)}</th><th>Count</th></tr></thead><tbody>${html}</tbody></table>`;
+}
+
+function artifactIcon(id) {
+  switch (id) {
+    case "prompts": return "📝";
+    case "skills": return "📦";
+    case "customTools": return "🔧";
+    case "enabledModels": return "🤖";
+    default: return "📊";
+  }
 }
 
 function renderArtifactSummary(reports) {
@@ -233,34 +255,19 @@ function renderArtifactReport(report) {
 </section>`;
 }
 
-function artifactIcon(id) {
-  switch (id) {
-    case "prompts": return "📝";
-    case "skills": return "📦";
-    case "customTools": return "🔧";
-    case "enabledModels": return "🤖";
-    default: return "📊";
-  }
-}
-
 function renderExtensionUsage(counters) {
   const used = sortMap(counters.extensionUsed);
   const installed = Array.from(counters.extensionInstalled.keys()).sort();
   const unused = installed.filter((k) => !counters.extensionUsed.has(k));
 
-  let html = "";
-  if (used.length === 0) {
-    html += `<p class="empty">No extension usage observed</p>`;
-  } else {
-    html += renderTable(used, ["Extension", "Count"]);
-  }
+  let html = used.length === 0
+    ? `<p class="empty">No extension usage observed</p>`
+    : renderTable(used, ["Extension", "Count"]);
 
   if (unused.length > 0) {
     html += `<h3 style="margin-top:16px;font-size:0.95rem;color:var(--text-muted);">Installed but not used</h3>`;
     html += `<ul style="margin:8px 0 0 0;padding-left:20px;color:var(--text-muted);font-size:0.85rem;">`;
-    for (const name of unused) {
-      html += `<li>${escapeHtml(name)}</li>`;
-    }
+    for (const name of unused) html += `<li>${escapeHtml(name)}</li>`;
     html += `</ul>`;
   }
 
@@ -268,6 +275,7 @@ function renderExtensionUsage(counters) {
 }
 
 function renderRecent(events, count) {
+  if (events.length === 0) return `<p class="empty">No events in this interval</p>`;
   const subset = events.slice(-count).reverse();
   let rows = "";
   for (const entry of subset) {
@@ -279,12 +287,13 @@ function renderRecent(events, count) {
         .filter(([k]) => k !== "t" && k !== "event")
         .map(([k, v]) => `${k}=${JSON.stringify(v)}`)
         .join(" ");
-    rows += `<tr><td class="time">${time}</td><td><span class="badge ${badgeClass}">${entry.event}</span></td><td class="detail">${escapeHtml(detail || "—")}</td></tr>`;
+    rows += `<tr><td class="time">${time}</td><td><span class="badge ${badgeClass}">${escapeHtml(entry.event)}</span></td><td class="detail">${escapeHtml(detail || "—")}</td></tr>`;
   }
   return `<table class="recent"><thead><tr><th>Time</th><th>Event</th><th>Details</th></tr></thead><tbody>${rows}</tbody></table>`;
 }
 
-function generateReport(outputPath, recentCount) {
+function renderIntervalPanel(report, recentCount) {
+  const { interval, counters, recent, timeline } = report;
   const artifactReports = createArtifactReports(counters);
   const totalEvents = timeline.length;
   const totalSkills = counters.skillLoaded.size;
@@ -292,219 +301,15 @@ function generateReport(outputPath, recentCount) {
   const firstEvent = timeline.length > 0 ? new Date(timeline[0].t).toLocaleDateString() : "—";
   const lastEvent = timeline.length > 0 ? new Date(timeline[timeline.length - 1].t).toLocaleDateString() : "—";
 
-  const html = `<!DOCTYPE html>
-<html lang="en">
-<head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Pi Usage Report</title>
-<style>
-:root {
-  --bg: #0f0f13;
-  --card-bg: #1a1a23;
-  --card-border: #272730;
-  --text: #e2e2e8;
-  --text-muted: #8b8b9a;
-  --accent: #6366f1;
-  --accent2: #8b5cf6;
-  --success: #10b981;
-  --warning: #f59e0b;
-  --danger: #f43f5e;
-  --radius: 14px;
-  --shadow: 0 4px 24px rgba(0,0,0,0.35);
-}
-@media (prefers-color-scheme: light) {
-  :root {
-    --bg: #f5f5f7;
-    --card-bg: #ffffff;
-    --card-border: #e2e2e8;
-    --text: #1a1a23;
-    --text-muted: #6b6b7b;
-    --shadow: 0 4px 24px rgba(0,0,0,0.08);
-  }
-}
-* { box-sizing: border-box; }
-body {
-  margin: 0;
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
-  background: var(--bg);
-  color: var(--text);
-  line-height: 1.5;
-}
-.container { max-width: 1100px; margin: 0 auto; padding: 32px 20px; }
-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  margin-bottom: 32px;
-  flex-wrap: wrap;
-  gap: 12px;
-}
-h1 { font-size: 1.8rem; font-weight: 700; margin: 0; letter-spacing: -0.02em; }
-h1 span { color: var(--accent); }
-.subtitle { color: var(--text-muted); font-size: 0.95rem; margin-top: 4px; }
-.timestamp { color: var(--text-muted); font-size: 0.85rem; }
-
-.metrics {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: 16px;
-  margin-bottom: 32px;
-}
-.metric {
-  background: var(--card-bg);
-  border: 1px solid var(--card-border);
-  border-radius: var(--radius);
-  padding: 20px;
-  box-shadow: var(--shadow);
-  transition: transform 0.15s ease;
-}
-.metric:hover { transform: translateY(-2px); }
-.metric-value {
-  font-size: 2rem;
-  font-weight: 700;
-  background: linear-gradient(135deg, var(--accent), var(--accent2));
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  background-clip: text;
-}
-.metric-label { font-size: 0.85rem; color: var(--text-muted); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.04em; }
-
-section {
-  background: var(--card-bg);
-  border: 1px solid var(--card-border);
-  border-radius: var(--radius);
-  padding: 24px;
-  margin-bottom: 24px;
-  box-shadow: var(--shadow);
-}
-h2 { font-size: 1.15rem; font-weight: 600; margin: 0 0 16px 0; display: flex; align-items: center; gap: 8px; }
-h2 .icon { font-size: 1.3rem; }
-
-.grid-2 {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-  gap: 24px;
-}
-
-.artifact-summary {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 16px;
-}
-.summary-card {
-  border: 1px solid var(--card-border);
-  border-radius: 12px;
-  padding: 16px;
-  background: linear-gradient(180deg, rgba(99,102,241,0.08), rgba(99,102,241,0.025));
-}
-.summary-card.prompts { background: linear-gradient(180deg, rgba(16,185,129,0.10), rgba(16,185,129,0.025)); }
-.summary-card.skills { background: linear-gradient(180deg, rgba(139,92,246,0.10), rgba(139,92,246,0.025)); }
-.summary-card.customTools { background: linear-gradient(180deg, rgba(244,63,94,0.10), rgba(244,63,94,0.025)); }
-.summary-card.enabledModels { background: linear-gradient(180deg, rgba(245,158,11,0.10), rgba(245,158,11,0.025)); }
-h3 { font-size: 0.95rem; margin: 0 0 10px 0; color: var(--text); }
-.summary-bars { display: flex; flex-direction: column; gap: 10px; }
-.summary-bar-meta { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; font-size: 0.86rem; }
-.summary-bar-meta span { color: var(--text); overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
-.summary-bar-meta strong { color: var(--accent); font-variant-numeric: tabular-nums; }
-.summary-bar-track { height: 7px; overflow: hidden; border-radius: 999px; background: rgba(139,139,154,0.16); }
-.summary-bar-fill { height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--accent), var(--accent2)); }
-.summary-card.prompts .summary-bar-fill { background: linear-gradient(90deg, #10b981, #34d399); }
-.summary-card.skills .summary-bar-fill { background: linear-gradient(90deg, #8b5cf6, #a78bfa); }
-.summary-card.customTools .summary-bar-fill { background: linear-gradient(90deg, #f43f5e, #fb7185); }
-.summary-card.enabledModels .summary-bar-fill { background: linear-gradient(90deg, #f59e0b, #fbbf24); }
-.source-note { margin-top: -4px; margin-bottom: 18px; color: var(--text-muted); font-size: 0.85rem; }
-.full-ranking-heading { margin-top: 22px; }
-.empty.compact { padding: 0; text-align: left; }
-
-.bar-chart { width: 100%; height: auto; }
-.bar-chart .label { font-size: 11px; fill: var(--text-muted); }
-.bar-chart .value { font-size: 11px; fill: var(--text); font-weight: 600; }
-
-.donut-wrap { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; }
-.donut { width: 240px; height: 200px; flex-shrink: 0; }
-.donut-total { font-size: 22px; font-weight: 700; fill: var(--text); }
-.legend { display: flex; flex-direction: column; gap: 8px; }
-.legend-item { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; }
-.swatch { width: 12px; height: 12px; border-radius: 3px; flex-shrink: 0; }
-.legend-label { color: var(--text); }
-.legend-pct { color: var(--text-muted); margin-left: auto; font-variant-numeric: tabular-nums; }
-
-.timeline-chart { width: 100%; height: auto; }
-.timeline-chart .grid { stroke: var(--card-border); stroke-width: 1; }
-.timeline-chart .axis { font-size: 10px; fill: var(--text-muted); }
-
-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
-th { text-align: left; padding: 10px 12px; color: var(--text-muted); font-weight: 500; border-bottom: 1px solid var(--card-border); }
-td { padding: 10px 12px; border-bottom: 1px solid var(--card-border); }
-td.num { font-variant-numeric: tabular-nums; font-weight: 600; color: var(--accent); text-align: right; }
-tbody tr:hover { background: rgba(99,102,241,0.05); }
-.recent td.time { color: var(--text-muted); font-size: 0.82rem; white-space: nowrap; font-variant-numeric: tabular-nums; }
-.recent td.detail { color: var(--text-muted); font-size: 0.85rem; word-break: break-all; }
-
-.badge {
-  display: inline-block;
-  padding: 2px 10px;
-  border-radius: 999px;
-  font-size: 0.75rem;
-  font-weight: 600;
-  text-transform: uppercase;
-  letter-spacing: 0.03em;
-}
-.badge.session_start { background: rgba(16,185,129,0.12); color: var(--success); }
-.badge.skill_invoked { background: rgba(99,102,241,0.12); color: var(--accent); }
-.badge.model_used { background: rgba(245,158,11,0.12); color: var(--warning); }
-.badge.custom_tool_called { background: rgba(244,63,94,0.12); color: var(--danger); }
-.badge.skill_loaded { background: rgba(139,92,246,0.12); color: var(--accent2); }
-.badge.extension_loaded { background: rgba(20,184,166,0.12); color: #14b8a6; }
-.badge.extension_inventory { background: rgba(20,184,166,0.08); color: #0d9488; }
-.badge.extension_command_invoked { background: rgba(20,184,166,0.12); color: #14b8a6; }
-.badge.model_select { background: rgba(6,182,212,0.12); color: #06b6d4; }
-.badge.prompt_invoked { background: rgba(16,185,129,0.12); color: var(--success); }
-.badge { background: rgba(99,102,241,0.08); color: var(--text-muted); }
-
-.empty { color: var(--text-muted); font-style: italic; text-align: center; padding: 24px; }
-
-footer { text-align: center; color: var(--text-muted); font-size: 0.8rem; margin-top: 12px; }
-
-@media (max-width: 720px) {
-  .artifact-summary { grid-template-columns: 1fr; }
-}
-@media (max-width: 640px) {
-  .container { padding: 16px; }
-  h1 { font-size: 1.4rem; }
-  .metric-value { font-size: 1.5rem; }
-  .donut-wrap { justify-content: center; }
-}
-</style>
-</head>
-<body>
-<div class="container">
-<header>
-  <div>
-    <h1><span>Pi</span> Usage Report</h1>
-    <div class="subtitle">${totalEvents.toLocaleString()} events &middot; ${firstEvent} – ${lastEvent}</div>
-  </div>
-  <div class="timestamp">Generated ${new Date().toLocaleString()}</div>
-</header>
+  return `<div class="interval-heading">
+  <div class="subtitle">${totalEvents.toLocaleString()} events &middot; ${firstEvent} – ${lastEvent} &middot; interval: ${escapeHtml(interval)}</div>
+</div>
 
 <div class="metrics">
-  <div class="metric">
-    <div class="metric-value">${counters.sessionStart.toLocaleString()}</div>
-    <div class="metric-label">Sessions</div>
-  </div>
-  <div class="metric">
-    <div class="metric-value">${totalEvents.toLocaleString()}</div>
-    <div class="metric-label">Total Events</div>
-  </div>
-  <div class="metric">
-    <div class="metric-value">${totalSkills}</div>
-    <div class="metric-label">Skills Loaded</div>
-  </div>
-  <div class="metric">
-    <div class="metric-value">${totalModels}</div>
-    <div class="metric-label">Models Tried</div>
-  </div>
+  <div class="metric"><div class="metric-value">${counters.sessionStart.toLocaleString()}</div><div class="metric-label">Sessions</div></div>
+  <div class="metric"><div class="metric-value">${totalEvents.toLocaleString()}</div><div class="metric-label">Total Events</div></div>
+  <div class="metric"><div class="metric-value">${totalSkills}</div><div class="metric-label">Skills Loaded</div></div>
+  <div class="metric"><div class="metric-value">${totalModels}</div><div class="metric-label">Models Tried</div></div>
 </div>
 
 <section>
@@ -530,7 +335,7 @@ ${artifactReports.map(renderArtifactReport).join("\n")}
 ${counters.extensionCommandInvoked.size > 0 ? `<section>
   <h2><span class="icon">⚡</span> Extension Slash Commands</h2>
   ${renderTable(sortMap(counters.extensionCommandInvoked), ["Command", "Count"])}
-</section>` : ''}
+</section>` : ""}
 
 <section>
   <h2><span class="icon">🧩</span> Extensions Used</h2>
@@ -540,10 +345,142 @@ ${counters.extensionCommandInvoked.size > 0 ? `<section>
 <section>
   <h2><span class="icon">🕒</span> Recent Events</h2>
   ${renderRecent(recent, recentCount)}
-</section>
+</section>`;
+}
+
+function generateReport(outputPath, recentCount, intervalReports, selectedInterval) {
+  const optionsHtml = TIME_INTERVAL_OPTIONS.map((option) => {
+    const selected = option.value === selectedInterval ? " selected" : "";
+    return `<option value="${escapeHtml(option.value)}"${selected}>${escapeHtml(option.label)}</option>`;
+  }).join("");
+
+  const panelsHtml = intervalReports.map((report) => {
+    const hidden = report.interval === selectedInterval ? "" : " hidden";
+    return `<div class="interval-panel" data-interval-panel="${escapeHtml(report.interval)}"${hidden}>${renderIntervalPanel(report, recentCount)}</div>`;
+  }).join("\n");
+
+  const html = `<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Pi Usage Report</title>
+<style>
+:root { --bg: #0f0f13; --card-bg: #1a1a23; --card-border: #272730; --text: #e2e2e8; --text-muted: #8b8b9a; --accent: #6366f1; --accent2: #8b5cf6; --success: #10b981; --warning: #f59e0b; --danger: #f43f5e; --radius: 14px; --shadow: 0 4px 24px rgba(0,0,0,0.35); }
+@media (prefers-color-scheme: light) { :root { --bg: #f5f5f7; --card-bg: #ffffff; --card-border: #e2e2e8; --text: #1a1a23; --text-muted: #6b6b7b; --shadow: 0 4px 24px rgba(0,0,0,0.08); } }
+* { box-sizing: border-box; }
+body { margin: 0; font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; background: var(--bg); color: var(--text); line-height: 1.5; }
+.container { max-width: 1100px; margin: 0 auto; padding: 32px 20px; }
+header { display: flex; align-items: center; justify-content: space-between; margin-bottom: 24px; flex-wrap: wrap; gap: 16px; }
+h1 { font-size: 1.8rem; font-weight: 700; margin: 0; letter-spacing: -0.02em; }
+h1 span { color: var(--accent); }
+.subtitle, .timestamp { color: var(--text-muted); font-size: 0.9rem; }
+.interval-controls { display: flex; align-items: center; gap: 10px; color: var(--text-muted); font-size: 0.9rem; }
+.interval-controls select { appearance: none; color: var(--text); background: var(--card-bg); border: 1px solid var(--card-border); border-radius: 999px; padding: 8px 34px 8px 12px; box-shadow: var(--shadow); }
+.interval-panel[hidden] { display: none; }
+.interval-heading { margin: -6px 0 22px 0; }
+.metrics { display: grid; grid-template-columns: repeat(auto-fit, minmax(160px, 1fr)); gap: 16px; margin-bottom: 32px; }
+.metric, section { background: var(--card-bg); border: 1px solid var(--card-border); border-radius: var(--radius); box-shadow: var(--shadow); }
+.metric { padding: 20px; }
+.metric-value { font-size: 2rem; font-weight: 700; background: linear-gradient(135deg, var(--accent), var(--accent2)); -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text; }
+.metric-label { font-size: 0.85rem; color: var(--text-muted); margin-top: 4px; text-transform: uppercase; letter-spacing: 0.04em; }
+section { padding: 24px; margin-bottom: 24px; }
+h2 { font-size: 1.15rem; font-weight: 600; margin: 0 0 16px 0; display: flex; align-items: center; gap: 8px; }
+h2 .icon { font-size: 1.3rem; }
+h3 { font-size: 0.95rem; margin: 0 0 10px 0; color: var(--text); }
+.grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; }
+.artifact-summary { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
+.summary-card { border: 1px solid var(--card-border); border-radius: 12px; padding: 16px; background: linear-gradient(180deg, rgba(99,102,241,0.08), rgba(99,102,241,0.025)); }
+.summary-card.prompts { background: linear-gradient(180deg, rgba(16,185,129,0.10), rgba(16,185,129,0.025)); }
+.summary-card.skills { background: linear-gradient(180deg, rgba(139,92,246,0.10), rgba(139,92,246,0.025)); }
+.summary-card.customTools { background: linear-gradient(180deg, rgba(244,63,94,0.10), rgba(244,63,94,0.025)); }
+.summary-card.enabledModels { background: linear-gradient(180deg, rgba(245,158,11,0.10), rgba(245,158,11,0.025)); }
+.summary-bars { display: flex; flex-direction: column; gap: 10px; }
+.summary-bar-meta { display: flex; justify-content: space-between; align-items: baseline; gap: 12px; font-size: 0.86rem; }
+.summary-bar-meta span { overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.summary-bar-meta strong, td.num { color: var(--accent); font-variant-numeric: tabular-nums; }
+.summary-bar-track { height: 7px; overflow: hidden; border-radius: 999px; background: rgba(139,139,154,0.16); }
+.summary-bar-fill { height: 100%; border-radius: inherit; background: linear-gradient(90deg, var(--accent), var(--accent2)); }
+.source-note { margin-top: -4px; margin-bottom: 18px; color: var(--text-muted); font-size: 0.85rem; }
+.full-ranking-heading { margin-top: 22px; }
+.empty { color: var(--text-muted); font-style: italic; text-align: center; padding: 24px; }
+.empty.compact { padding: 0; text-align: left; }
+.bar-chart, .timeline-chart { width: 100%; height: auto; }
+.bar-chart .label, .bar-chart .value { font-size: 11px; fill: var(--text-muted); }
+.bar-chart .value { fill: var(--text); font-weight: 600; }
+.timeline-chart .grid { stroke: var(--card-border); stroke-width: 1; }
+.timeline-chart .axis { font-size: 10px; fill: var(--text-muted); }
+.donut-wrap { display: flex; align-items: center; gap: 24px; flex-wrap: wrap; }
+.donut { width: 240px; height: 200px; flex-shrink: 0; }
+.donut-total { font-size: 22px; font-weight: 700; fill: var(--text); }
+.legend { display: flex; flex-direction: column; gap: 8px; }
+.legend-item { display: flex; align-items: center; gap: 8px; font-size: 0.85rem; }
+.swatch { width: 12px; height: 12px; border-radius: 3px; flex-shrink: 0; }
+.legend-pct { color: var(--text-muted); margin-left: auto; font-variant-numeric: tabular-nums; }
+table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+th { text-align: left; padding: 10px 12px; color: var(--text-muted); font-weight: 500; border-bottom: 1px solid var(--card-border); }
+td { padding: 10px 12px; border-bottom: 1px solid var(--card-border); }
+td.num { font-weight: 600; text-align: right; }
+tbody tr:hover { background: rgba(99,102,241,0.05); }
+.recent td.time { color: var(--text-muted); font-size: 0.82rem; white-space: nowrap; font-variant-numeric: tabular-nums; }
+.recent td.detail { color: var(--text-muted); font-size: 0.85rem; word-break: break-all; }
+.badge { display: inline-block; padding: 2px 10px; border-radius: 999px; font-size: 0.75rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.03em; background: rgba(99,102,241,0.08); color: var(--text-muted); }
+.badge.session_start { background: rgba(16,185,129,0.12); color: var(--success); }
+.badge.skill_invoked { background: rgba(99,102,241,0.12); color: var(--accent); }
+.badge.model_used { background: rgba(245,158,11,0.12); color: var(--warning); }
+.badge.custom_tool_called { background: rgba(244,63,94,0.12); color: var(--danger); }
+.badge.skill_loaded { background: rgba(139,92,246,0.12); color: var(--accent2); }
+.badge.extension_loaded, .badge.extension_command_invoked { background: rgba(20,184,166,0.12); color: #14b8a6; }
+.badge.extension_inventory { background: rgba(20,184,166,0.08); color: #0d9488; }
+.badge.model_select { background: rgba(6,182,212,0.12); color: #06b6d4; }
+.badge.prompt_invoked { background: rgba(16,185,129,0.12); color: var(--success); }
+footer { text-align: center; color: var(--text-muted); font-size: 0.8rem; margin-top: 12px; }
+@media (max-width: 720px) { .artifact-summary { grid-template-columns: 1fr; } }
+@media (max-width: 640px) { .container { padding: 16px; } h1 { font-size: 1.4rem; } .metric-value { font-size: 1.5rem; } .donut-wrap { justify-content: center; } }
+</style>
+</head>
+<body>
+<div class="container">
+<header>
+  <div>
+    <h1><span>Pi</span> Usage Report</h1>
+    <div class="timestamp">Generated ${new Date().toLocaleString()}</div>
+  </div>
+  <label class="interval-controls" for="interval-selector">
+    Time interval
+    <select id="interval-selector" name="interval" data-interval-selector>${optionsHtml}</select>
+  </label>
+</header>
+
+${panelsHtml}
 
 <footer>Generated by pi-usage-report-html &middot; Data from ~/.pi/agent/usage-stats.jsonl</footer>
 </div>
+<script>
+(() => {
+  const selector = document.querySelector('[data-interval-selector]');
+  const panels = Array.from(document.querySelectorAll('[data-interval-panel]'));
+  const values = new Set(panels.map((panel) => panel.dataset.intervalPanel));
+  const params = new URLSearchParams(window.location.search);
+  const queryInterval = params.get('interval');
+
+  function show(interval) {
+    if (!values.has(interval)) interval = selector.value;
+    selector.value = interval;
+    for (const panel of panels) {
+      panel.hidden = panel.dataset.intervalPanel !== interval;
+    }
+    try {
+      const url = new URL(window.location.href);
+      url.searchParams.set('interval', interval);
+      history.replaceState(null, '', url);
+    } catch {}
+  }
+
+  selector.addEventListener('change', () => show(selector.value));
+  show(values.has(queryInterval) ? queryInterval : selector.value);
+})();
+</script>
 </body>
 </html>`;
 
@@ -553,12 +490,21 @@ ${counters.extensionCommandInvoked.size > 0 ? `<section>
 
 async function main() {
   const args = process.argv.slice(2);
-  const outputPath = args.find((a) => a.startsWith("--output="))?.slice(9) || DEFAULT_OUTPUT;
-  const recentCount = Number(args.find((a) => a.startsWith("--recent="))?.slice(9) || 50);
+  const outputPath = optionValue(args, "--output") || DEFAULT_OUTPUT;
+  const recentCount = Number(optionValue(args, "--recent") || 50);
+  let selectedInterval;
 
   try {
+    selectedInterval = normalizeTimeInterval(optionValue(args, "--interval"));
+  } catch (err) {
+    console.error(err.message);
+    process.exit(2);
+  }
+
+  const entries = [];
+  try {
     for await (const entry of readStatsEntries(STATS_PATH)) {
-      processEntry(entry);
+      entries.push(entry);
     }
   } catch (err) {
     if (err.code === "ENOENT") {
@@ -569,7 +515,13 @@ async function main() {
     throw err;
   }
 
-  const path = generateReport(outputPath, recentCount);
+  const now = Date.now();
+  const intervalReports = TIME_INTERVAL_OPTIONS.map((option) => ({
+    interval: option.value,
+    ...collectEntries(entries, option.value, now),
+  }));
+
+  const path = generateReport(outputPath, recentCount, intervalReports, selectedInterval);
   console.log(`✅ HTML report written to ${path}`);
   console.log(`   Open it: open ${path}`);
 }

@@ -34,6 +34,60 @@ const BUILTIN_TOOLS = new Set([
   "ls",
 ]);
 
+const DAY_MS = 24 * 60 * 60 * 1000;
+
+export const TIME_INTERVAL_OPTIONS = [
+  { value: "today", label: "today" },
+  { value: "last 3 days", label: "last 3 days" },
+  { value: "last 7 days", label: "last 7 days" },
+  { value: "last 10 days", label: "last 10 days" },
+  { value: "last 30 days", label: "last 30 days" },
+  { value: "last 90 days", label: "last 90 days" },
+  { value: "last year", label: "last year" },
+  { value: "all", label: "all" },
+];
+
+const TIME_INTERVAL_VALUES = new Set(TIME_INTERVAL_OPTIONS.map((option) => option.value));
+
+export function normalizeTimeInterval(value = "all") {
+  const normalized = String(value || "all").trim().toLowerCase();
+  if (TIME_INTERVAL_VALUES.has(normalized)) return normalized;
+  throw new Error(
+    `Invalid time interval: ${value}. Expected one of: ${TIME_INTERVAL_OPTIONS.map((option) => option.value).join(", ")}`,
+  );
+}
+
+function intervalStartMs(interval, now = Date.now()) {
+  switch (normalizeTimeInterval(interval)) {
+    case "all":
+      return Number.NEGATIVE_INFINITY;
+    case "today": {
+      const date = new Date(now);
+      date.setHours(0, 0, 0, 0);
+      return date.getTime();
+    }
+    case "last 3 days":
+      return now - 3 * DAY_MS;
+    case "last 7 days":
+      return now - 7 * DAY_MS;
+    case "last 10 days":
+      return now - 10 * DAY_MS;
+    case "last 30 days":
+      return now - 30 * DAY_MS;
+    case "last 90 days":
+      return now - 90 * DAY_MS;
+    case "last year":
+      return now - 365 * DAY_MS;
+  }
+}
+
+export function entryMatchesTimeInterval(entry, interval = "all", now = Date.now()) {
+  const normalized = normalizeTimeInterval(interval);
+  if (normalized === "all") return true;
+  if (!entry || typeof entry.t !== "number" || !Number.isFinite(entry.t)) return false;
+  return entry.t >= intervalStartMs(normalized, now) && entry.t <= now;
+}
+
 export function skillNameFromPath(path) {
   if (!path || typeof path !== "string") return path;
   const name = basename(dirname(path));
