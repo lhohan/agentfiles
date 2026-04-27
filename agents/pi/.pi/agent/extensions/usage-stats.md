@@ -33,7 +33,7 @@ When an extension-managed prompt is recorded, the `prompt_invoked` entry include
 - `sourceInfo` with `path`, `source`, `scope`, and `origin` pointing at the prompt template file
 - `inferred: true` only when captured by the `before_agent_start` fallback
 
-Native Pi prompts take precedence over extension-managed prompts when both could match. The shared reporter counts `prompt_invoked` entries with an `extension` field toward that extension's usage.
+Native Pi prompts take precedence over extension-managed prompts when both could match. The shared reporter preserves `prompt_invoked` entries with an `extension` field for raw-event attribution, but it no longer rolls those entries into a standalone extension-usage summary. Extension context is shown inline where available, especially for custom tools and extension slash commands.
 
 ## Data file
 
