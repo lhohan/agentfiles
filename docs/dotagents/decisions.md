@@ -2,6 +2,14 @@
 
 Dotagents-specific decisions are listed in reverse chronological order (most recent first).
 
+### dotagents-005: interrogate-plan recovers grill-me branch coverage without full verbosity [Accepted]
+
+> **In the context of** interrogate-plan stopping too early—accepting an implementable plan while material semantic decisions remained live,
+> **facing** the choice between replacing it with grill-me (exhaustive) or revising it to be compressed-but-not-shallow,
+> **we decided** to revise interrogate-plan so that it enumerates live semantic decisions before finalising a plan, uses a bounded threshold for low-risk classification (local, reversible, non-user-visible), and asks when risk depends on product intent or policy—keeping the skill general-purpose and repository-agnostic,
+> **to achieve** a compressed interrogation that surfaces hidden decision branches without the verbosity of full grill-me questioning,
+> **accepting** that the skill is longer, and that the agent still judges low-risk technical leftovers without user input.
+
 ### dotagents-004: Delegate `/implement` to vendored implementation skills [Accepted]
 
 > **In the context of** replacing the stub `/implement` prompt with reusable implementation guidance,
