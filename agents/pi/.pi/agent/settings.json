@@ -13,16 +13,12 @@
   },
   "treeFilterMode": "default",
   "hideThinkingBlock": false,
-  "packages": [
-    "npm:pi-prompt-template-model@0.7.3"
-  ],
+  "packages": ["npm:pi-prompt-template-model@0.7.3"],
   "enabledModels": [
     "openai-codex/gpt-5.4-mini",
     "openai-codex/gpt-5.4",
     "openai-codex/gpt-5.3-codex",
     "opencode/gemini-3-flash",
-    "opencode-go/mimo-v2-pro",
-    "opencode-go/minimax-m2.7",
     "opencode-go/qwen3.6-plus",
     "opencode-go/kimi-k2.6",
     "openai-codex/gpt-5.5",

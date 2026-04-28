@@ -1,6 +1,6 @@
 ---
 description: Implement features, fixes, or tasks using walking-skeleton and verification guidance
-model: opencode-go/kimi-k2.6
+model: opencode-go/kimi-k2.6,opencode-go/deepseek-v4-pro
 thinking: high
 restore: false
 ---
