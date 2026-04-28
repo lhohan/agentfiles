@@ -5,6 +5,8 @@ description: Inspect the codebase, infer behaviour and constraints, then resolve
 
 Inspect the relevant parts of the codebase first using read-only tools. Infer as much as possible from code, tests, configuration, and documentation before asking the user anything.
 
+When the user arrives with a pre-baked solution (e.g., "add X to Y", "Your proposed improvement: ...", "just do Z"), treat it as a hypothesis, not a settled requirement. Before enumerating semantic decisions, validate intent: ask whether the proposed change captures the full problem or only a partial solution, and whether unstated requirements (e.g., per-agent defaults, out-of-the-box behaviour) exist. Do not proceed to `write-implementation-plan` until the true requirements boundary is clear.
+
 After inspection, actively enumerate live semantic decisions and ask about them rather than silently accepting a plan that is implementable but underspecified.
 
 Build a short behavioural inventory:
