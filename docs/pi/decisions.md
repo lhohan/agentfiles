@@ -2,6 +2,21 @@
 
 Pi-specific decisions are listed in reverse chronological order (most recent first).
 
+### pi-025: Accept pi.setModel() persistence for skill-triggered model switching [Accepted]
+
+> **In the context of** adding JSON-configured model switching for `/skill:name` commands,
+> **facing** Pi not exposing a session-only or turn-local model switch API,
+> **we decided** to use the public `pi.setModel()` API in an `input` event handler, accepting that the switch persists for the remainder of the Pi session,
+> **to achieve** automatic model selection per skill without custom provider hacks or prompt-template frontmatter workarounds,
+> **accepting** that:
+>   - the model switch is sticky and not automatically restored after the skill run ends
+>   - users must manually change models or start a new session to revert
+>   - documentation must clearly state this persistence caveat
+>
+> **Rationale:** `pi.setModel()` is the only public, stable API for changing the active model from an extension. Attempting to snapshot and restore the model around skill execution would require intercepting `agent_end` or similar, creating fragile state management and potential race conditions. The persistence trade-off is acceptable because explicit `/skill:name` invocations are intentional, and users can see the active model in the TUI footer.
+>
+> **Scope limit:** The extension only acts on explicit `/skill:<name>` input. It does not intercept skills loaded via frontmatter, implicit skill reads, or prompt-template expansion.
+
 ### pi-024: Remove dedicated prompt telemetry and reporting from usage-stats [Accepted]
 
 > **In the context of** simplifying the usage-stats extension and reducing its surface area,

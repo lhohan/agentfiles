@@ -63,6 +63,8 @@ Located in [Pi](agents/pi).
 
 - A [Usage statistics extension](agents/pi/.pi/agent/extensions/usage-stats.ts) that tracks skill, loaded extensions, command, tool, and model usage into a local JSONL file, with standalone reporting executables at [`~/.pi/agent/bin/pi-usage-report`](agents/pi/.pi/agent/bin/pi-usage-report) and [`~/.pi/agent/bin/pi-usage-report-html`](agents/pi/.pi/agent/bin/pi-usage-report-html). The reports include configurable time-interval filtering, consistent most-used, least-used, and full-list artifact rankings for skills, custom tools, and enabled models, inline extension context for extension-owned commands/tools, and an HTML at-a-glance summary. [Documentation](agents/pi/.pi/agent/extensions/usage-stats.md)
 
+- A [Skill model switch extension](agents/pi/.pi/agent/extensions/skill-model-switch.ts) that switches to a configured model before executing explicit `/skill:<name>` commands. Mapping is read from an adjacent JSON config file. [Documentation](agents/pi/.pi/agent/extensions/skill-model-switch.md)
+
   
 ## Tooling
 
