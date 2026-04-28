@@ -26,11 +26,14 @@ Built-in tools (`read`, `bash`, `edit`, `write`, `grep`, `find`, `ls`) are inten
 
 Prompt templates are identified from `pi.getCommands()` (`source: "prompt"`). Extension-managed prompts (e.g. `/plan`, `/review` via `pi-prompt-template-model`) are discovered by scanning `~/.pi/agent/prompts` and `<cwd>/.pi/prompts` recursively for Markdown files with frontmatter indicating they are managed by `pi-prompt-template-model`.
 
-For normal slash-command input, native prompt commands are recorded directly during `input` interception. For extension-managed prompts, the resolved command metadata is matched against scanned managed prompt entries before attribution to `pi-prompt-template-model`. `before_agent_start` still performs prefix-based inference as a fallback for flows where prompt invocations bypass `input` interception.
+For normal slash-command input, native prompt commands are recorded directly during `input` interception. For extension-managed prompts, the resolved command metadata is matched against scanned managed prompt entries before attribution to `pi-prompt-template-model`. `before_agent_start` performs title-based inference as the primary fallback for flows where prompt invocations bypass `input` interception, extracting the first Markdown H1 title from the rendered prompt and matching it against known prompt entries. This avoids placeholder-substitution issues (e.g. `$@` in `/implement`). Prefix-based matching is retained as a secondary fallback for prompts without an H1 title.
+
+Prompt templates SHOULD include a unique fixed H1 title as the first body line after frontmatter. This title serves as the telemetry anchor for fallback detection and is displayed in usage reports when available.
 
 When an extension-managed prompt is recorded, the `prompt_invoked` entry includes:
 - `extension: "pi-prompt-template-model"`
 - `sourceInfo` with `path`, `source`, `scope`, and `origin` pointing at the prompt template file
+- `promptTitle: "..."` when the H1 title is known (from both `input` and `before_agent_start` paths)
 - `inferred: true` only when captured by the `before_agent_start` fallback
 
 Native Pi prompts take precedence over extension-managed prompts when both could match. The shared reporter preserves `prompt_invoked` entries with an `extension` field for raw-event attribution, but it no longer rolls those entries into a standalone extension-usage summary. Extension context is shown inline where available, especially for custom tools and extension slash commands.

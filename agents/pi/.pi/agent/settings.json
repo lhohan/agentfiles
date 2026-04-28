@@ -1,7 +1,7 @@
 {
-  "lastChangelogVersion": "0.70.2",
-  "defaultProvider": "openai-codex",
-  "defaultModel": "gpt-5.4-mini",
+  "lastChangelogVersion": "0.70.5",
+  "defaultProvider": "opencode-go",
+  "defaultModel": "deepseek-v4-flash",
   "defaultThinkingLevel": "high",
   "theme": "kanagawa-dragon",
   "terminal": {
@@ -20,13 +20,14 @@
     "openai-codex/gpt-5.4-mini",
     "openai-codex/gpt-5.4",
     "openai-codex/gpt-5.3-codex",
-    "opencode-go/glm-5.1",
     "opencode/gemini-3-flash",
     "opencode-go/mimo-v2-pro",
     "opencode-go/minimax-m2.7",
     "opencode-go/qwen3.6-plus",
     "opencode-go/kimi-k2.6",
-    "openai-codex/gpt-5.5"
+    "openai-codex/gpt-5.5",
+    "opencode-go/deepseek-v4-flash",
+    "opencode-go/deepseek-v4-pro"
   ],
   "enableSkillCommands": true,
   "showHardwareCursor": true,

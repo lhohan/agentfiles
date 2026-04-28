@@ -116,9 +116,20 @@ function normalizeText(text: string): string {
   return text.replace(/\r\n/g, "\n").replace(/\s+/g, " ").trim();
 }
 
+/**
+ * Extract the first H1 title from markdown body text.
+ * Matches the first line starting with "# " after frontmatter stripping.
+ * Returns the title text without the "# " prefix, or undefined if no H1 found.
+ */
+function extractTitle(text: string): string | undefined {
+  const match = text.match(/^#\s+(.+)$/m);
+  return match ? match[1].trim() : undefined;
+}
+
 interface PromptEntry {
   name: string;
   prefix: string;
+  title?: string;
   sourceInfo?: { path?: string; source?: string; scope?: string; origin?: string };
 }
 
@@ -150,6 +161,7 @@ function buildPromptIndex(pi: ExtensionAPI): PromptIndex {
         const normalized = normalizeText(body);
         if (normalized.length > 0) {
           entry.prefix = normalized.slice(0, 180);
+          entry.title = extractTitle(body);
           signatures.push(entry);
         }
       } catch {
@@ -167,8 +179,8 @@ function scanPromptDir(
   dir: string,
   scope: "user" | "project",
   visitedDirectories = new Set<string>(),
-): Array<{ name: string; path: string; prefix: string; scope: "user" | "project" }> {
-  const results: Array<{ name: string; path: string; prefix: string; scope: "user" | "project" }> = [];
+): Array<{ name: string; path: string; prefix: string; title?: string; scope: "user" | "project" }> {
+  const results: Array<{ name: string; path: string; prefix: string; title?: string; scope: "user" | "project" }> = [];
   if (!existsSync(dir)) return results;
 
   let canonicalDir: string;
@@ -226,6 +238,7 @@ function scanPromptDir(
         name: entry.name.slice(0, -3),
         path: fullPath,
         prefix: normalized.slice(0, 180),
+        title: extractTitle(body),
         scope,
       });
     } catch {
@@ -244,27 +257,29 @@ function buildExtensionManagedPromptIndex(): PromptIndex {
   const globalDir = join(homedir(), ".pi", "agent", "prompts");
   const projectDir = resolve(process.cwd(), ".pi", "prompts");
 
-  for (const { name, path, prefix, scope } of scanPromptDir(globalDir, "user")) {
+  for (const { name, path, prefix, title, scope } of scanPromptDir(globalDir, "user")) {
     names.add(name);
     const entry: PromptEntry = {
       name,
       prefix,
+      title,
       sourceInfo: { path, source: "prompt", scope, origin: "pi-prompt-template-model" },
     };
     prompts.set(name, entry);
-    if (prefix.length >= 32) signatures.push(entry);
+    if (prefix.length > 0) signatures.push(entry);
   }
 
-  for (const { name, path, prefix, scope } of scanPromptDir(projectDir, "project")) {
+  for (const { name, path, prefix, title, scope } of scanPromptDir(projectDir, "project")) {
     names.add(name);
     const entry: PromptEntry = {
       name,
       prefix,
+      title,
       sourceInfo: { path, source: "prompt", scope, origin: "pi-prompt-template-model" },
     };
     // Project overrides user
     prompts.set(name, entry);
-    if (prefix.length >= 32) {
+    if (prefix.length > 0) {
       const existingIdx = signatures.findIndex((s) => s.name === name);
       if (existingIdx !== -1) signatures.splice(existingIdx, 1);
       signatures.push(entry);
@@ -313,7 +328,7 @@ export default function usageStatsExtension(pi: ExtensionAPI) {
 
   const recordPromptInvocation = (
     name: string,
-    opts: { sourceInfo?: { path?: string; source?: string; scope?: string; origin?: string }; args?: string; inferred?: boolean; extension?: string } = {},
+    opts: { sourceInfo?: { path?: string; source?: string; scope?: string; origin?: string }; args?: string; inferred?: boolean; extension?: string; title?: string } = {},
   ) => {
     const detail: Record<string, unknown> = { name };
     if (opts.sourceInfo) {
@@ -327,6 +342,9 @@ export default function usageStatsExtension(pi: ExtensionAPI) {
     }
     if (opts.extension) {
       detail.extension = opts.extension;
+    }
+    if (opts.title) {
+      detail.promptTitle = opts.title;
     }
     collector.record("prompt_invoked", detail);
     rememberPromptInvocation(name);
@@ -399,7 +417,7 @@ export default function usageStatsExtension(pi: ExtensionAPI) {
 
     if (promptIndex.names.has(name)) {
       const entry = promptIndex.prompts.get(name);
-      recordPromptInvocation(name, { sourceInfo: entry?.sourceInfo, args });
+      recordPromptInvocation(name, { sourceInfo: entry?.sourceInfo, args, title: entry?.title });
       return;
     }
 
@@ -415,6 +433,7 @@ export default function usageStatsExtension(pi: ExtensionAPI) {
       if (managedEntry) {
         recordPromptInvocation(managedEntry.name, {
           sourceInfo: managedEntry.sourceInfo,
+          title: managedEntry.title,
           args,
           extension: "pi-prompt-template-model",
         });
@@ -422,9 +441,11 @@ export default function usageStatsExtension(pi: ExtensionAPI) {
       }
 
       switch (cmd.source) {
-        case "prompt":
-          recordPromptInvocation(cmd.name, { sourceInfo: cmd.sourceInfo, args });
+        case "prompt": {
+          const promptTitle = promptIndex.prompts.get(cmd.name)?.title;
+          recordPromptInvocation(cmd.name, { sourceInfo: cmd.sourceInfo, args, title: promptTitle });
           break;
+        }
         case "extension": {
           const extName = cmd.sourceInfo?.path
             ? extensionNameFromPath(cmd.sourceInfo.path)
@@ -517,9 +538,11 @@ export default function usageStatsExtension(pi: ExtensionAPI) {
 
   // --- Prompt fallback detection ---
   // Some extension-command flows can bypass `input` interception.
-  // This fallback inspects the final prompt text before the agent starts and
-  // matches it against known prompt template prefixes.
-  // Native Pi prompts are checked first; extension-managed prompts second.
+  // This fallback inspects the final prompt text before the agent starts
+  // and matches it against known prompt template prefixes.
+  // Title-based matching (H1 fallback anchor) is checked first;
+  // prefix-based matching is retained for prompts without an H1 title.
+  // Native Pi prompts are checked before extension-managed prompts.
   pi.on("before_agent_start", async (event) => {
     if (promptIndex.signatures.length === 0) {
       refreshPromptIndex();
@@ -531,26 +554,63 @@ export default function usageStatsExtension(pi: ExtensionAPI) {
     const normalizedPrompt = normalizeText(event.prompt);
     if (normalizedPrompt.length === 0) return;
 
+    const promptTitle = extractTitle(event.prompt);
+
+    // Title-based matching: extract first H1 from rendered prompt and match
+    // against known prompt entries. This avoids placeholder issues such as $@
+    // in prompts like /implement.
+    if (promptTitle) {
+      for (const sig of promptIndex.signatures) {
+        if (!sig.title) continue;
+        if (sig.title !== promptTitle) continue;
+        if (wasPromptRecentlyRecorded(sig.name)) continue;
+
+        recordPromptInvocation(sig.name, {
+          sourceInfo: sig.sourceInfo,
+          title: sig.title,
+          inferred: true,
+        });
+        return;
+      }
+
+      for (const sig of extManagedPromptIndex.signatures) {
+        if (!sig.title) continue;
+        if (sig.title !== promptTitle) continue;
+        if (wasPromptRecentlyRecorded(sig.name)) continue;
+
+        recordPromptInvocation(sig.name, {
+          sourceInfo: sig.sourceInfo,
+          extension: "pi-prompt-template-model",
+          title: sig.title,
+          inferred: true,
+        });
+        return;
+      }
+    }
+
+    // Fallback: prefix-based matching for prompts without an H1 title
     for (const sig of promptIndex.signatures) {
-      if (!sig.prefix || sig.prefix.length < 32) continue;
+      if (!sig.prefix) continue;
       if (!normalizedPrompt.startsWith(sig.prefix)) continue;
       if (wasPromptRecentlyRecorded(sig.name)) continue;
 
       recordPromptInvocation(sig.name, {
         sourceInfo: sig.sourceInfo,
+        title: sig.title,
         inferred: true,
       });
       return;
     }
 
     for (const sig of extManagedPromptIndex.signatures) {
-      if (!sig.prefix || sig.prefix.length < 32) continue;
+      if (!sig.prefix) continue;
       if (!normalizedPrompt.startsWith(sig.prefix)) continue;
       if (wasPromptRecentlyRecorded(sig.name)) continue;
 
       recordPromptInvocation(sig.name, {
         sourceInfo: sig.sourceInfo,
         extension: "pi-prompt-template-model",
+        title: sig.title,
         inferred: true,
       });
       return;

@@ -2,6 +2,19 @@
 
 Pi-specific decisions are listed in reverse chronological order (most recent first).
 
+### pi-023: Use H1 title as telemetry anchor for prompt fallback detection [Accepted]
+
+> **In the context of** the `before_agent_start` fallback needing to detect which prompt template was invoked,
+> **facing** prefix-based matching (first 180 chars of normalized body) failing when the prompt body contains template placeholders like `$@` that get substituted before the rendered prompt is compared,
+> **we decided** to extract the first Markdown H1 title from each prompt body and use exact title matching as the primary fallback, retaining prefix matching only for prompts without an H1 title,
+> **to achieve** reliable prompt attribution even for prompts with placeholder-heavy bodies (e.g. `/implement`), while keeping the rule simple and the matching deterministic,
+> **accepting** that:
+>   - prompts must include a unique fixed H1 title as the first body line after frontmatter for title-based matching to work
+>   - prefix matching remains available for prompts that lack an H1 title
+>   - the H1 title is also stored in `prompt_invoked` events as `promptTitle` for display in usage reports
+>
+> **Rationale:** The H1 title is a stable, fixed string that does not change between the template file and the rendered prompt, unlike the body prefix which can shift when template placeholders are replaced at runtime. Title matching avoids the brittleness of character-offset prefix comparisons while being simple enough to implement with a single regex.
+
 ### pi-022: Show usage-stats extension context inline [Accepted]
 
 > **In the context of** making usage-stats reports explain which extension contributed a tool call or slash command,
@@ -67,6 +80,8 @@ Pi-specific decisions are listed in reverse chronological order (most recent fir
 > **Rationale:** The `before_agent_start` fallback is the only available interception point for extension-managed prompt commands, because Pi does not expose a generic post-dispatch "extension command executed" event. Synthesising `sourceInfo` from the prompt file path keeps reporter logic consistent without special-casing extension-managed prompts everywhere. The coupling is bounded to discovery directory scanning and a simple frontmatter heuristic, not deep integration with `pi-prompt-template-model`'s runtime.
 
 **Amendment (2026-04-26):** `usage-stats` now resolves the command first and only records an extension-managed prompt from `input` when the resolved command metadata confirms the scanned `pi-prompt-template-model` entry. This avoids attributing stale scans or command-name collisions as managed prompts while leaving `before_agent_start` fallback inference unchanged.
+
+**Amendment (2026-04-27):** The fallback prefix matcher now accepts any non-empty managed prompt body instead of enforcing a 32-character minimum. That keeps short prompt templates such as `/implement` observable while still relying on the primary command-resolution path first.
 
 ### pi-017: Do not track frontmatter-injected skills in usage-stats [Accepted]
 

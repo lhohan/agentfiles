@@ -132,6 +132,7 @@ export function extensionOwnedEntries(counts, owners = new Map()) {
 export function createCollector({ trackTimeline = false } = {}) {
   const counters = {
     promptInvoked: new Map(),
+    promptTitles: new Map(),
     extensionCommandInvoked: new Map(),
     customToolCalled: new Map(),
     customToolExtensions: new Map(),
@@ -170,6 +171,9 @@ export function createCollector({ trackTimeline = false } = {}) {
           entry.name,
           (counters.promptInvoked.get(entry.name) || 0) + 1,
         );
+        if (entry.promptTitle && !counters.promptTitles.has(entry.name)) {
+          counters.promptTitles.set(entry.name, entry.promptTitle);
+        }
         break;
       case "extension_command_invoked":
         counters.extensionCommandInvoked.set(
@@ -305,6 +309,10 @@ export function createArtifactReports(counters, options = {}) {
       counts: counters.promptInvoked,
       inventory: inventories.prompts || [],
       inventoryDiscovered: !!discovered.prompts,
+      displayNameForName: (name) => {
+        const title = counters.promptTitles?.get(name);
+        return title ? `${title} (${name})` : name;
+      },
     }),
     createArtifactReport({
       id: "skills",
@@ -675,6 +683,7 @@ export function discoverEnabledModelInventory(options = {}) {
 export function promptDisplayFromEntry(entry) {
   return {
     name: entry.name || "unknown",
+    title: entry.promptTitle,
     provenance: entry.sourceInfo?.path,
     extension: entry.extension,
   };
@@ -683,6 +692,7 @@ export function promptDisplayFromEntry(entry) {
 export function formatPromptDetail(entry) {
   const parts = [];
   parts.push(`name="${entry.name || "unknown"}"`);
+  if (entry.promptTitle) parts.push(`title="${entry.promptTitle}"`);
   if (entry.args) parts.push(`args=${JSON.stringify(entry.args)}`);
   if (entry.sourceInfo?.path) parts.push(`path="${entry.sourceInfo.path}"`);
   if (entry.extension) parts.push(`extension="${entry.extension}"`);
