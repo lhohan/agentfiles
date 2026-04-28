@@ -1,13 +1,12 @@
 # Usage Statistics Extension
 
-Collects anonymous usage statistics for Pi skills, prompt templates, loaded extensions, extension commands, custom tools, and model selections.
+Collects anonymous usage statistics for Pi skills, loaded extensions, extension commands, custom tools, and model selections.
 
 ## What is tracked
 
 | Event | Trigger | Fields |
 |---|---|---|
 | `skill_invoked` | User types `/skill:name` | `name`, `args` |
-| `prompt_invoked` | User types `/templatename` | `name`, `args`, `sourceInfo`, `inferred`, `extension` |
 | `extension_command_invoked` | User types an extension-provided slash command (e.g. `/extcommand`) | `name`, `args`, `extension` |
 | `extension_loaded` | Agent loads an extension | `extension` |
 | `extension_inventory` | Session start discovers extension-backed commands/tools | `extension` |
@@ -24,19 +23,7 @@ The report merges `skill_loaded`, `skill_invoked`, and `skill_command_invoked` i
 
 Built-in tools (`read`, `bash`, `edit`, `write`, `grep`, `find`, `ls`) are intentionally **not** tracked to reduce noise.
 
-Prompt templates are identified from `pi.getCommands()` (`source: "prompt"`). Extension-managed prompts (e.g. `/plan`, `/review` via `pi-prompt-template-model`) are discovered by scanning `~/.pi/agent/prompts` and `<cwd>/.pi/prompts` recursively for Markdown files with frontmatter indicating they are managed by `pi-prompt-template-model`.
-
-For normal slash-command input, native prompt commands are recorded directly during `input` interception. For extension-managed prompts, the resolved command metadata is matched against scanned managed prompt entries before attribution to `pi-prompt-template-model`. `before_agent_start` performs title-based inference as the primary fallback for flows where prompt invocations bypass `input` interception, extracting the first Markdown H1 title from the rendered prompt and matching it against known prompt entries. This avoids placeholder-substitution issues (e.g. `$@` in `/implement`). Prefix-based matching is retained as a secondary fallback for prompts without an H1 title.
-
-Prompt templates SHOULD include a unique fixed H1 title as the first body line after frontmatter. This title serves as the telemetry anchor for fallback detection and is displayed in usage reports when available.
-
-When an extension-managed prompt is recorded, the `prompt_invoked` entry includes:
-- `extension: "pi-prompt-template-model"`
-- `sourceInfo` with `path`, `source`, `scope`, and `origin` pointing at the prompt template file
-- `promptTitle: "..."` when the H1 title is known (from both `input` and `before_agent_start` paths)
-- `inferred: true` only when captured by the `before_agent_start` fallback
-
-Native Pi prompts take precedence over extension-managed prompts when both could match. The shared reporter preserves `prompt_invoked` entries with an `extension` field for raw-event attribution, but it no longer rolls those entries into a standalone extension-usage summary. Extension context is shown inline where available, especially for custom tools and extension slash commands.
+Extension context is shown inline where available, especially for custom tools and extension slash commands.
 
 ## Data file
 
@@ -79,7 +66,6 @@ Both reporters support these time intervals: `today`, `last 3 days`, `last 7 day
 
 The CLI report has fixed artifact sections for:
 
-- **Prompts** (`prompt_invoked` counts)
 - **Skills** (`skill_loaded`, `skill_invoked`, and `skill_command_invoked` counts)
 - **Custom Tools** (`custom_tool_called` counts)
 - **Enabled Models** (`model_used` counts)
@@ -96,7 +82,6 @@ The top 10 least-used list excludes any row already shown in the top 10 most-use
 
 Artifact inventory is discovered at report time by `bin/pi-usage-report-lib.mjs`; the telemetry extension does not write inventory snapshots for these artifact views. Zero-use rows are included only when current inventory can be rediscovered reliably:
 
-- Prompts are rediscovered from Pi prompt locations, including native prompt templates and extension-managed prompt files matching the existing `pi-prompt-template-model` frontmatter heuristic.
 - Skills are rediscovered from Pi skill locations such as `~/.pi/agent/skills/`, `~/.agents/skills/`, `.pi/skills/`, and project `.agents/skills/` directories.
 - Custom tools are rediscovered from local Pi extension source files by scanning `pi.registerTool({ name: ... })` calls. If no local custom-tool inventory is found, the report falls back to observed usage only.
 - Enabled Models are read from `enabledModels` in Pi settings. If `enabledModels` is absent or empty, enabled-model zero-use and inventory-backed least-used rows are skipped.
@@ -125,7 +110,7 @@ The HTML report is self-contained (no external dependencies) and includes:
 - Summary metric cards
 - An activity timeline near the top of the page
 - An interactive time-interval selector for switching between the supported intervals without regenerating the report
-- A compact 2×2 top 5 artifact-usage summary for prompts, skills, custom tools, and enabled models, with horizontal bars for quick comparison
+- A compact artifact-usage summary for skills, custom tools, and enabled models, with horizontal bars for quick comparison
 - Donut charts for model and skill distribution
 - Full artifact sections with top 10 most-used, top 10 least-used, and full ranked lists
 - Extension slash-command tables with owning extension names inline
@@ -148,7 +133,7 @@ The shared library (`pi-usage-report-lib.mjs`) owns:
 - `skillNameFromPath()`
 - `sortMap()`
 - `createArtifactReports()` and `createArtifactReport()` — shared artifact ranking shape used by both reporters, including custom-tool owner display names
-- Report-time inventory discovery for prompts, skills, custom tools, and enabled models
+- Report-time inventory discovery for skills, custom tools, and enabled models
 - `extensionOwnedEntries()` and `formatEventDetail()` — shared display formatting for extension-owned commands/tools and recent event details
 - `readStatsEntries()` async generator
 

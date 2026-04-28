@@ -131,8 +131,6 @@ export function extensionOwnedEntries(counts, owners = new Map()) {
 
 export function createCollector({ trackTimeline = false } = {}) {
   const counters = {
-    promptInvoked: new Map(),
-    promptTitles: new Map(),
     extensionCommandInvoked: new Map(),
     customToolCalled: new Map(),
     customToolExtensions: new Map(),
@@ -165,15 +163,6 @@ export function createCollector({ trackTimeline = false } = {}) {
           entry.name,
           (counters.skillLoaded.get(entry.name) || 0) + 1,
         );
-        break;
-      case "prompt_invoked":
-        counters.promptInvoked.set(
-          entry.name,
-          (counters.promptInvoked.get(entry.name) || 0) + 1,
-        );
-        if (entry.promptTitle && !counters.promptTitles.has(entry.name)) {
-          counters.promptTitles.set(entry.name, entry.promptTitle);
-        }
         break;
       case "extension_command_invoked":
         counters.extensionCommandInvoked.set(
@@ -303,18 +292,6 @@ export function createArtifactReports(counters, options = {}) {
 
   return [
     createArtifactReport({
-      id: "prompts",
-      label: "Prompts",
-      itemLabel: "Prompt",
-      counts: counters.promptInvoked,
-      inventory: inventories.prompts || [],
-      inventoryDiscovered: !!discovered.prompts,
-      displayNameForName: (name) => {
-        const title = counters.promptTitles?.get(name);
-        return title ? `${title} (${name})` : name;
-      },
-    }),
-    createArtifactReport({
       id: "skills",
       label: "Skills",
       itemLabel: "Skill",
@@ -347,7 +324,6 @@ export function createArtifactReports(counters, options = {}) {
 
 export function discoverArtifactInventories(options = {}) {
   const inventories = {
-    prompts: discoverPromptInventory(options),
     skills: discoverSkillInventory(options),
     customTools: discoverCustomToolInventory(options),
     enabledModels: discoverEnabledModelInventory(options),
@@ -356,7 +332,6 @@ export function discoverArtifactInventories(options = {}) {
   return {
     inventories,
     discovered: {
-      prompts: inventories.prompts.length > 0,
       skills: inventories.skills.length > 0,
       customTools: inventories.customTools.length > 0,
       enabledModels: inventories.enabledModels.length > 0,
@@ -459,91 +434,6 @@ function pathKind(path, dirent) {
     return "other";
   }
   return "other";
-}
-
-function stripFrontmatter(markdown) {
-  if (!markdown.startsWith("---\n")) return markdown.trim();
-  const end = markdown.indexOf("\n---\n", 4);
-  if (end === -1) return markdown.trim();
-  return markdown.slice(end + 5).trim();
-}
-
-function normalizeText(text) {
-  return text.replace(/\r\n/g, "\n").replace(/\s+/g, " ").trim();
-}
-
-function isManagedPromptMarkdown(markdown) {
-  if (!markdown.startsWith("---\n")) return false;
-  const end = markdown.indexOf("\n---\n", 4);
-  if (end === -1) return false;
-  const frontmatter = markdown.slice(4, end);
-  return /^(model|chain|skill|thinking|fresh|loop|converge|parallel|worktree|subagent|inheritContext|rotate|workers|reviewers|finalApplier|bestOfN|cwd)\s*:/m.test(frontmatter);
-}
-
-function addPromptFile(prompts, file) {
-  if (!file.endsWith(".md")) return;
-  try {
-    const raw = readFileSync(file, "utf-8");
-    const body = normalizeText(stripFrontmatter(raw));
-    if (!body) return;
-    prompts.add(basename(file, ".md"));
-  } catch {
-    // ignore unreadable prompt files
-  }
-}
-
-function scanPromptDirFlat(dir, prompts) {
-  if (!existsSync(dir)) return;
-  for (const entry of directoryEntries(dir)) {
-    const fullPath = join(dir, entry.name);
-    if (pathKind(fullPath, entry) !== "file") continue;
-    addPromptFile(prompts, fullPath);
-  }
-}
-
-function scanManagedPromptDirRecursive(dir, prompts, visited = new Set()) {
-  if (!existsSync(dir)) return;
-  const real = safeRealpath(dir);
-  if (visited.has(real)) return;
-  visited.add(real);
-
-  for (const entry of directoryEntries(dir)) {
-    const fullPath = join(dir, entry.name);
-    const kind = pathKind(fullPath, entry);
-    if (kind === "directory") {
-      scanManagedPromptDirRecursive(fullPath, prompts, visited);
-      continue;
-    }
-    if (kind !== "file" || !entry.name.endsWith(".md")) continue;
-
-    try {
-      const raw = readFileSync(fullPath, "utf-8");
-      if (!isManagedPromptMarkdown(raw)) continue;
-      const body = normalizeText(stripFrontmatter(raw));
-      if (!body) continue;
-      prompts.add(basename(fullPath, ".md"));
-    } catch {
-      // ignore unreadable prompt files
-    }
-  }
-}
-
-export function discoverPromptInventory(options = {}) {
-  const prompts = new Set();
-  const agentDir = defaultAgentDir(options);
-  const cwd = defaultCwd(options);
-  const dirs = [
-    join(agentDir, "prompts"),
-    join(cwd, ".pi", "prompts"),
-    ...settingsResourcePaths("prompts", options),
-  ];
-
-  for (const dir of dirs) {
-    scanPromptDirFlat(dir, prompts);
-    scanManagedPromptDirRecursive(dir, prompts);
-  }
-
-  return Array.from(prompts).sort();
 }
 
 function scanSkillLocation(dir, skills, { rootMarkdown = false } = {}, visited = new Set()) {
@@ -680,29 +570,7 @@ export function discoverEnabledModelInventory(options = {}) {
   return Array.from(stringSet(readEffectiveEnabledModels(options))).sort();
 }
 
-export function promptDisplayFromEntry(entry) {
-  return {
-    name: entry.name || "unknown",
-    title: entry.promptTitle,
-    provenance: entry.sourceInfo?.path,
-    extension: entry.extension,
-  };
-}
-
-export function formatPromptDetail(entry) {
-  const parts = [];
-  parts.push(`name="${entry.name || "unknown"}"`);
-  if (entry.promptTitle) parts.push(`title="${entry.promptTitle}"`);
-  if (entry.args) parts.push(`args=${JSON.stringify(entry.args)}`);
-  if (entry.sourceInfo?.path) parts.push(`path="${entry.sourceInfo.path}"`);
-  if (entry.extension) parts.push(`extension="${entry.extension}"`);
-  if (entry.inferred) parts.push("inferred=true");
-  return parts.join(" ");
-}
-
 export function formatEventDetail(entry) {
-  if (entry.event === "prompt_invoked") return formatPromptDetail(entry);
-
   if (entry.event === "custom_tool_called") {
     const parts = [
       `tool=${JSON.stringify(formatExtensionOwnedName(entry.tool, eventExtensionName(entry)))}`,

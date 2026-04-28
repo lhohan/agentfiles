@@ -11,9 +11,7 @@ import {
   createCollector,
   entryMatchesTimeInterval,
   formatEventDetail,
-  formatPromptDetail,
   normalizeTimeInterval,
-  promptDisplayFromEntry,
 } from "../agents/pi/.pi/agent/bin/pi-usage-report-lib.mjs";
 
 const usageStatsSource = readFileSync("agents/pi/.pi/agent/extensions/usage-stats.ts", "utf-8");
@@ -56,8 +54,8 @@ function usageFixtureHome() {
   assert.throws(() => normalizeTimeInterval("last week"), /Invalid time interval/);
   assert.equal(usageStatsSource.includes("prefix.length >= 32"), false);
   assert.equal(usageStatsSource.includes("prefix.length < 32"), false);
-  // Title-based matching anchor: extractTitle must exist in the extension
-  assert.equal(usageStatsSource.includes("function extractTitle"), true);
+  // Prompt telemetry helpers have been removed
+  assert.equal(usageStatsSource.includes("function extractTitle"), false);
 }
 
 {
@@ -139,7 +137,6 @@ function usageFixtureHome() {
 
 {
   const counters = {
-    promptInvoked: new Map([["plan", 4]]),
     skillLoaded: new Map([["detect-jujutsu", 2]]),
     customToolCalled: new Map([["web_search", 5]]),
     modelUsed: new Map([["openai/gpt-test", 1]]),
@@ -147,23 +144,20 @@ function usageFixtureHome() {
 
   const reports = createArtifactReports(counters, {
     inventories: {
-      prompts: ["plan", "review"],
       skills: ["detect-jujutsu", "unused-skill"],
       customTools: [],
       enabledModels: [],
     },
     discovered: {
-      prompts: true,
       skills: true,
       customTools: false,
       enabledModels: false,
     },
   });
 
-  assert.equal(reports.length, 4);
+  assert.equal(reports.length, 3);
   assert.equal(reports.find((r) => r.id === "enabledModels")?.label, "Enabled Models");
   assert.equal(reports.find((r) => r.id === "enabledModels")?.includesZeroUse, false);
-  assert.deepEqual(names(reports.find((r) => r.id === "prompts").full), ["plan", "review"]);
 }
 
 {
@@ -173,13 +167,11 @@ function usageFixtureHome() {
 
   const reports = createArtifactReports(counters, {
     inventories: {
-      prompts: [],
       skills: [],
       customTools: ["web_search"],
       enabledModels: [],
     },
     discovered: {
-      prompts: false,
       skills: false,
       customTools: true,
       enabledModels: false,
@@ -189,85 +181,6 @@ function usageFixtureHome() {
   assert.deepEqual(names(reports.find((r) => r.id === "customTools").full), ["web_search (bx)"]);
   assert.equal(formatEventDetail({ event: "custom_tool_called", tool: "web_search", extension: "bx" }), 'tool="web_search (bx)"');
   assert.equal(formatEventDetail({ event: "extension_command_invoked", name: "/review", extension: "pi-prompt-template-model" }), 'name="/review (pi-prompt-template-model)"');
-}
-
-// ── Prompt title tracking ────────────────────────────────────────────
-
-{
-  // promptDisplayFromEntry includes the title when present
-  const entry = { name: "implement", promptTitle: "Implement Mode", sourceInfo: { path: "/p/implement.md" } };
-  const display = promptDisplayFromEntry(entry);
-  assert.equal(display.name, "implement");
-  assert.equal(display.title, "Implement Mode");
-}
-
-{
-  // formatPromptDetail includes title when available
-  assert.equal(
-    formatPromptDetail({ name: "implement", promptTitle: "Implement Mode" }),
-    'name="implement" title="Implement Mode"',
-  );
-}
-
-{
-  // formatPromptDetail omits title when absent
-  assert.equal(
-    formatPromptDetail({ name: "plan" }),
-    'name="plan"',
-  );
-}
-
-{
-  // collector stores promptTitles from prompt_invoked entries
-  const { counters, processEntry } = createCollector();
-  processEntry({ event: "prompt_invoked", name: "implement", promptTitle: "Implement Mode" });
-  processEntry({ event: "prompt_invoked", name: "plan", promptTitle: "Plan Mode" });
-  processEntry({ event: "prompt_invoked", name: "implement", promptTitle: "Implement Mode" });
-  assert.equal(counters.promptInvoked.get("implement"), 2);
-  assert.equal(counters.promptInvoked.get("plan"), 1);
-  assert.equal(counters.promptTitles.get("implement"), "Implement Mode");
-  assert.equal(counters.promptTitles.get("plan"), "Plan Mode");
-  // First-seen title persists when the same name appears again
-  assert.equal(counters.promptTitles.size, 2);
-}
-
-{
-  // collector does not store promptTitles when promptTitle is absent
-  const { counters, processEntry } = createCollector();
-  processEntry({ event: "prompt_invoked", name: "legacy-prompt" });
-  assert.equal(counters.promptTitles.has("legacy-prompt"), false);
-}
-
-{
-  // createArtifactReports displays title alongside name for prompts
-  const { counters, processEntry } = createCollector();
-  processEntry({ event: "prompt_invoked", name: "implement", promptTitle: "Implement Mode" });
-  processEntry({ event: "prompt_invoked", name: "plan", promptTitle: "Plan Mode" });
-
-  const reports = createArtifactReports(counters, {
-    inventories: {
-      prompts: ["implement", "plan", "review"],
-      skills: [],
-      customTools: [],
-      enabledModels: [],
-    },
-    discovered: {
-      prompts: true,
-      skills: false,
-      customTools: false,
-      enabledModels: false,
-    },
-  });
-
-  const promptReport = reports.find((r) => r.id === "prompts");
-  const displayNames = promptReport.full.map((row) => row.name);
-  // Display names include title + name
-  const planRow = displayNames.find((n) => n.startsWith("Plan Mode"));
-  const implementRow = displayNames.find((n) => n.startsWith("Implement Mode"));
-  assert.ok(planRow, 'Plan Mode should appear in display names');
-  assert.ok(implementRow, 'Implement Mode should appear in display names');
-  // review has no title, so it uses raw name
-  assert.ok(displayNames.includes("review"), 'review should appear as raw name');
 }
 
 {

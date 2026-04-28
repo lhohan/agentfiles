@@ -2,7 +2,23 @@
 
 Pi-specific decisions are listed in reverse chronological order (most recent first).
 
-### pi-023: Use H1 title as telemetry anchor for prompt fallback detection [Accepted]
+### pi-024: Remove dedicated prompt telemetry and reporting from usage-stats [Accepted]
+
+> **In the context of** simplifying the usage-stats extension and reducing its surface area,
+> **facing** dedicated prompt tracking that adds significant complexity (prompt indexing, title extraction, prefix matching, H1 fallback, extension-managed prompt coupling) for marginal benefit,
+> **we decided** to remove all prompt-specific telemetry (`prompt_invoked`) and prompt-specific reporting from `usage-stats`,
+> **to achieve** a smaller, easier-to-maintain extension that still covers skills, tools, models, and extension commands,
+> **accepting** that:
+>   - prompt usage is no longer tracked or reported
+>   - managed prompts such as `/plan` and `/review` may appear as normal `extension_command_invoked` or generic `command_invoked` events
+>   - historical `prompt_invoked` entries may still appear in raw/recent views but receive no dedicated formatting or aggregation
+>   - decisions **pi-017**, **pi-018**, and **pi-023** are superseded by this removal
+>
+> **Rationale:** Prompt tracking required coupling to `pi-prompt-template-model` discovery semantics, frontmatter heuristics, and fragile fallback matching in `before_agent_start`. The signal-to-complexity ratio was poor. Removing it brings the extension back to its core purpose: tracking skills, tools, models, and extension commands through Pi's public API events.
+
+**Supersedes:** pi-017, pi-018, pi-023.
+
+### pi-023: Use H1 title as telemetry anchor for prompt fallback detection [Superseded by pi-024]
 
 > **In the context of** the `before_agent_start` fallback needing to detect which prompt template was invoked,
 > **facing** prefix-based matching (first 180 chars of normalized body) failing when the prompt body contains template placeholders like `$@` that get substituted before the rendered prompt is compared,
@@ -65,7 +81,7 @@ Pi-specific decisions are listed in reverse chronological order (most recent fir
 > **to achieve** behaviour that stays aligned with the documented frontmatter scope while keeping skill usage visible in prompt instructions,
 > **accepting** that prompt authors must keep explicit skill-call wording up to date when workflow expectations change.
 
-### pi-018: Bounded coupling to `pi-prompt-template-model` for prompt telemetry [Accepted]
+### pi-018: Bounded coupling to `pi-prompt-template-model` for prompt telemetry [Superseded by pi-024]
 
 > **In the context of** wanting `usage-stats` to record prompt invocations for extension-managed prompts like `/plan`,
 > **facing** the fact that `pi-prompt-template-model` registers prompts as extension commands that bypass Pi's native `input` event,
@@ -83,7 +99,7 @@ Pi-specific decisions are listed in reverse chronological order (most recent fir
 
 **Amendment (2026-04-27):** The fallback prefix matcher now accepts any non-empty managed prompt body instead of enforcing a 32-character minimum. That keeps short prompt templates such as `/implement` observable while still relying on the primary command-resolution path first.
 
-### pi-017: Do not track frontmatter-injected skills in usage-stats [Accepted]
+### pi-017: Do not track frontmatter-injected skills in usage-stats [Superseded by pi-024]
 
 > **In the context of** wanting the `usage-stats` extension to record skill loads triggered by the `skill:` frontmatter field in `pi-prompt-template-model` prompts,
 > **facing** the fact that `pi-prompt-template-model` resolves and injects skills internally via `before_agent_start`, bypassing both `/skill:name` commands and the agent `read` tool,

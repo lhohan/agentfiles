@@ -203,7 +203,6 @@ function renderArtifactRows(rows, itemLabel, emptyMessage = "No data") {
 
 function artifactIcon(id) {
   switch (id) {
-    case "prompts": return "📝";
     case "skills": return "📦";
     case "customTools": return "🔧";
     case "enabledModels": return "🤖";
@@ -366,7 +365,6 @@ h3 { font-size: 0.95rem; margin: 0 0 10px 0; color: var(--text); }
 .grid-2 { display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 24px; }
 .artifact-summary { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 16px; }
 .summary-card { border: 1px solid var(--card-border); border-radius: 12px; padding: 16px; background: linear-gradient(180deg, rgba(99,102,241,0.08), rgba(99,102,241,0.025)); }
-.summary-card.prompts { background: linear-gradient(180deg, rgba(16,185,129,0.10), rgba(16,185,129,0.025)); }
 .summary-card.skills { background: linear-gradient(180deg, rgba(139,92,246,0.10), rgba(139,92,246,0.025)); }
 .summary-card.customTools { background: linear-gradient(180deg, rgba(244,63,94,0.10), rgba(244,63,94,0.025)); }
 .summary-card.enabledModels { background: linear-gradient(180deg, rgba(245,158,11,0.10), rgba(245,158,11,0.025)); }
@@ -408,7 +406,6 @@ tbody tr:hover { background: rgba(99,102,241,0.05); }
 .badge.extension_loaded, .badge.extension_command_invoked { background: rgba(20,184,166,0.12); color: #14b8a6; }
 .badge.extension_inventory { background: rgba(20,184,166,0.08); color: #0d9488; }
 .badge.model_select { background: rgba(6,182,212,0.12); color: #06b6d4; }
-.badge.prompt_invoked { background: rgba(16,185,129,0.12); color: var(--success); }
 footer { text-align: center; color: var(--text-muted); font-size: 0.8rem; margin-top: 12px; }
 @media (max-width: 720px) { .artifact-summary { grid-template-columns: 1fr; } }
 @media (max-width: 640px) { .container { padding: 16px; } h1 { font-size: 1.4rem; } .metric-value { font-size: 1.5rem; } .donut-wrap { justify-content: center; } }
