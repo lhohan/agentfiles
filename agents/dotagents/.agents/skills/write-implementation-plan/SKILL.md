@@ -12,6 +12,7 @@ Produce a concise, concrete implementation plan formatted in markdown. The plan 
 - **Open questions** — only if genuinely unresolved; otherwise omit
 - **Plan** — a short ordered list of implementation steps
 - **Likely files** — files or areas likely to be inspected or changed, with exact paths when knowable
+- **Task linkage** — if this plan maps to a tracked task or issue, note the saved plan location in that task
 - **Risks** — key tradeoffs, unknowns, or failure points
 - **Validation** — how to verify the work once implementation begins
 
