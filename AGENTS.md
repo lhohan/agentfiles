@@ -40,7 +40,7 @@ Repository for agent configuration files. It uses [Mise](https://mise.jdx.dev) t
 
 ## Beads Task Hygiene
 
-- After saving a plan file for a beads task, update the task with a link to the plan file.
+- After saving a plan file for a beads task, update the task with a link to the plan file: `bd update <id> --description="Plan saved at <saved-path>"`.
 
 ## Documenting Decisions
 
