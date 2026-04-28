@@ -1,5 +1,12 @@
 # decisions
 
+Decisions are listed in reverse chronological order (most recent first).
+
+Package-specific decisions live in:
+- [`agents-shared/decisions.md`](./agents-shared/decisions.md)
+- [`dotagents/decisions.md`](./dotagents/decisions.md)
+- [`pi/decisions.md`](./pi/decisions.md)
+
 ### AGF-013: Calibrate less-is-more to catch setup wiring without broadening into docs/reporting [Accepted]
 
 > **In the context of** a repo-local `less-is-more` skill that missed several setup-adjacent changes,
@@ -33,15 +40,6 @@
 > **we decided** to use `docs/plans/YYYY-MM-DD-<topic>.md` as the canonical saved-plan location,
 > **to achieve** a predictable, dated, topic-named convention for finished plans,
 > **accepting** that the save handoff should appear only at the end of a substantial completed plan, never mid-planning, and that the directory must be created when first needed.
-
-### AGF-009: Keep decision logs focused on durable structural choices [Accepted]
-
-Decisions are listed in reverse chronological order (most recent first).
-
-Package-specific decisions live in:
-- [`agents-shared/decisions.md`](./agents-shared/decisions.md)
-- [`dotagents/decisions.md`](./dotagents/decisions.md)
-- [`pi/decisions.md`](./pi/decisions.md)
 
 ### AGF-009: Keep decision logs focused on durable structural choices [Accepted]
 
