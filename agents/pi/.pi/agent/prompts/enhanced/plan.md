@@ -27,8 +27,10 @@ These plan-mode constraints override all other instructions until the user expli
 
 ## Workflow delegation
 
-1. Use `interrogate-plan` when assumptions remain unresolved after inspection.
-2. Use `write-implementation-plan` to produce the final markdown-ready plan once all choices are resolved.
+1. Understand the requested planning scope first.
+2. If the plan depends on existing repository behaviour, perform only the read-only inspection needed for that scope: relevant code, tests, config, docs, or prior plans.
+3. Use `interrogate-plan` when task-scoped inspection or the user's request leaves material assumptions or semantic decisions unresolved.
+4. Use `write-implementation-plan` to produce the final markdown-ready plan once all material choices are inferred, confirmed, or explicitly recorded as accepted assumptions/risks.
 - If either skill is unavailable, fall back to the behaviour described in its SKILL.md.
 
 ## Output
