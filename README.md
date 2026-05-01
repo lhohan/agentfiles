@@ -52,7 +52,7 @@ Located in [Pi](agents/pi).
   
 ### Extensions
 
-- A [Jujutsu-aware footer extension](agents/pi/.pi/agent/extensions/) that shows jj file counts plus the nearest bookmark name and ahead count in the TUI. [Documentation](agents/pi/.pi/agent/extensions/jj-footer.md).
+- A [Jujutsu-aware footer extension](agents/pi/.pi/agent/extensions/) that shows jj file counts plus the nearest bookmark name and ahead count in the TUI. Requires [Jujutsu (jj)](https://github.com/martinvonz/jj) on `PATH`. [Documentation](agents/pi/.pi/agent/extensions/jj-footer.md).
 
 - A [Questionnaire extension](agents/pi/.pi/agent/extensions/questionnaire.ts) for bounded multi-question clarification flows. [Documentation](agents/pi/.pi/agent/extensions/questionnaire.md).
 
@@ -107,3 +107,16 @@ See [`docs/decisions.md`](./docs/decisions.md) for the repo-wide decisions, and 
 ## Contributing
 
 For issues or pull requests visit [Codeberg](https://codeberg.org/hanlho/agentfiles).
+
+## Quickstart
+
+1. **Install Prerequisites**:
+   - [Mise](https://mise.jdx.dev/) (for Stow and runtime management)
+   - GNU Stow (`brew install stow` or `apt-get install stow`)
+
+2. **Clone and Link**:
+   ```bash
+   git clone https://github.com/lhohan/agentfiles.git
+   cd agentfiles
+   mise stow  # Link all packages
+   ```
