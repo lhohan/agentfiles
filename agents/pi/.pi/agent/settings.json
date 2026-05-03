@@ -1,7 +1,7 @@
 {
-  "lastChangelogVersion": "0.70.5",
-  "defaultProvider": "openai-codex",
-  "defaultModel": "gpt-5.4-mini",
+  "lastChangelogVersion": "0.72.0",
+  "defaultProvider": "mistral",
+  "defaultModel": "mistral-medium-3.5",
   "defaultThinkingLevel": "high",
   "theme": "kanagawa-dragon",
   "terminal": {
@@ -25,7 +25,8 @@
     "opencode-go/kimi-k2.6",
     "openai-codex/gpt-5.5",
     "opencode-go/deepseek-v4-flash",
-    "opencode-go/deepseek-v4-pro"
+    "opencode-go/deepseek-v4-pro",
+    "mistral/mistral-medium-3.5"
   ],
   "enableSkillCommands": true,
   "showHardwareCursor": true,
