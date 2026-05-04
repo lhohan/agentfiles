@@ -165,7 +165,7 @@ allowlist = [
     "git diff",
     "git log",
     "git status",
-    "jj"
+    "jj",
     "tree",
     "whoami",
     "cat",
