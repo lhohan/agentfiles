@@ -77,8 +77,6 @@ alias = "devstral-small"
 temperature = 0.2
 input_price = 0.1
 output_price = 0.3
-thinking = "off"
-auto_compact_threshold = 200000
 
 [[models]]
 name = "devstral"
