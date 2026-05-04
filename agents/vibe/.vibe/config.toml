@@ -1,4 +1,4 @@
-active_model = "devstral-small"
+active_model = "mistral-default"
 vim_keybindings = false
 disable_welcome_banner_animation = false
 autocopy_to_clipboard = true
@@ -49,23 +49,32 @@ region = ""
 [providers.extra_headers]
 
 [[models]]
-name = "mistral-vibe-cli-latest"
+name = "mistral-medium-3.5"
 provider = "mistral"
-alias = "mistral-medium-3.5"
-temperature = 1.0
-input_price = 1.5
-output_price = 7.5
+alias = "mistral-plan"
+temperature = 0.7
 thinking = "high"
-auto_compact_threshold = 200000
 
 [[models]]
-name = "devstral-small-latest"
+name = "mistral-medium-3.5"
 provider = "mistral"
-alias = "devstral-small"
-temperature = 0.2
-input_price = 0.1
-output_price = 0.3
-auto_compact_threshold = 200000
+alias = "mistral-default"
+temperature = 0.3
+thinking = "high"
+
+[[models]]
+name = "mistral-medium-3.5"
+provider = "mistral"
+alias = "mistral-review"
+temperature = 0.3
+thinking = "high"
+
+[[models]]
+name = "mistral-medium-3.5"
+provider = "mistral"
+alias = "mistral-brainstorming"
+temperature = 0.9
+thinking = "low"
 
 [[transcribe_providers]]
 name = "mistral"
