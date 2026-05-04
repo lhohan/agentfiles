@@ -2,6 +2,14 @@
 
 Dotagents-specific decisions are listed in reverse chronological order (most recent first).
 
+### dotagents-006: Vendor Karpathy guidelines as a standalone reusable skill [Accepted]
+
+> **In the context of** repeatedly needing the same coding-behaviour guardrails during implementation work,
+> **facing** the choice between folding them into `AGENTS.md`, merging them into `less-is-more`, or vendoring a dedicated skill,
+> **we decided** to vendor `karpathy-guidelines` as its own skill under `agents/dotagents/.agents/skills/`, with provenance metadata pointing to `forrestchang/andrej-karpathy-skills`, and to leave the plugin/Cursor packaging out of scope,
+> **to achieve** reusable guidance that can be enabled independently from repo policy text without widening the shared instructions package,
+> **accepting** that the guidance overlaps with existing agent rules and therefore must stay concise rather than becoming another catch-all policy file.
+
 ### dotagents-005: interrogate-plan recovers grill-me branch coverage without full verbosity [Accepted]
 
 > **In the context of** interrogate-plan stopping too early—accepting an implementable plan while material semantic decisions remained live,
