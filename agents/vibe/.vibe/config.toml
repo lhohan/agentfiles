@@ -1,4 +1,4 @@
-active_model = "review"
+active_model = "default"
 vim_keybindings = false
 disable_welcome_banner_animation = false
 autocopy_to_clipboard = true
