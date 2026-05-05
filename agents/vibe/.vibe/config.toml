@@ -109,7 +109,7 @@ default_commit_count = 5
 timeout_seconds = 2.0
 
 [session_logging]
-save_dir = "/Users/hans/.vibe/logs/session"
+save_dir = "~/.vibe/logs/session"
 session_prefix = "session"
 enabled = true
 
