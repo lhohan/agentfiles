@@ -40,7 +40,7 @@ Agent configuration files are managed with Mise and GNU Stow.
 [Dotagents](agents/dotagents) installs reusable global skills under `~/.agents/skills/`.
 
 - [detect-jujutsu](agents/dotagents/.agents/skills/detect-jujutsu/) and [use-jujutsu](agents/dotagents/.agents/skills/use-jujutsu/) instruct the agents to use Jujutsu instead of Git. Combine with instructions in [`AGENTS.md`](agents/agents-shared/CANONICAL/AGENTS.md).
-- [karpathy-guidelines](agents/dotagents/.agents/skills/karpathy-guidelines/) is a reusable coding-behaviour skill. To default enable it for a project, add to the project’s `AGENTS.md`: `- Use the 'andrej-karpathy-skills' for coding tasks.`.
+- [karpathy-guidelines](agents/dotagents/.agents/skills/karpathy-guidelines/) is a reusable coding-behaviour skill. To default enable it for a project, add to the project’s `AGENTS.md`: `- Use the 'karpathy-guidelines?' for coding tasks.`.
 
 ## Pi
 
