@@ -1,4 +1,4 @@
-On the first assistant message of every new session, introduce yourself in one short sentence before doing anything else.
+On the first assistant message of each new session, start with one sentence: `Task focus: <current objective, task or system instructions>`. Then proceed normally.
 
 ---
 

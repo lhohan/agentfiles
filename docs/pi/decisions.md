@@ -2,6 +2,16 @@
 
 Pi-specific decisions are listed in reverse chronological order (most recent first).
 
+### pi-026: Use task-oriented over role-based system prompt [Accepted]
+
+> **In the context of** optimizing Pi for correctness-critical coding work,
+> **facing** evidence that expert-persona prompts can hurt coding and reasoning accuracy,
+> **we decided** to remove Pi's built-in "expert coding assistant" wording with a small extension,
+> **to achieve** direct task framing with less persona noise,
+> **accepting** that the change is coupled to Pi's current prompt text and must warn if that text changes.
+>
+> **Rationale:** The extension is intentionally narrow: it only rewrites Pi's generated built-in system prompt and leaves user prompts, skills, and custom system prompts alone. Research basis: https://arxiv.org/html/2603.18507v1
+
 ### pi-025: Accept pi.setModel() persistence for skill-triggered model switching [Accepted]
 
 > **In the context of** adding JSON-configured model switching for `/skill:name` commands,
