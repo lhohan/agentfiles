@@ -1,7 +1,7 @@
 {
-  "lastChangelogVersion": "0.72.0",
-  "defaultProvider": "openai-codex",
-  "defaultModel": "gpt-5.4-mini",
+  "lastChangelogVersion": "0.73.0",
+  "defaultProvider": "opencode-go",
+  "defaultModel": "deepseek-v4-flash",
   "defaultThinkingLevel": "high",
   "theme": "kanagawa-dragon",
   "terminal": {
@@ -12,7 +12,7 @@
     "enabled": true
   },
   "treeFilterMode": "default",
-  "hideThinkingBlock": false,
+  "hideThinkingBlock": true,
   "packages": [
     "npm:pi-prompt-template-model@0.7.3"
   ],
