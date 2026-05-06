@@ -2,6 +2,14 @@
 
 Dotagents-specific decisions are listed in reverse chronological order (most recent first).
 
+### dotagents-007: Vendor web-browser skill from mitsuhiko/agent-stuff [Accepted]
+
+> **In the context of** needing browser automation for project "web vision" work,
+> **facing** the choice between installing the upstream `mitsupi` npm package (bundling 20+ skills) or vendoring the single web-browser skill,
+> **we decided** to vendor `web-browser` as a standalone skill under `agents/dotagents/.agents/skills/web-browser/`, with provenance attribution pointing to `mitsuhiko/agent-stuff` (commit permalink in source metadata),
+> **to achieve** a lean, locally-maintained browser automation capability without pulling in unrelated upstream skills,
+> **accepting** that upstream updates must be reviewed and synced manually, and that an alternative integration path exists via `pi package add mitsupi`.
+
 ### dotagents-006: Vendor Karpathy guidelines as a standalone reusable skill [Accepted]
 
 > **In the context of** repeatedly needing the same coding-behaviour guardrails during implementation work,

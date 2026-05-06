@@ -2,6 +2,8 @@
 *.swp
 *.tmp
 *.bak
+node_modules/
+npm-debug.log*
 
 # Beads / Dolt files (added by bd init)
 .dolt/
