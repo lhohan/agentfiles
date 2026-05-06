@@ -14,10 +14,9 @@ Collects anonymous usage statistics for Pi skills, loaded extensions, extension 
 | `custom_tool_called` | Agent calls a non-built-in tool (includes extension tools such as `web_search`) | `tool`, `extension` |
 | `skill_loaded` | Agent `read`s a `SKILL.md` file | `path` |
 | `model_used` | First provider request of an agent run | `model` |
-| `model_select` | Model changes via `/model`, cycling, or restore | `model`, `previousModel`, `source` |
 | `session_start` | New, resume, fork, or reload | `reason`, `hasPreviousSession` |
 
-`model_used` counts the model actually invoked for a prompt. `model_select` records every browsing or cycling action, so the two can diverge when a user cycles through several models before sending a message.
+`model_used` counts the model actually invoked for a prompt.
 
 The report merges `skill_loaded`, `skill_invoked`, and `skill_command_invoked` into a single **Skills** artifact view. `skill_loaded` entries are grouped by parent directory name (e.g., `detect-jujutsu/SKILL.md` → `detect-jujutsu`). Skills loaded from multiple paths are aggregated into one row, while repeated loads, invocations, and commands all contribute to the same per-skill count.
 

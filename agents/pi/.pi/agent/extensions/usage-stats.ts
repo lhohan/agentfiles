@@ -6,7 +6,7 @@ import { dirname } from "node:path";
  * Usage Statistics Extension
  *
  * Collects anonymous usage statistics for skills, loaded extensions,
- * extension commands, custom tools, and model selections.
+ * extension commands, custom tools, and model usage.
  *
  * Data is written as append-only JSONL to ~/.pi/agent/usage-stats.jsonl.
  *
@@ -15,7 +15,6 @@ import { dirname } from "node:path";
  * - stats file path
  * - flush behaviour
  * - built-in tool exclusion list
- * - model_used vs model_select semantics
  * - skill_loaded grouping by skill name in viewer
  * - extension_loaded grouping by extension name in viewer
  * - extension_inventory / extension_used semantics
@@ -220,17 +219,6 @@ export default function usageStatsExtension(pi: ExtensionAPI) {
       model: `${model.provider}/${model.id}`,
     });
     modelUsedRecorded = true;
-  });
-
-  // --- Model selection (raw telemetry) ---
-  pi.on("model_select", async (event) => {
-    collector.record("model_select", {
-      model: `${event.model.provider}/${event.model.id}`,
-      previousModel: event.previousModel
-        ? `${event.previousModel.provider}/${event.previousModel.id}`
-        : undefined,
-      source: event.source,
-    });
   });
 
   // --- Session lifecycle ---

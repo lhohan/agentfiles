@@ -221,8 +221,6 @@ async function main() {
     )),
     topN,
   );
-  printTable("Models Selected", counters.modelSelect, topN);
-
   // Recent events (optional)
   if (showRecent) {
     printHeader("  Timeline");

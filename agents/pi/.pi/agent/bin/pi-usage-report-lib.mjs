@@ -136,7 +136,6 @@ export function createCollector({ trackTimeline = false } = {}) {
     customToolExtensions: new Map(),
     skillLoaded: new Map(),
     modelUsed: new Map(),
-    modelSelect: new Map(),
     extensionCommandExtensions: new Map(),
     sessionStart: 0,
   };
@@ -196,12 +195,6 @@ export function createCollector({ trackTimeline = false } = {}) {
         counters.modelUsed.set(
           entry.model,
           (counters.modelUsed.get(entry.model) || 0) + 1,
-        );
-        break;
-      case "model_select":
-        counters.modelSelect.set(
-          entry.model,
-          (counters.modelSelect.get(entry.model) || 0) + 1,
         );
         break;
       case "session_start":
