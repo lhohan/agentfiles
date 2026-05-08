@@ -2,6 +2,19 @@
 
 Pi-specific decisions are listed in reverse chronological order (most recent first).
 
+### pi-027: Use complementary models for plan drafting and plan critique [Accepted]
+
+> **In the context of** adding a `/review-plan` prompt to critically evaluate implementation plans,
+> **facing** the choice of which model should perform plan critique versus plan drafting,
+> **we decided** to use `openai-codex/gpt-5.4` for `/plan` (drafting) and `opencode-go/deepseek-v4-pro` for `/review-plan` (critique),
+> **to achieve** a complementary model split where each phase plays to the respective model's strengths: OpenAI for structured planning and DeepSeek for deep reasoning and critical analysis,
+> **accepting** that:
+>   - the model split must be maintained manually in prompt frontmatter
+>   - users may override the model via Pi's model selector, breaking the intended pairing
+>   - future prompts that follow the same draft-then-critique pattern should adopt the same model pairing for consistency
+>
+> **Rationale:** The `/plan` prompt already uses `openai-codex/gpt-5.4` for its strong instruction-following and structured output. DeepSeek v4 Pro excels at reasoning, identifying assumptions, and surfacing risks — exactly the posture needed for critical review. Making the split explicit and consistent helps users trust that `/review-plan` will bring a genuinely different analytical lens to the same plan text.
+
 ### pi-026: Use task-oriented over role-based system prompt [Accepted]
 
 > **In the context of** optimizing Pi for correctness-critical coding work,
