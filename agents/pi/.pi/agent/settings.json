@@ -1,7 +1,8 @@
 {
-  "lastChangelogVersion": "0.73.0",
-  "defaultProvider": "opencode-go",
-  "defaultModel": "deepseek-v4-flash",
+  "lastChangelogVersion": "0.74.0",
+  "defaultProvider": "mistral",
+  "defaultModel": "mistral-medium-3.5",
+  "sessionStartModel": "mistral/mistral-medium-3.5",
   "defaultThinkingLevel": "high",
   "theme": "kanagawa-dragon",
   "terminal": {

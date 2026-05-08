@@ -2,6 +2,20 @@
 
 Pi-specific decisions are listed in reverse chronological order (most recent first).
 
+### pi-028: Use a `sessionStartModel` setting separate from Pi's built-in `defaultModel` [Accepted]
+
+> **In the context of** wanting each new Pi session to start with a known model regardless of what model was last selected,
+> **facing** Pi's built-in behaviour where the `/model` selector IMMEDIATELY writes the chosen model to `defaultModel`/`defaultProvider` in `settings.json` — meaning the "last-used" model IS the persisted `defaultModel` and there is no separate "last-session model" vs. "desired default" distinction,
+> **we decided** to introduce a user-facing `sessionStartModel` key (separate from Pi's own `defaultModel`) and build an extension (`force-session-start-model`) that reads it on `session_start` for `"startup"` and `"new"` reasons only,
+> **to achieve** a user-configurable model that resets every new session without fighting Pi's own model-persistence mechanism,
+> **accepting** that:
+>   - the extension uses its own config key (`sessionStartModel`) to avoid colliding with Pi's `defaultModel`
+>   - the extension only fires on `session_start` reasons `"startup"` and `"new"` — NOT on `"resume"`, `"fork"`, `"reload"`, or `"continue"` since those restore model from session state or are not fresh-session starts
+>   - the user must provide a valid `provider/modelId` string that can be split and resolved; if the model is not found or has no API key configured, the extension warns rather than silently failing
+>   - project-local overrides are explicitly out of scope for v1
+>
+> **Rationale:** From source-code analysis, Pi's `ModelSelectorComponent` calls `settingsManager.setDefaultModelAndProvider()` immediately when the user selects a model via `/model` or `Ctrl+P`. The `findInitialModel()` resolution order (settings → provider defaults → first available) means the user's last selection always becomes the next session's starting model. There is no built-in distinction between "user's desired default" and "last-used model." A separate config key avoids competing with Pi's own persistence without patching or intercepting Pi internals.
+
 ### pi-027: Use complementary models for plan drafting and plan critique [Accepted]
 
 > **In the context of** adding a `/review-plan` prompt to critically evaluate implementation plans,
