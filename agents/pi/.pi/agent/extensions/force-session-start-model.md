@@ -2,6 +2,8 @@
 
 Forces the active ("default") model to a user-configured value at the start of every new session.
 
+Use when you want a stable starting model that survives `/model` changes across sessions. Pi normally persists whichever model you last selected, so there's no built-in distinction between "preferred default" and "last used."
+
 ## Config
 
 Add a `sessionStartModel` key to `~/.pi/agent/settings.json`:
