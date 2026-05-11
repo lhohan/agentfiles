@@ -1,7 +1,7 @@
 {
   "lastChangelogVersion": "0.74.0",
-  "defaultProvider": "mistral",
-  "defaultModel": "mistral-medium-3.5",
+  "defaultProvider": "opencode-go",
+  "defaultModel": "deepseek-v4-pro",
   "defaultThinkingLevel": "high",
   "theme": "kanagawa-dragon",
   "terminal": {
@@ -14,7 +14,8 @@
   "treeFilterMode": "default",
   "hideThinkingBlock": true,
   "packages": [
-    "npm:pi-prompt-template-model@0.7.3"
+    "npm:pi-prompt-template-model@0.7.3",
+    "npm:pi-answer@0.1.4"
   ],
   "enabledModels": [
     "openai-codex/gpt-5.4-mini",
@@ -36,5 +37,44 @@
   "sessionStartModel": {
     "model": "mistral/mistral-medium-3.5",
     "thinkingLevel": "high"
+  },
+  "answer": {
+    "extractionModels": [
+      {
+        "provider": "mistral",
+        "id": "mistral-medium-3.5"
+      },
+      {
+        "provider": "opencode-go",
+        "id": "deepseek-v4-flash"
+      },
+      {
+        "provider": "openai-codex",
+        "id": "gpt-5.4-mini"
+      }
+    ],
+    "answerTemplates": [
+      {
+        "label": "Brief",
+        "template": "{{answer}}"
+      },
+      {
+        "label": "Need info",
+        "template": "I need more details about: {{question}}"
+      },
+      {
+        "label": "Structured",
+        "template": "Q{{index}}: {{answer}}"
+      },
+      {
+        "label": "Ack",
+        "template": "Regarding {{question}}, I confirm: {{answer}}"
+      }
+    ],
+    "drafts": {
+      "enabled": true,
+      "autosaveMs": 1000,
+      "promptOnRestore": true
+    }
   }
 }
