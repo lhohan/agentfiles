@@ -69,7 +69,7 @@ Located in [Pi](agents/pi).
 
 - A [Skill model switch extension](agents/pi/.pi/agent/extensions/skill-model-switch.ts) that switches to a configured model before executing explicit `/skill:<name>` commands. Mapping is read from an adjacent JSON config file. [Documentation](agents/pi/.pi/agent/extensions/skill-model-switch.md)
 
-- A [Force session start model extension](agents/pi/.pi/agent/extensions/force-session-start-model.ts) that resets the active model to a user-configured value on every new session, avoiding collision with Pi's own `defaultModel` persistence. [Documentation](agents/pi/.pi/agent/extensions/force-session-start-model.md)
+- A [Force session start model extension](agents/pi/.pi/agent/extensions/force-session-start-model.ts) that resets the active model and thinking level to user-configured values on every new session, avoiding collision with Pi's own `defaultModel` persistence. [Documentation](agents/pi/.pi/agent/extensions/force-session-start-model.md)
 
   
 ## Tooling

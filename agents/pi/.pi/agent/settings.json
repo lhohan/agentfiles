@@ -2,7 +2,6 @@
   "lastChangelogVersion": "0.74.0",
   "defaultProvider": "mistral",
   "defaultModel": "mistral-medium-3.5",
-  "sessionStartModel": "mistral/mistral-medium-3.5",
   "defaultThinkingLevel": "high",
   "theme": "kanagawa-dragon",
   "terminal": {
@@ -33,5 +32,9 @@
   "showHardwareCursor": true,
   "autocompleteMaxVisible": 5,
   "quietStartup": false,
-  "doubleEscapeAction": "tree"
+  "doubleEscapeAction": "tree",
+  "sessionStartModel": {
+    "model": "mistral/mistral-medium-3.5",
+    "thinkingLevel": "high"
+  }
 }
