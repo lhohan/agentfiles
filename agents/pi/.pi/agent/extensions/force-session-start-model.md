@@ -37,4 +37,4 @@ Fires on `session_start` for `"startup"` and `"new"` only. Does not fire on `"re
 
 ## Related
 
-- [pi-028](../../../../docs/pi/decisions.md#pi-028-use-a-sessionstartmodel-setting-separate-from-pis-built-in-defaultmodel-accepted) — rationale for the separate config key.
+- [pi-028](../../../../../docs/pi/decisions.md#pi-028-use-a-sessionstartmodel-setting-separate-from-pis-built-in-defaultmodel-accepted) — rationale for the separate config key.
