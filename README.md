@@ -4,9 +4,7 @@ Dotfiles, but for agents.
 
 ## The dotfiles
 
-If you want to go straight to the dotfiles, go [here](agents/).
-
-Note: as with dotfiles, this repository is not meant to be checked out and _used_ on your own systems. For example [some skills](agents/dotagents/.agents/skills/find-docs/SKILL.md) may call out to third party services.
+If you want to go straight to the 'dotfiles', go [here](agents/).
 
 ### Repository Setup
 
@@ -19,11 +17,13 @@ Agent configuration files are managed with Mise and GNU Stow.
 │   ├── agents-shared/      # shared AGENTS.md for Pi, OpenCode, and Codex
 │   ├── dotagents/          # shared global skills under ~/.agents/skills/
 │   ├── pi/                 # Pi package
+│   ├── vibe/               # Vibe package
 │   └── …                   # other agent packages as needed
 └── docs/                   # package-specific documentation
     ├── agents-shared/
     ├── dotagents/
     ├── pi/
+    ├── vibe/
     └── …                   # other package docs as needed
 ```
 
@@ -40,7 +40,7 @@ Agent configuration files are managed with Mise and GNU Stow.
 [Dotagents](agents/dotagents) installs reusable global skills under `~/.agents/skills/`.
 
 - [detect-jujutsu](agents/dotagents/.agents/skills/detect-jujutsu/) and [use-jujutsu](agents/dotagents/.agents/skills/use-jujutsu/) instruct the agents to use Jujutsu instead of Git. Combine with instructions in [`AGENTS.md`](agents/agents-shared/CANONICAL/AGENTS.md).
-- [karpathy-guidelines](agents/dotagents/.agents/skills/karpathy-guidelines/) is a reusable coding-behaviour skill. To default enable it for a project, add to the project’s `AGENTS.md`: `- Use the 'karpathy-guidelines?' for coding tasks.`.
+- [karpathy-guidelines](agents/dotagents/.agents/skills/karpathy-guidelines/) is a reusable coding-behaviour skill. To default enable it for a project, add to the project's `AGENTS.md`: `- Use the 'karpathy-guidelines?' for coding tasks.`.
 
 ## Pi
 
@@ -51,7 +51,7 @@ Located in [Pi](agents/pi).
   - A `/review` prompt at [`agents/pi/.pi/agent/prompts/enhanced/review.md`](agents/pi/.pi/agent/prompts/enhanced/review.md) for read-only code review.
   - A `/review-plan` prompt at [`agents/pi/.pi/agent/prompts/enhanced/review-plan.md`](agents/pi/.pi/agent/prompts/enhanced/review-plan.md) for critical review of plan text before execution.
   - [custom themes](agents/pi/.pi/agent/themes/)
-  
+
 ### Extensions
 
 - A [Jujutsu-aware footer extension](agents/pi/.pi/agent/extensions/) that shows jj file counts plus the nearest bookmark name and ahead count in the TUI. Requires [Jujutsu (jj)](https://github.com/martinvonz/jj) on `PATH`. [Documentation](agents/pi/.pi/agent/extensions/jj-footer.md).
@@ -71,42 +71,13 @@ Located in [Pi](agents/pi).
 
 - A [Force session start model extension](agents/pi/.pi/agent/extensions/force-session-start-model.ts) that resets the active model and thinking level to user-configured values on every new session, avoiding collision with Pi's own `defaultModel` persistence. [Documentation](agents/pi/.pi/agent/extensions/force-session-start-model.md)
 
-  
-## Tooling
+## Vibe
 
-- [GNU Stow](https://www.gnu.org/software/stow/) symlinks the configuration files in `agents/` into the home directory.
-- [Mise](https://mise.jdx.dev) manages the repo tasks and installs the required tooling.
+Located in [Vibe](agents/vibe).
 
-### Stow
+- A [`config.toml`](agents/vibe/.vibe/config.toml) for the [Vibe CLI](https://github.com/Mistral-AI-Club/vibe-cli) with Mistral provider settings, model aliases, and tool permission profiles.
 
-Stow runs in `--no-folding` mode so nested files become symlinks.
-
-Canonical Stow settings live in `.stowrc`:
-
-- `--dir=agents`
-- `--target=~`
-- `--no-folding`
-
-## Common tasks
-
-- `mise stow` — link all packages under `agents/`
-- `mise stow agents-shared` — link only package `agents-shared`
-- `mise stow dotagents` — link only package `dotagents`
-- `mise stow pi` — link only package `pi`
-- `mise unstow` — remove links for all packages
-- `mise restow agents-shared` — recreate links for package `agents-shared`
-- `mise restow dotagents` — recreate links for package `dotagents`
-- `mise restow pi` — recreate links for package `pi`
-- `mise check` — preview link actions for all packages
-- `mise check agents-shared` — preview link actions for package `agents-shared`
-- `mise check dotagents` — preview link actions for package `dotagents`
-- `mise check pi` — preview link actions for package `pi`
-
-### Helper scripts
-
-- `scripts/commit-pi-day-to-day` — use `jj` to commit only `agents/pi/.pi/agent/settings.json` with the message `pi: day-to-day updates`
-
-## decisions
+## Decisions
 
 See [`docs/decisions.md`](./docs/decisions.md) for the repo-wide decisions, and `docs/<agent>/decisions.md` for agent-specific decisions.
 
@@ -114,15 +85,6 @@ See [`docs/decisions.md`](./docs/decisions.md) for the repo-wide decisions, and 
 
 For issues or pull requests visit [Codeberg](https://codeberg.org/hanlho/agentfiles).
 
-## Quickstart
+## Maintainer setup
 
-1. **Install Prerequisites**:
-   - [Mise](https://mise.jdx.dev/) (for Stow and runtime management)
-   - GNU Stow (`brew install stow` or `apt-get install stow`)
-
-2. **Clone and Link**:
-   ```bash
-   git clone https://github.com/lhohan/agentfiles.git
-   cd agentfiles
-   mise stow  # Link all packages
-   ```
+For maintainer-only tooling, common tasks, and setup instructions see [`SETUP.md`](SETUP.md).

@@ -2,6 +2,14 @@
 
 Decisions are listed in reverse chronological order (most recent first).
 
+### AGF-014: Split README overview from maintainer setup [Accepted]
+
+> **In the context of** `README.md` mixing public-facing repository overview with maintainer-only setup commands and tooling details,
+> **facing** a first impression that buries repository contents under operational instructions and leaves newer packages like `vibe` under-described,
+> **we decided** to keep `README.md` scoped to repository contents while moving tooling, common tasks, helper scripts, and quickstart into `SETUP.md`,
+> **to achieve** a clearer boundary between "what is here" and "how to maintain it", with a short pointer from README to the setup page,
+> **accepting** that future package additions should be reflected in both the overview and the maintainer task list.
+
 Package-specific decisions live in:
 - [`agents-shared/decisions.md`](./agents-shared/decisions.md)
 - [`dotagents/decisions.md`](./dotagents/decisions.md)
