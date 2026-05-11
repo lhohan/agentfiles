@@ -1,6 +1,6 @@
 # Force Session Start Model
 
-Forces the active ("default") model to a user-configured value at the start of every new session.
+Forces the active ("default") model to a user-configured value at the start of every new session. [Source](./force-session-start-model.ts).
 
 Use when you want a stable starting model that survives `/model` changes across sessions. Pi normally persists whichever model you last selected, so there's no built-in distinction between "preferred default" and "last used."
 
@@ -28,4 +28,4 @@ Fires on `session_start` for `"startup"` and `"new"` only. Does not fire on `"re
 
 ## Related
 
-- `pi-028` in `docs/pi/decisions.md` — rationale for the separate config key.
+- [pi-028](../../../../docs/pi/decisions.md#pi-028-use-a-sessionstartmodel-setting-separate-from-pis-built-in-defaultmodel-accepted) — rationale for the separate config key.
