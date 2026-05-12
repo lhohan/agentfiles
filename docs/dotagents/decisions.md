@@ -2,6 +2,18 @@
 
 Dotagents-specific decisions are listed in reverse chronological order (most recent first).
 
+### dotagents-011: Move `document-architectural-decisions` into dotagents [Accepted]
+
+**In the context of** `agentfiles` now being the main repository for managing my skills
+
+**Facing** the need to keep the latest `document-architectural-decisions` skill in the managed skill package
+
+> **We decided** to add `document-architectural-decisions` to `agents/dotagents/.agents/skills/`
+
+**To achieve** one current source for the globally installed skill
+
+**Accepting** the old copy in `agent-chisels` should be removed rather than kept in parallel
+
 ### dotagents-009: Tighten `interrogate-plan` with explicit interrogation mode [Accepted]
 
 **Amends** dotagents-005.

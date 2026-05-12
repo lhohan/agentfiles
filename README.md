@@ -42,6 +42,8 @@ Agent configuration files are managed with Mise and GNU Stow.
 - [detect-jujutsu](agents/dotagents/.agents/skills/detect-jujutsu/) and [use-jujutsu](agents/dotagents/.agents/skills/use-jujutsu/) are the stable Jujutsu guidance pair. Combine them with instructions in [`AGENTS.md`](agents/agents-shared/CANONICAL/AGENTS.md).
 - [use-jujutsu-workspaces](agents/dotagents/.agents/skills/use-jujutsu-workspaces/) is an experimental, under-construction companion for `jj workspace` workflows when running parallel agent work. It is not yet a default recommendation alongside the main Jujutsu skills.
 - [karpathy-guidelines](agents/dotagents/.agents/skills/karpathy-guidelines/) is a reusable coding-behaviour skill. To default-enable it for a project, add this to the project's `AGENTS.md`: `- Use the skill 'karpathy-guidelines' for coding tasks.`
+- [document-architectural-decisions](agents/dotagents/.agents/skills/document-architectural-decisions/) guides creation and review of Architecture Decision Records using traditional ADRs or Y-statements.
+- [document-change-intentions-using-change-intent-records](agents/dotagents/.agents/skills/document-change-intentions-using-change-intent-records/) guides agents and users to create lightweight Change Intent Records (CIRs) for non-trivial or non-obvious changes.
 
 ## Pi
 
