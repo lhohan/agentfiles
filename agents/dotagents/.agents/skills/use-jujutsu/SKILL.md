@@ -19,6 +19,9 @@ This guide provides the definitive instruction set for working with **Jujutsu (j
   - NEVER use `jj restore` to exclude files from a commit; use fileset commits instead.
 - Push: `jj git push`
 - Push main: `jj bookmark set main -r @- && jj git push`
+- Fetch remote: `jj git fetch --remote origin`
+- Check remote state: `jj log -r @origin --no-pager -n 5`
+- List bookmarks: `jj bookmark list`
 - Undo last jj command: `jj undo`
 - Help: `jj help` -- use this is you need to research how `jj` works. Or use available search tools.
 
@@ -51,7 +54,7 @@ If location is ambiguous (for example, multiple checkouts/workspaces), confirm w
 - `descendants(@)` — All descendants of current revision
 
 ## Important Constraints
-- **Never use `git` commands in `.jj/` repositories**—translate to jj equivalent.
+- **Never use `git` commands in `.jj/` repositories**—translate to jj equivalent. This includes read-only commands like `git log` or `git status`.
 - **Do not mix `git` and `jj` operations**; they have incompatible internal models.
 - If a jj command fails, provide the error message and suggest alternatives.
 
