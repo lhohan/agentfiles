@@ -14,6 +14,18 @@ Dotagents-specific decisions are listed in reverse chronological order (most rec
 
 **Accepting** the old copy in `agent-chisels` should be removed rather than kept in parallel
 
+### dotagents-010: Add CIR skill for change-level intent records [Accepted]
+
+**In the context of** needing reusable guidance for documenting the intent, behaviour, constraints, and decisions behind non-trivial changes
+
+**Facing** the choice between relying on ADR guidance, adding automation, or adding a small dedicated skill
+
+> **We decided** to add `document-change-intentions-using-change-intent-records` under `agents/dotagents/.agents/skills/` as a self-contained skill
+
+**To achieve** lightweight change-level documentation to capature past decisions and remember the intention of changes made. This complements ADRs, design documents, commit messages, and tests without adding runtime machinery
+
+**Accepting** CIRs must remain selective and should be skipped for trivial or obvious changes to avoid process bloat and overlap with current decision record mechanisms.
+
 ### dotagents-009: Tighten `interrogate-plan` with explicit interrogation mode [Accepted]
 
 **Amends** dotagents-005.
