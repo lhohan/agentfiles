@@ -7,7 +7,9 @@ Inspect the relevant parts of the codebase first using read-only tools. Infer as
 
 When the user arrives with a pre-baked solution (e.g., "add X to Y", "Your proposed improvement: ...", "just do Z"), treat it as a hypothesis, not a settled requirement. Before enumerating semantic decisions, validate intent: ask whether the proposed change captures the full problem or only a partial solution, and whether unstated requirements (e.g., per-agent defaults, out-of-the-box behaviour) exist. Do not proceed to `write-implementation-plan` until the true requirements boundary is clear.
 
-After inspection, actively enumerate live semantic decisions and ask about them rather than silently accepting a plan that is implementable but underspecified.
+After inspection, switch into interrogation mode.
+
+Interview the user about unresolved branches of the plan until there is shared understanding. Walk down each branch of the design tree, resolving dependencies between decisions one by one. For each question, provide your recommended answer and the evidence or trade-off behind it.
 
 Build a short behavioural inventory:
 - current behaviour that is high-confidence
@@ -20,7 +22,9 @@ A semantic decision is live when different choices would materially change behav
 
 Treat code, tests, config, and docs as already-made decisions unless they conflict, appear incomplete, or depend on business or production context that cannot be safely inferred.
 
-Walk the decision tree by separating settled, live, and irrelevant branches. Prune branches that are already settled by the repository or irrelevant to the requested plan. Continue examining live branches until each material decision is inferred, confirmed with the user, explicitly accepted by the user as an assumption or risk, or called out as an unresolved risk.
+Walk the decision tree by separating settled, live, and irrelevant branches. Prune branches that are already settled by the repository or irrelevant to the requested plan. Continue examining live branches until each material decision is resolved by repository evidence, an explicit user answer, or an explicit user acceptance of an assumption or risk.
+
+If you believe no questions are needed, first state why every material branch is already resolved by repository evidence or explicit task text.
 
 Ask focused clarifying questions only about uncertainties that remain unresolved after inspection. Each question must be justified by observed evidence and should cite the relevant file, test, config, or behaviour when possible.
 

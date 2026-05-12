@@ -2,6 +2,20 @@
 
 Dotagents-specific decisions are listed in reverse chronological order (most recent first).
 
+### dotagents-009: Tighten `interrogate-plan` with explicit interrogation mode [Accepted]
+
+**Amends** dotagents-005.
+
+**In the context of** `interrogate-plan` still being able to produce an implementation plan without asking questions when material branches were unresolved
+
+**Facing** the choice between adding session-specific rules for the observed failure or strengthening the generic grill-me-derived behaviour
+
+> **We decided** to amend `dotagents-005` by making `interrogate-plan` enter an explicit interrogation mode after inspection, walk unresolved plan branches one by one, give a recommended answer with each question, and only skip questions after stating why every material branch is already resolved by repository evidence or explicit task text
+
+**To achieve** the intended grill-me branch coverage without overfitting the skill to one observed planning failure
+
+**Accepting** the skill becomes more forceful and may ask more questions before allowing `write-implementation-plan`
+
 ### dotagents-008: Document `use-jujutsu-workspaces` as experimental until it proves out [Accepted]
 
 **In the context of** adding a reusable skill for `jj workspace` workflows
