@@ -1,5 +1,5 @@
 ---
-model: openai-codex/gpt-5.4,opencode-go/deepseek-v4-pro
+model: openai-codex/gpt-5.5,opencode-go/deepseek-v4-pro
 thinking: high
 restore: false
 ---
