@@ -39,8 +39,9 @@ Agent configuration files are managed with Mise and GNU Stow.
 
 [Dotagents](agents/dotagents) installs reusable global skills under `~/.agents/skills/`.
 
-- [detect-jujutsu](agents/dotagents/.agents/skills/detect-jujutsu/) and [use-jujutsu](agents/dotagents/.agents/skills/use-jujutsu/) instruct the agents to use Jujutsu instead of Git. Combine with instructions in [`AGENTS.md`](agents/agents-shared/CANONICAL/AGENTS.md).
-- [karpathy-guidelines](agents/dotagents/.agents/skills/karpathy-guidelines/) is a reusable coding-behaviour skill. To default enable it for a project, add to the project's `AGENTS.md`: `- Use the 'karpathy-guidelines?' for coding tasks.`.
+- [detect-jujutsu](agents/dotagents/.agents/skills/detect-jujutsu/) and [use-jujutsu](agents/dotagents/.agents/skills/use-jujutsu/) are the stable Jujutsu guidance pair. Combine them with instructions in [`AGENTS.md`](agents/agents-shared/CANONICAL/AGENTS.md).
+- [use-jujutsu-workspaces](agents/dotagents/.agents/skills/use-jujutsu-workspaces/) is an experimental, under-construction companion for `jj workspace` workflows when running parallel agent work. It is not yet a default recommendation alongside the main Jujutsu skills.
+- [karpathy-guidelines](agents/dotagents/.agents/skills/karpathy-guidelines/) is a reusable coding-behaviour skill. To default-enable it for a project, add this to the project's `AGENTS.md`: `- Use the skill 'karpathy-guidelines' for coding tasks.`
 
 ## Pi
 

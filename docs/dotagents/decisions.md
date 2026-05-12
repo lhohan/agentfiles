@@ -2,6 +2,18 @@
 
 Dotagents-specific decisions are listed in reverse chronological order (most recent first).
 
+### dotagents-008: Document `use-jujutsu-workspaces` as experimental until it proves out [Accepted]
+
+**In the context of** adding a reusable skill for `jj workspace` workflows
+
+**Facing** the risk of presenting a newly added skill as equally established with the core shared skills even though it is not yet in active use
+
+> **We decided** to keep `use-jujutsu-workspaces` installed in `agents/dotagents/.agents/skills/`, but document it in `README.md` as **experimental** and **under construction** rather than as part of the default Jujutsu guidance
+
+**To achieve** a truthful inventory that exposes the capability without overstating its maturity or recommending it as standard practice before it has earned that status
+
+**Accepting** the skill may evolve, be rewritten, or be removed if it does not solve a real repeated need
+
 ### dotagents-007: Vendor web-browser skill from mitsuhiko/agent-stuff [Accepted]
 
 **In the context of** needing browser automation for project "web vision" work
