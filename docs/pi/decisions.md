@@ -1,6 +1,30 @@
 # pi decisions
 
-Pi-specific decisions are listed in reverse chronological order (most recent first).
+Pi-specific decisions listed in reverse chronological order (most recent first).
+
+### pi-029: Answer extension comparison - sids/pi-extensions/answer vs mitsuhiko/agent-stuff/answer.ts [Provisional]
+
+**In the context of** evaluating answer-question extraction extension workflow for Pi
+
+**Facing** the choice between `sids/pi-extensions/answer` (published as `pi-answer`) and `mitsuhiko/agent-stuff/extensions/answer.ts` as candidates for adoption
+
+
+> **We decided** to recommend **sids/pi-extensions/answer** for packaged trial and **mitsuhiko/agent-stuff/answer.ts** as minimal reference implementation
+
+
+**To achieve** a clear path forward for Q&A extraction functionality while maintaining security and code quality standards,
+
+**Accepting** that:
+  - sids/pi-extensions/answer has a larger trust surface due to external dependency on `@siddr/pi-shared-qna`
+  - sids/pi-extensions/answer provides comprehensive features (draft persistence, templates, options, configuration) that justify the additional complexity
+  - mitsuhiko/agent-stuff/answer.ts serves as excellent minimal reference but lacks features for production use
+  - top-level version pinning doesn't fully pin transitive dependencies in the packaged option
+  - the security review of `@siddr/pi-shared-qna` was completed with a Medium-risk verdict and limited-trial recommendation (`docs/pi/security-review-answer-extension.md`)
+  - long-term, building an Alps-owned extension that cherry-picks the best features may be optimal
+
+**Rationale:** The feature comparison (docs/comparisons/answer-extension-comparison.md) shows sids/pi-extensions/answer as production-ready with professional packaging, comprehensive documentation, active maintenance, and a rich feature set. mitsuhiko/agent-stuff/answer.ts demonstrates the core pattern excellently but lacks the polish and features needed for daily use. The recommendation balances immediate usability with long-term maintainability.
+
+**Status:** Provisional - security review completed (`docs/pi/security-review-answer-extension.md`); trial evaluation pending (`docs/pi/trial-answer-extension.md`)
 
 ### pi-028: Use a `sessionStartModel` setting separate from Pi's built-in `defaultModel` [Accepted]
 
