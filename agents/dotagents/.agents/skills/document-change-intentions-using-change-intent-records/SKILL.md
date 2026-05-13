@@ -1,7 +1,7 @@
 ---
 name: document-change-intentions-using-change-intent-records
 description: >
-  Use when change intent is worth remembering. Guides Change Intent Records for non-obvious rationale, rejected alternatives, subtle behaviour, or constraints maintainers and agents must preserve.
+  Use when change intent or decision is worth remembering. Guides Change Intent Records for non-obvious rationale, rejected alternatives, subtle behaviour, or constraints maintainers and agents must preserve.
 ---
 
 # Document Change Intentions Using Change Intent Records

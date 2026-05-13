@@ -2,6 +2,18 @@
 
 Dotagents-specific decisions are listed in reverse chronological order (most recent first).
 
+### dotagents-012: Check for CIRs during task completion [Accepted]
+
+**In the context of** using `landing-the-plane` as the shared completion workflow instead of adding more global `AGENTS.md` process text
+
+**Facing** the need to remember when completed changes deserve Change Intent Records without making CIR creation mandatory for every task
+
+> **We decided** to add a Change Intent Record check to `landing-the-plane`, delegating detailed guidance to `document-change-intentions-using-change-intent-records`
+
+**To achieve** consistent end-of-task consideration of whether change intent, constraints, behaviour, and rejected alternatives need durable documentation before the final commit
+
+**Accepting** the specialized CIR skill owns the criteria, template, examples, and workflow guidance.
+
 ### dotagents-011: Move `document-architectural-decisions` into dotagents [Accepted]
 
 **In the context of** `agentfiles` now being the main repository for managing my skills

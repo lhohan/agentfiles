@@ -44,6 +44,7 @@ Agent configuration files are managed with Mise and GNU Stow.
 - [karpathy-guidelines](agents/dotagents/.agents/skills/karpathy-guidelines/) is a reusable coding-behaviour skill. To default-enable it for a project, add this to the project's `AGENTS.md`: `- Use the skill 'karpathy-guidelines' for coding tasks.`
 - [document-architectural-decisions](agents/dotagents/.agents/skills/document-architectural-decisions/) guides creation and review of Architecture Decision Records using traditional ADRs or Y-statements.
 - [document-change-intentions-using-change-intent-records](agents/dotagents/.agents/skills/document-change-intentions-using-change-intent-records/) is a new skill under evaluation for documenting change intent worth remembering with lightweight Change Intent Records (CIRs), based on Bryan Liles' [Change Intent Records](https://blog.bryanl.dev/posts/change-intent-records/) pattern.
+- [landing-the-plane](agents/dotagents/.agents/skills/landing-the-plane/) runs the end-of-task closure workflow.
 
 ## Pi
 

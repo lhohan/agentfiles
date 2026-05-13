@@ -1,6 +1,6 @@
 ---
 name: landing-the-plane
-description: Use when user says they are done, want to finish, close a task, end a session, or asks to "land the plane." ALSO use before completing ANY task to run the quality gate workflow (issue sweep, VCS review, verification, commit, close).
+description: Use when user says they are done, want to finish, close a task, end a session, or asks to "land the plane." ALSO use before completing ANY task to run the quality gate workflow (issue sweep, VCS review, verification, CIR check, commit, close).
 version: 0.1.0
 ---
 
@@ -29,25 +29,29 @@ Confirm that all quality gates (tests, lints, builds) are passing.
 - **Rule:** Do not guess commands. Refer to the project's AGENTS.md, README.md.
 - Confirm that all identified gates have passed. **Never close a task with failing gates.**
 
-### Step 4: Final Commit
+### Step 4: Change Intent Record Check
+Invoke `document-change-intentions-using-change-intent-records` to decide whether this completed change needs a CIR before committing.
+
+### Step 5: Final Commit
 Ensure all changes are persisted with clear context.
 - Commit changes using the project's VCS.
 - **Rule:** Include the task ID in the commit message body for traceability.
 
-### Step 5: Remote Sync (Optional)
+### Step 6: Remote Sync (Optional)
 If remote sync is explicitly requested by the user or required by project policy:
 - Perform the repository/task-tracker sync operations appropriate for this project.
 
-### Step 6: Task Closure
+### Step 7: Task Closure
 Mark the work as finished in the task tracker.
 - **Pre-close checkpoint:** Do not close tasks if requirements are still changing, unresolved uncertainty remains, or the user is still deciding direction.
 - Require an explicit closure-ready signal from the conversation before closing tasks or issues.
 - Close the task(s) completed in this session's scope.
 
-### Step 7: Session Handoff
+### Step 8: Session Handoff
 Provide a clear summary for the next session.
 - Document exactly what was completed.
 - State which verification gates passed.
+- State whether a CIR was created or skipped, and why.
 - List any newly created follow-up tasks.
 
 ## Critical Rules
