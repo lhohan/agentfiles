@@ -13,18 +13,20 @@ Minimal CDP tools for collaborative site exploration. Remote controls Google Chr
 
 - **Chrome/Chromium** installed at a standard macOS path, or set `BROWSER_BIN`
 - **Node.js** (for the scripts)
-- **npm dependencies:** `cd scripts && npm install` (installs `ws` WebSocket library)
+- **npm dependencies:** `cd scripts && npm ci` (installs `ws` WebSocket library)
 
 ## Setup
 
 ```bash
 # Install npm dependency (one-time)
-# Scripts are symlinked from the repo; run npm install where the real files live.
-cd agents/dotagents/.agents/skills/web-browser/scripts && npm install
+# Scripts are symlinked from the repo; run npm ci where the real files live.
+cd agents/dotagents/.agents/skills/web-browser/scripts && npm ci
 
 # Start Chrome with remote debugging
 ./scripts/start.js
 ```
+
+> **⚠️ Do not install from `~/.agents/skills/web-browser/scripts`.** The scripts are symlinks; Node resolves imports from the real repo path. Installing in the symlink target leaves stale `node_modules` that Node ignores.
 
 ## Start Chrome
 

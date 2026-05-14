@@ -19,11 +19,13 @@ Vendored from [mitsuhiko/agent-stuff/skills/web-browser](https://github.com/mits
 cd ~/dev/agentfiles && mise stow
 
 # 2. Install npm dependency (one-time)
-# Scripts are symlinks; run npm install where the real files live (in the repo).
-cd agents/dotagents/.agents/skills/web-browser/scripts && npm install
+# Scripts are symlinks; run npm ci where the real files live (in the repo).
+cd agents/dotagents/.agents/skills/web-browser/scripts && npm ci
 ```
 
-The stow step creates symlinks at `~/.agents/skills/web-browser/` pointing back to the repo files. After `npm install` in the repo path, all scripts are ready to use.
+The stow step creates symlinks at `~/.agents/skills/web-browser/` pointing back to the repo files. After `npm ci` in the repo path, all scripts are ready to use.
+
+> **⚠️ Do not install from `~/.agents/skills/web-browser/scripts`.** Node resolves ESM imports from the real repo path (symlink target), not the symlink location. Installing in `~/.agents/...` leaves stale `node_modules` that Node ignores.
 
 ## Quick start
 
