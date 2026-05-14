@@ -1,5 +1,7 @@
 # pi decisions
 
+> **Note:** These decision logs remain active reference material. New durable change intent should usually be recorded as CIRs. A CIR may supersede an older decision record when it replaces or invalidates that prior decision.
+
 Pi-specific decisions listed in reverse chronological order (most recent first).
 
 ### pi-029: Answer extension comparison - sids/pi-extensions/answer vs mitsuhiko/agent-stuff/answer.ts [Provisional]

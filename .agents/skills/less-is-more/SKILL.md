@@ -17,7 +17,7 @@ When the user considers changing their agent setup, apply this skill.
 
 4. **Label speculative additions `experimental`.** If the user wants to try something that does not yet meet the bar above, it must be explicitly marked as `experimental`. This includes a clear note on what problem it might solve and that it should be removed if it proves unnecessary.
 
-5. **Record the reason.** For meaningful setup changes, encourage an explicit decision record so the motivation is visible later. Use `docs/<package>/decisions.md` for package-local choices and `docs/decisions.md` for repo-wide or cross-cutting choices. This is a recommendation, not a gate — but absence of one should prompt the user to justify the addition.
+5. **Record the reason.** For meaningful setup changes, encourage an explicit record so the motivation is visible later. Prefer Change Intent Records (CIRs) under `docs/<package>/cir/` or `docs/cir/` for new durable change intent or decisions; existing decision logs remain active reference material. This is a recommendation, not a gate — but absence of one should prompt the user to justify the addition.
 
 ## What to use this for
 

@@ -1,5 +1,7 @@
 # agents-shared decisions
 
+> **Note:** These decision logs remain active reference material. New durable change intent or decisions should usually be recorded as CIRs. A CIR may supersede an older decision record when it replaces or invalidates that prior decision.
+
 Agents-shared-specific decisions are listed in reverse chronological order (most recent first).
 
 ### agents-shared-004: Rename the internal canonical source directory to CANONICAL [Accepted]

@@ -1,5 +1,7 @@
 # dotagents decisions
 
+> **Note:** These decision logs remain active reference material. New durable change intent should usually be recorded as CIRs. A CIR may supersede an older decision record when it replaces or invalidates that prior decision.
+
 Dotagents-specific decisions are listed in reverse chronological order (most recent first).
 
 ### dotagents-012: Check for CIRs during task completion [Accepted]

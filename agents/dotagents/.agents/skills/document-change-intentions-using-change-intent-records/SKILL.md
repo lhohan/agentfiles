@@ -83,9 +83,8 @@ Omit `Supersedes` when the CIR does not replace an earlier record. Use sequentia
 
 Default location:
 
-```text
-docs/cir/
-```
+- Repo-wide CIRs: `docs/cir/`
+- Package-scoped CIRs: `docs/<package>/cir/`
 
 Default filename:
 
@@ -97,14 +96,15 @@ Examples:
 
 ```text
 docs/cir/2026-05-13-preserve-plan-mode-read-only.md
-docs/cir/2026-05-13-skip-cir-for-trivial-cleanups.md
+docs/dotagents/cir/2026-05-14-adopt-hybrid-cir-decision-record-policy.md
 ```
 
-If the repository already has a convention for decision records, follow it unless it conflicts with the CIR purpose. Keep CIRs near other durable project documentation, not inside temporary task notes.
+A CIR may supersede an earlier decision record when it replaces or invalidates that prior decision. If the repository already has a convention for decision records, follow it unless it conflicts with the CIR purpose. Keep CIRs near other durable project documentation, not inside temporary task notes.
 
 ## Relationship to Other Records
 
 - **ADRs:** Use ADRs for architecture-level decisions that shape system structure over time. Use CIRs for change-level intent and constraints. A CIR may reference an ADR, but should not replace one.
+- **Decision records:** Existing decision logs remain active reference material. A CIR may supersede a prior decision record when it replaces or invalidates that prior decision.
 - **Commit messages:** Commit messages summarize what changed and may mention why. CIRs preserve richer rationale, expected behaviour, and rejected alternatives that should outlive a single commit.
 - **Design documents:** Design docs can explore broad options before implementation. CIRs capture the final intent and decisions for a specific change after the relevant tradeoffs are known.
 - **Tests:** Tests prove behaviour. CIRs explain why that behaviour matters and what constraints future changes must respect.

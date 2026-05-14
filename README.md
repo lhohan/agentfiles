@@ -81,9 +81,18 @@ Located in [Vibe](agents/vibe).
 
 - A [`config.toml`](agents/vibe/.vibe/config.toml) for the [Vibe CLI](https://github.com/Mistral-AI-Club/vibe-cli) with Mistral provider settings, model aliases, and tool permission profiles.
 
-## Decisions
+## Decisions and Change Intent Records
 
-See [`docs/decisions.md`](./docs/decisions.md) for the repo-wide decisions, and `docs/<agent>/decisions.md` for agent-specific decisions.
+Decision logs remain active reference material:
+- See [`docs/decisions.md`](./docs/decisions.md) for repo-wide decisions
+- See `docs/<agent>/decisions.md` for agent-specific decisions
+
+For new durable change intent, we prefer lightweight Change Intent Records (CIRs):
+- Repo-wide CIRs live in [`docs/cir/`](./docs/cir/)
+- Package-scoped CIRs live in `docs/<package>/cir/`
+- A CIR may supersede an earlier decision record when it replaces or invalidates that prior decision
+
+The [`document-change-intentions-using-change-intent-records`](agents/dotagents/.agents/skills/document-change-intentions-using-change-intent-records/) skill provides guidance on when and how to create CIRs.
 
 ## Contributing
 

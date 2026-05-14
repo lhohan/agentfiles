@@ -1,5 +1,7 @@
 # decisions
 
+> **Note:** These decision logs remain active reference material. New durable change intent should usually be recorded as CIRs. A CIR may supersede an older decision record when it replaces or invalidates that prior decision.
+
 Decisions are listed in reverse chronological order (most recent first).
 
 ### AGF-014: Split README overview from maintainer setup [Accepted]

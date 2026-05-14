@@ -17,7 +17,9 @@ Repository for agent configuration files. It uses [Mise](https://mise.jdx.dev) t
 
 ## Decision logging
 
-- Log important package decisions in `docs/<package>/decisions.md` as you make them.
+- Existing decision logs in `docs/<package>/decisions.md` remain active reference material.
+- For new durable change intent and decisions, prefer Change Intent Records (CIRs) under `docs/<package>/cir/` or `docs/cir/` for repo-wide records.
+- A CIR may supersede an earlier decision record when it replaces or invalidates that prior decision.
 
 ## Stow/Mise Workflow
 
@@ -31,8 +33,8 @@ Repository for agent configuration files. It uses [Mise](https://mise.jdx.dev) t
 ## Documentation Triggers
 
 - Update `README.md` when user-facing commands or workflow behavior changes.
-- Update `docs/decisions.md` when package model or operational policy changes.
-- Keep package-specific docs and decisions in `docs/<package>/` in sync with package and implementation changes.
+- Update `docs/decisions.md` or `docs/cir/` when package model or operational policy changes.
+- Keep package-specific docs and decisions in `docs/<package>/` and `docs/cir/` in sync with package and implementation changes.
 
 ## Prompt-Skill Pattern
 
