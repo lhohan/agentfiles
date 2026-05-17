@@ -53,6 +53,7 @@ Located in [Pi](agents/pi).
   - A global [`APPEND_SYSTEM.md`](agents/pi/.pi/agent/APPEND_SYSTEM.md) for Pi-specific startup and questionnaire-steering behaviour
   - A `/plan` prompt at [`agents/pi/.pi/agent/prompts/enhanced/plan.md`](agents/pi/.pi/agent/prompts/enhanced/plan.md) for read-only planning before implementation.
   - A `/review` prompt at [`agents/pi/.pi/agent/prompts/enhanced/review.md`](agents/pi/.pi/agent/prompts/enhanced/review.md) for read-only code review.
+  - A `/break` prompt at [`agents/pi/.pi/agent/prompts/enhanced/break.md`](agents/pi/.pi/agent/prompts/enhanced/break.md) for read-only adversarial QA and failure-mode hunting.
   - A `/review-plan` prompt at [`agents/pi/.pi/agent/prompts/enhanced/review-plan.md`](agents/pi/.pi/agent/prompts/enhanced/review-plan.md) for critical review of plan text before execution.
   - [custom themes](agents/pi/.pi/agent/themes/)
 
