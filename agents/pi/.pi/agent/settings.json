@@ -1,7 +1,7 @@
 {
-  "lastChangelogVersion": "0.74.0",
-  "defaultProvider": "mistral",
-  "defaultModel": "mistral-medium-3.5",
+  "lastChangelogVersion": "0.75.3",
+  "defaultProvider": "openai-codex",
+  "defaultModel": "gpt-5.4-mini",
   "defaultThinkingLevel": "high",
   "theme": "kanagawa-dragon",
   "terminal": {
