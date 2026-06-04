@@ -18,12 +18,14 @@ Agent configuration files are managed with Mise and GNU Stow.
 │   ├── dotagents/          # shared global skills under ~/.agents/skills/
 │   ├── pi/                 # Pi package
 │   ├── vibe/               # Vibe package
+│   ├── zerostack/          # ZeroStack package
 │   └── …                   # other agent packages as needed
 └── docs/                   # package-specific documentation
     ├── agents-shared/
     ├── dotagents/
     ├── pi/
     ├── vibe/
+    ├── zerostack/
     └── …                   # other package docs as needed
 ```
 
@@ -81,6 +83,12 @@ Located in [Pi](agents/pi).
 Located in [Vibe](agents/vibe).
 
 - A [`config.toml`](agents/vibe/.vibe/config.toml) for the [Vibe CLI](https://github.com/Mistral-AI-Club/vibe-cli) with Mistral provider settings, model aliases, and tool permission profiles.
+
+## ZeroStack
+
+Located in [ZeroStack](agents/zerostack).
+
+- A [`config.toml`](agents/zerostack/.config/zerostack/config.toml) for [ZeroStack](https://zerostack.dev) with Opencode Go provider configuration, model settings, and permission profiles.
 
 ## Decisions and Change Intent Records
 

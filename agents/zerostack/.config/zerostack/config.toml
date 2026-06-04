@@ -1,0 +1,40 @@
+# ~/.config/zerostack/config.toml
+# Opencode Go provider configuration
+
+provider = "opencode-go"
+model = "deepseek-v4-flash"  # or kimi-k2.6, glm-5.1, etc.
+subagent_provider = "opencode-go"
+subagent_model = "deepseek-v4-flash"
+
+show_tool_details = true
+
+# =============================================================================
+# Custom Providers
+# =============================================================================
+[custom_providers.opencode-go]
+provider_type = "openai"
+base_url = "https://opencode.ai/zen/go/v1"
+api_key_env = "OPENCODE_ZEROSTACK_API_KEY"  # unfortunate naming for now, but works
+api_style = "completions"
+
+# =============================================================================
+# Quick Models (optional)
+# =============================================================================
+
+[quick_models.fast]
+provider = "opencode-go"
+model = "deepseek-v4-flash"
+
+[quick_models.smart]
+provider = "opencode-go"
+model = "kimi-k2.6"
+
+# =============================================================================
+# Permission Configuration (adjust as needed)
+# =============================================================================
+
+[permission]
+"*" = "ask"
+read = "allow"
+write = "ask"
+bash = "ask"

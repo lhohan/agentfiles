@@ -17,6 +17,8 @@ This is **not** traditional Conventional Commits.
 - `pi:` — changes under `agents/pi/`
 - `dotagents:` — changes under `agents/dotagents/`
 - `shared:` — changes under `agents/agents-shared/`
+- `vibe:` — changes under `agents/vibe/`
+- `zerostack:` — changes under `agents/zerostack/`
 - `docs:` — documentation changes (only)
 - `build:` — task management or build related changes
 - `chore:` — repository-wide or cross-cutting changes, including root files, task scripts
