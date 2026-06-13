@@ -1,7 +1,7 @@
 {
-  "lastChangelogVersion": "0.75.3",
-  "defaultProvider": "openai-codex",
-  "defaultModel": "gpt-5.4-mini",
+  "lastChangelogVersion": "0.79.7",
+  "defaultProvider": "opencode-go",
+  "defaultModel": "kimi-k2.7-code",
   "defaultThinkingLevel": "high",
   "theme": "kanagawa-dragon",
   "terminal": {
@@ -13,21 +13,17 @@
   },
   "treeFilterMode": "default",
   "hideThinkingBlock": true,
-  "packages": [
-    "npm:pi-prompt-template-model@0.7.3",
-    "npm:pi-answer@0.1.4"
-  ],
+  "packages": ["npm:pi-prompt-template-model@0.7.3", "npm:pi-answer@0.1.4"],
   "enabledModels": [
-    "openai-codex/gpt-5.4-mini",
-    "openai-codex/gpt-5.4",
-    "openai-codex/gpt-5.3-codex",
-    "opencode/gemini-3-flash",
     "opencode-go/qwen3.6-plus",
     "opencode-go/kimi-k2.6",
     "openai-codex/gpt-5.5",
     "opencode-go/deepseek-v4-flash",
     "opencode-go/deepseek-v4-pro",
-    "mistral/mistral-medium-3.5"
+    "mistral/mistral-medium-3.5",
+    "opencode-go/kimi-k2.7-code",
+    "opencode-go/minimax-m3",
+    "opencode-go/glm-5.2"
   ],
   "enableSkillCommands": true,
   "showHardwareCursor": true,
