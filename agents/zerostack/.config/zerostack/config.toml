@@ -1,40 +1,35 @@
-# ~/.config/zerostack/config.toml
-# Opencode Go provider configuration
-
+model = "deepseek-v4-flash"
 provider = "opencode-go"
-model = "deepseek-v4-flash"  # or kimi-k2.6, glm-5.1, etc.
-subagent_provider = "opencode-go"
-subagent_model = "deepseek-v4-flash"
-
 show_tool_details = true
+subagent_model = "deepseek-v4-flash"
+subagent_provider = "opencode-go"
 
-# =============================================================================
-# Custom Providers
-# =============================================================================
 [custom_providers.opencode-go]
 provider_type = "openai"
 base_url = "https://opencode.ai/zen/go/v1"
-api_key_env = "OPENCODE_ZEROSTACK_API_KEY"  # unfortunate naming for now, but works
+api_key_env = "OPENCODE_ZEROSTACK_API_KEY"
 api_style = "completions"
 
-# =============================================================================
-# Quick Models (optional)
-# =============================================================================
+[permission]
+"*" = "ask"
+bash = "ask"
+read = "allow"
+write = "ask"
 
 [quick_models.fast]
 provider = "opencode-go"
 model = "deepseek-v4-flash"
+input_token_cost = 0.0
+output_token_cost = 0.0
 
 [quick_models.smart]
 provider = "opencode-go"
 model = "kimi-k2.6"
+input_token_cost = 0.0
+output_token_cost = 0.0
 
-# =============================================================================
-# Permission Configuration (adjust as needed)
-# =============================================================================
-
-[permission]
-"*" = "ask"
-read = "allow"
-write = "ask"
-bash = "ask"
+[quick_models.smart-latest]
+provider = "opencode-go"
+model = "mimo-v2.5-pro"
+input_token_cost = 0.0
+output_token_cost = 0.0
