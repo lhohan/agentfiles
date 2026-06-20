@@ -12,8 +12,7 @@ include_model_info = true
 
 # remove 'Co-Authored-By: Mistral Vibe <vibe@mistral.ai>"' when commiting
 enable_commit_signature = false
-
-active_model = "default"
+active_model = "deepseek-v4-flash"
 instructions = "Use the skill 'karpathy-guidelines' for coding tasks."
 vim_keybindings = false
 disable_welcome_banner_animation = false
@@ -47,6 +46,13 @@ region = ""
 
 [providers.extra_headers]
 
+[[providers]]
+name = "opencode-go"
+api_base = "https://opencode.ai/zen/go/v1"
+api_key_env_var = "OPENCODE_VIBE_API_KEY"
+api_style = "openai"
+backend = "generic"
+
 [[models]]
 name = "mistral-medium-3.5"
 provider = "mistral"
@@ -74,6 +80,51 @@ provider = "mistral"
 alias = "brainstorming"
 temperature = 0.9
 thinking = "low"
+
+[[models]]
+name = "kimi-k2.7-code"
+provider = "opencode-go"
+alias = "kimi-k2.7-code"
+temperature = 0.3
+thinking = "off"
+input_price = 0.95
+output_price = 4.0
+
+[[models]]
+name = "kimi-k2.6"
+provider = "opencode-go"
+alias = "kimi-k2.6"
+temperature = 0.3
+thinking = "off"
+input_price = 0.95
+output_price = 4.0
+
+[[models]]
+name = "deepseek-v4-pro"
+provider = "opencode-go"
+alias = "deepseek-v4-pro"
+temperature = 0.3
+thinking = "off"
+input_price = 1.74
+output_price = 3.48
+
+[[models]]
+name = "deepseek-v4-flash"
+provider = "opencode-go"
+alias = "deepseek-v4-flash"
+temperature = 0.3
+thinking = "off"
+input_price = 0.14
+output_price = 0.28
+
+[[models]]
+name = "glm-5.2"
+provider = "opencode-go"
+alias = "glm-5.2"
+temperature = 0.3
+thinking = "off"
+input_price = 1.4
+output_price = 4.4
 
 [[transcribe_providers]]
 name = "mistral"
