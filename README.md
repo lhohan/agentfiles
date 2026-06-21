@@ -89,6 +89,7 @@ Located in [Vibe](agents/vibe).
 Located in [ZeroStack](agents/zerostack).
 
 - A [`config.toml`](agents/zerostack/.config/zerostack/config.toml) for [ZeroStack](https://zerostack.dev) with Opencode Go provider configuration, model settings, and permission profiles.
+- An [`AGENTS.md`](agents/zerostack/.config/zerostack/agent/AGENTS.md) in Zerostack's config location that that instructs every Zerostack session to integrate Agent Skills. This requires [`skills-primer`](https://codeberg.org/hanlho/skills-primer) to be available on the CLI.
 
 ## Decisions and Change Intent Records
 
