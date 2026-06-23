@@ -1,6 +1,6 @@
 model = "deepseek-v4-flash"
 provider = "opencode-go"
-show_tool_details = true
+show_tool_details = false
 subagent_model = "deepseek-v4-flash"
 subagent_provider = "opencode-go"
 
