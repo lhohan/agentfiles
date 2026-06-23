@@ -1,16 +1,11 @@
-# --- Privacy & PII: controls what data is sent to Mistral or the model ---
 enable_telemetry = false
 include_commit_signature = false
 enable_update_checks = false
 enable_auto_update = false
 experimental_enable_registry_skills = false
-
-# disabling these degrades context but good to be aware of
 include_project_context = true
 include_prompt_detail = true
 include_model_info = true
-
-# remove 'Co-Authored-By: Mistral Vibe <vibe@mistral.ai>"' when commiting
 enable_commit_signature = false
 active_model = "deepseek-v4-flash"
 instructions = "Use the skill 'karpathy-guidelines' for coding tasks."
@@ -155,7 +150,6 @@ voice = "gb_jane_neutral"
 response_format = "wav"
 
 [project_context]
-# Sends N commit messages to the model per turn. Lowering this reduces exposure but also reduces model context quality.
 default_commit_count = 5
 max_chars = 40000
 max_doc_bytes = 32768
@@ -165,7 +159,6 @@ max_files = 1000
 max_dirs_per_level = 20
 timeout_seconds = 2.0
 
-# persists full transcripts to ~/.vibe/logs/session
 [session_logging]
 save_dir = "~/.vibe/logs/session"
 session_prefix = "session"
@@ -194,6 +187,7 @@ sensitive_patterns = []
 [tools.bash]
 permission = "ask"
 allowlist = [
+    "~/.local/bin/*",
     "basename",
     "cargo test",
     "cat",
@@ -212,7 +206,6 @@ allowlist = [
     "git diff",
     "git log",
     "git status",
-    "rg",
     "head",
     "jj",
     "join",
@@ -225,14 +218,17 @@ allowlist = [
     "paste",
     "pwd",
     "readlink",
+    "rg",
     "sha1sum",
     "sha256sum",
     "shasum",
     "sort",
     "stat",
+    "stow",
     "sum",
     "tac",
     "tail",
+    "test",
     "tr",
     "tree",
     "uname",
