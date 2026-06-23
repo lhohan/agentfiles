@@ -9,7 +9,7 @@
  */
 
 import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
-import { Editor, type EditorTheme, Key, matchesKey, Text, truncateToWidth } from "@mariozechner/pi-tui";
+import { Editor, type EditorTheme, Key, matchesKey, Text, truncateToWidth, visibleWidth, wrapTextWithAnsi } from "@mariozechner/pi-tui";
 import { Type } from "@sinclair/typebox";
 
 interface QuestionOption {
@@ -251,9 +251,25 @@ export default function questionnaire(pi: ExtensionAPI) {
 					const lines: string[] = [];
 					const q = currentQuestion();
 					const opts = currentOptions();
-					const add = (s: string) => lines.push(truncateToWidth(s, width));
 
-					add(theme.fg("accent", "─".repeat(width)));
+					function addWrapped(text: string) {
+						lines.push(...wrapTextWithAnsi(text, width));
+					}
+
+					function addWrappedWithPrefix(prefix: string, text: string) {
+						const prefixWidth = visibleWidth(prefix);
+						if (prefixWidth >= width) {
+							addWrapped(prefix + text);
+							return;
+						}
+						const wrapped = wrapTextWithAnsi(text, width - prefixWidth);
+						const continuationPrefix = " ".repeat(prefixWidth);
+						for (let i = 0; i < wrapped.length; i++) {
+							lines.push(`${i === 0 ? prefix : continuationPrefix}${wrapped[i]}`);
+						}
+					}
+
+					lines.push(theme.fg("accent", "─".repeat(width)));
 
 					if (isMulti) {
 						const tabs: string[] = ["← "];
@@ -274,7 +290,7 @@ export default function questionnaire(pi: ExtensionAPI) {
 							? theme.bg("selectedBg", theme.fg("text", submitText))
 							: theme.fg(canSubmit ? "success" : "dim", submitText);
 						tabs.push(`${submitStyled} →`);
-						add(` ${tabs.join("")}`);
+						addWrappedWithPrefix(" ", tabs.join(""));
 						lines.push("");
 					}
 
@@ -285,50 +301,49 @@ export default function questionnaire(pi: ExtensionAPI) {
 							const isOther = opt.isOther === true;
 							const prefix = selected ? theme.fg("accent", "> ") : "  ";
 							const color = selected ? "accent" : "text";
-							if (isOther && inputMode) {
-								add(prefix + theme.fg("accent", `${i + 1}. ${opt.label} ✎`));
-							} else {
-								add(prefix + theme.fg(color, `${i + 1}. ${opt.label}`));
-							}
+							const labelText = isOther && inputMode
+								? `${i + 1}. ${opt.label} ✎`
+								: `${i + 1}. ${opt.label}`;
+							addWrappedWithPrefix(prefix, theme.fg(color, labelText));
 							if (opt.description) {
-								add(`     ${theme.fg("muted", opt.description)}`);
+								addWrappedWithPrefix("     ", theme.fg("muted", opt.description));
 							}
 						}
 					}
 
 					if (inputMode && q) {
-						add(theme.fg("text", ` ${q.prompt}`));
+						addWrappedWithPrefix(" ", theme.fg("text", q.prompt));
 						lines.push("");
 						renderOptions();
 						lines.push("");
-						add(theme.fg("muted", " Your answer:"));
-						for (const line of editor.render(width - 2)) {
-							add(` ${line}`);
+						addWrappedWithPrefix(" ", theme.fg("muted", "Your answer:"));
+						for (const line of editor.render(Math.max(1, width - 2))) {
+							addWrappedWithPrefix("  ", line);
 						}
 						lines.push("");
-						add(theme.fg("dim", " Enter to submit • Esc to cancel"));
+						addWrappedWithPrefix(" ", theme.fg("dim", "Enter to submit • Esc to cancel"));
 					} else if (currentTab === questions.length) {
-						add(theme.fg("accent", theme.bold(" Ready to submit")));
+						addWrappedWithPrefix(" ", theme.fg("accent", theme.bold("Ready to submit")));
 						lines.push("");
 						for (const question of questions) {
 							const answer = answers.get(question.id);
 							if (answer) {
 								const prefix = answer.wasCustom ? "(wrote) " : "";
-								add(`${theme.fg("muted", ` ${question.label}: `)}${theme.fg("text", prefix + answer.label)}`);
+								addWrappedWithPrefix(" ", theme.fg("muted", `${question.label}: `) + theme.fg("text", prefix + answer.label));
 							}
 						}
 						lines.push("");
 						if (allAnswered()) {
-							add(theme.fg("success", " Press Enter to submit"));
+							addWrappedWithPrefix(" ", theme.fg("success", "Press Enter to submit"));
 						} else {
 							const missing = questions
 								.filter((q) => !answers.has(q.id))
 								.map((q) => q.label)
 								.join(", ");
-							add(theme.fg("warning", ` Unanswered: ${missing}`));
+							addWrappedWithPrefix(" ", theme.fg("warning", `Unanswered: ${missing}`));
 						}
 					} else if (q) {
-						add(theme.fg("text", ` ${q.prompt}`));
+						addWrappedWithPrefix(" ", theme.fg("text", q.prompt));
 						lines.push("");
 						renderOptions();
 					}
@@ -336,11 +351,11 @@ export default function questionnaire(pi: ExtensionAPI) {
 					lines.push("");
 					if (!inputMode) {
 						const help = isMulti
-							? " Tab/←→ navigate • ↑↓ select • Enter confirm • Esc cancel"
-							: " ↑↓ navigate • Enter select • Esc cancel";
-						add(theme.fg("dim", help));
+							? "Tab/←→ navigate • ↑↓ select • Enter confirm • Esc cancel"
+							: "↑↓ navigate • Enter select • Esc cancel";
+						addWrappedWithPrefix(" ", theme.fg("dim", help));
 					}
-					add(theme.fg("accent", "─".repeat(width)));
+					lines.push(theme.fg("accent", "─".repeat(width)));
 
 					cachedLines = lines;
 					return lines;
