@@ -1,4 +1,4 @@
-model = "deepseek-v4-flash"
+model = "kimi-k2.7-code"
 provider = "opencode-go"
 show_tool_details = false
 subagent_model = "deepseek-v4-flash"
