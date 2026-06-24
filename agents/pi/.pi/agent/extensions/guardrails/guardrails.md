@@ -1,15 +1,17 @@
-# Guardrails Extension
+# Command Guardrails Extension
 
-Configurable tool-call guardrails for Pi's built-in `bash`, `read`, `write`, `edit`, `grep`, `find`, and `ls` tools.
+Command guardrails are opt-in warn/block rules for Pi `bash` tool calls.
+
+They are useful for risky shell commands such as destructive Jujutsu operations. They are not file secrecy, content filtering, sandboxing, or a reliable way to stop the model from reading or editing files through other tools. Put file access control in containment such as Safehouse.
 
 ## Config Locations
 
 Guardrail config is opt-in. No default config file is shipped.
 
-- Global: `~/.pi/agent/guardrails.yaml` or `~/.pi/agent/guardrails.yml`
-- Project-local: `<project-root>/.pi/guardrails.yaml` or `<project-root>/.pi/guardrails.yml`
+- Global: `~/.pi/agent/guardrails.conf`
+- Project-local: `<project-root>/.pi/guardrails.conf`
 
-Project-local rules override global rules by `name`.
+Project-local rules override global rules by section name.
 
 ## Post-Stow Setup
 
@@ -17,108 +19,58 @@ No extra setup is required.
 
 ## Config Format
 
-Use a simple YAML file with a top-level `rules:` array.
+Use an INI-style config file. Each section is one rule, and the section name is the rule name.
 
-```yaml
-rules:
-  - name: block-jj-abandon
-    tools: [bash]
-    pattern: '\bjj abandon\b'
-    mode: block
-    reason: Protect working-copy history
+```ini
+[block-jj-abandon]
+mode = block
+match = \bjj abandon\b
+reason = Protect working-copy history
 
-  - name: warn-secret-searches
-    tools: [grep]
-    pattern: '(secret|token|apikey|password)'
-    mode: warn
+[warn-rm-rf]
+mode = warn
+match = \brm\s+-rf\b
 
-  - name: block-env-reads
-    tools: [read]
-    pattern: '(^|/)\.env(\.|$|/)'
-    mode: block
-
-  - name: block-svelte-effects
-    tools: [write, edit]
-    pattern: '\$effect'
-    pathPattern: '\.svelte$'
-    mode: block
-
-  - name: allow-doc-env-example
-    tools: [read]
-    pattern: '(^|/)\.env(\.|$|/)'
-    allow: 'docs/examples/'
-    mode: warn
+[disable-global-rule]
+mode = off
+match = .*
 ```
+
+Supported keys:
+
+- `match`: required JavaScript regex string matched against the full bash command
+- `mode`: required `off`, `warn`, or `block`
+- `reason`: optional user-facing explanation included in warnings and blocks
 
 Regex strings are passed to JavaScript `new RegExp(...)`. Write the regex pattern itself, not `/.../` delimiters.
 
-Current parser scope:
-
-- top-level `rules:`
-- one inline rule per list item
-- inline tools arrays such as `tools: [bash, read]`
-- scalar string values for the other fields
-
-Do not use advanced YAML features such as anchors, multiline strings, nested mappings, or block lists.
-
-## Rule Schema
-
-Required fields:
-
-- `name`: unique within a config scope
-- `tools`: array using only `bash`, `read`, `write`, `edit`, `grep`, `find`, `ls`
-- `pattern`: regex string matched against the tool's primary input
-- `mode`: `off`, `warn`, or `block`
-
-Optional fields:
-
-- `pathPattern`: regex string matched against `event.input.path` when that field exists
-- `reason`: user-facing explanation included in warnings and blocks
-- `allow`: regex exemption
+Comments are whole-line only. Lines whose trimmed content starts with `#` or `;` are ignored. Inline comments are not parsed, so `#` and `;` can be used predictably inside regexes.
 
 ## Matching Semantics
 
-`pattern` always matches the tool's primary input:
-
-- `bash`: `command`
-- `read`: `path`
-- `write`: `content`
-- `edit`: combined edit payload built from each `oldText` and `newText`
-- `grep`: `pattern`
-- `find`: `pattern`
-- `ls`: `path`
-
-`pathPattern` matches `event.input.path` when the tool input includes a path:
-
-- `read`, `write`, `edit`
-- `grep`, `find`, `ls` only when the caller provided `path`
-
-`allow` uses a different subject:
-
-- `bash`: matches the command
-- `read`, `write`, `edit`, `grep`, `find`, `ls`: matches the path
-
-If a tool call has no path, `pathPattern` does not match and path-based `allow` does not match.
+Only `bash` `tool_call` events are evaluated. All other tool calls are ignored.
 
 For a rule to match:
 
-1. the tool name must be included in `tools`
-2. `allow` must not match
-3. `pattern` must match
-4. `pathPattern`, when present, must also match
+1. `mode` must be `warn` or `block`
+2. `match` must match the full bash command string
+
+`off` rules are loaded and listed, but not enforced. Use a project-local rule with the same section name and `mode = off` to disable a global rule for one project.
 
 ## Rule Evaluation
 
-- `off` rules are loaded but ignored during enforcement
-- all matching `warn` rules emit warnings
-- the first matching `block` rule blocks the tool call
-- a block also emits a notification
+Rules are evaluated in merged order:
+
+1. global rules whose names are not overridden by project rules
+2. project rules
+
+Evaluation collects matching warnings before the first matching block. When a block matches, evaluation stops and the bash tool call is blocked.
 
 ## Override Behavior
 
-- Rule names must be unique within one scope
-- Project-local rules replace global rules with the same `name`
-- Using the same rule `name` with `mode: off` is the way to disable a global rule in one project
+- Rule section names must be unique within one config scope.
+- Project-local rules replace global rules with the same section name.
+- A parse or validation error disables only that config scope.
 
 ## Error Handling
 
@@ -126,36 +78,40 @@ Missing config files are silent and fail open.
 
 Each scope is validated independently:
 
-- If both `.yaml` and `.yml` exist in one scope, that scope is ignored and Pi shows a warning
-- If the chosen config file cannot be parsed or validated, that scope is ignored and Pi shows a warning
-- Errors in one scope do not disable the other scope
+- If `guardrails.conf` cannot be parsed or validated, that scope is ignored and Pi shows a warning.
+- Errors in one scope do not disable the other scope.
+- Duplicate sections in one scope disable that scope.
 
-Validation currently rejects:
+Validation rejects:
 
-- duplicate rule names within one scope
-- unsupported tool names
+- duplicate section names within one scope
+- keys other than `match`, `mode`, and `reason`
 - invalid regexes
-- missing required fields or wrong field types
+- missing required fields
+- invalid modes
 
 ## `/guardrails` Command
 
-List the currently loaded rules:
+List the currently loaded command guardrails:
 
 ```text
 /guardrails
 ```
 
-Test a mock input value against loaded rules:
+Test a bash command string against loaded rules:
+
+```text
+/guardrails test jj abandon
+```
+
+The command after `test` is treated verbatim. There is no legacy tool argument, so this tests the command string `bash jj abandon`:
 
 ```text
 /guardrails test bash jj abandon
-/guardrails test read .env
-/guardrails test grep secret
 ```
 
-`test <tool> <value>` parses `<tool>` as the first token and treats the remaining text verbatim as the test value.
+## Scope Boundary
 
-Path-dependent rules are only partially testable through `/guardrails test`:
+Command guardrails only make selected shell commands harder to run accidentally. They do not constrain the model's access to Pi tools, filesystem content, or process capabilities.
 
-- `bash`, `read`, and `ls` can test both primary matching and allow/path matching
-- `write`, `edit`, `grep`, and `find` test only the primary match unless a real tool call also supplies `path`
+For file-read restrictions, write restrictions, secret protection, or stronger execution boundaries, use containment such as Safehouse.

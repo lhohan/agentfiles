@@ -1,7 +1,7 @@
 {
-  "lastChangelogVersion": "0.79.10",
+  "lastChangelogVersion": "0.80.2",
   "defaultProvider": "opencode-go",
-  "defaultModel": "minimax-m3",
+  "defaultModel": "deepseek-v4-flash",
   "defaultThinkingLevel": "high",
   "theme": "kanagawa-dragon",
   "terminal": {
@@ -20,7 +20,6 @@
   "enabledModels": [
     "opencode-go/qwen3.6-plus",
     "opencode-go/kimi-k2.6",
-    "openai-codex/gpt-5.5",
     "opencode-go/deepseek-v4-flash",
     "opencode-go/deepseek-v4-pro",
     "mistral/mistral-medium-3.5",
