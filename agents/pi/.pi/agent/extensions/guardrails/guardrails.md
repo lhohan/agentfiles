@@ -90,6 +90,19 @@ Validation rejects:
 - missing required fields
 - invalid modes
 
+## Blocked Command Behavior
+
+When a bash command is blocked, the extension does more than reject that one command.
+
+1. The blocked command is rejected with a rule-specific reason (as before).
+2. A steering message is injected instructing the model to stop trying equivalent or nearby shell commands and ask the user how to proceed.
+
+Only the first blocked bash command in a turn triggers a steering message. Later blocks in the same turn still reject the command but do not emit duplicate steering messages. The steering flag resets at the end of each turn so a fresh message can be sent on the next turn.
+
+This is a best-effort signal, not a hard abort. The model may still attempt non-bash tools (read, write, edit) or ignore the steering message. In parallel tool mode, sibling bash calls from the same assistant response may all execute before the steering message is delivered.
+
+Warn-only rule matches never produce steering messages.
+
 ## `/guardrails` Command
 
 List the currently loaded command guardrails:

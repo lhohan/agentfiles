@@ -70,6 +70,7 @@ const EMPTY_STATE: GuardrailsState = {
 };
 
 let state: GuardrailsState = EMPTY_STATE;
+let steeredThisTurn = false;
 
 function notify(
   ctx: ExtensionContext,
@@ -484,6 +485,7 @@ async function handleGuardrailsCommand(
 export default function guardrailsExtension(pi: ExtensionAPI) {
   pi.on("session_start", async (_event, ctx) => {
     state = await loadGuardrails(ctx);
+    steeredThisTurn = false;
   });
 
   pi.on("tool_call", async (event, ctx): Promise<ToolCallEventResult | void> => {
@@ -497,10 +499,31 @@ export default function guardrailsExtension(pi: ExtensionAPI) {
 
     if (!match.block) return;
 
+    if (!steeredThisTurn) {
+      steeredThisTurn = true;
+      pi.sendMessage(
+        {
+          customType: "guardrails",
+          content: `The bash command was blocked by guardrail "${match.block.name}". Do not try equivalent or nearby shell commands. Stop and ask the user how to proceed.`,
+          display: true,
+          details: {
+            guardrail: match.block.name,
+          },
+        },
+        {
+          deliverAs: "steer",
+        },
+      );
+    }
+
     return {
       block: true,
       reason: buildBlockReason(match.block),
     };
+  });
+
+  pi.on("turn_end", async () => {
+    steeredThisTurn = false;
   });
 
   pi.registerCommand("guardrails", {
