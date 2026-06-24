@@ -81,6 +81,9 @@ Located in [Pi](agents/pi).
 - A [Command guardrails extension](agents/pi/.pi/agent/extensions/guardrails/index.ts) that enforces opt-in warn/block rules for Pi `bash` tool calls from global and project-local `guardrails.conf` files. It is command safety, not file secrecy or sandboxing. [Documentation](agents/pi/.pi/agent/extensions/guardrails/guardrails.md)
     - no extra setup required
 
+- A [Sandbox EPERM halt extension](agents/pi/.pi/agent/extensions/sandbox-eperm-halt/index.ts) that detects sandbox permission failures (EPERM / "Operation not permitted") in built-in tool results and halts the agent for the current turn. It is a best-effort "stop trying" signal layered on top of sandbox containment. [Documentation](agents/pi/.pi/agent/extensions/sandbox-eperm-halt/sandbox-eperm-halt.md)
+    - no extra setup required
+
 ## Vibe
 
 Located in [Vibe](agents/vibe).
