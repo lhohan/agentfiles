@@ -78,6 +78,9 @@ Located in [Pi](agents/pi).
 
 - A [Force session start model extension](agents/pi/.pi/agent/extensions/force-session-start-model.ts) that resets the active model and thinking level to user-configured values on every new session, avoiding collision with Pi's own `defaultModel` persistence. [Documentation](agents/pi/.pi/agent/extensions/force-session-start-model.md)
 
+- A [Guardrails extension](agents/pi/.pi/agent/extensions/guardrails/index.ts) that enforces configurable warn/block rules for Pi's built-in `bash`, `read`, `write`, `edit`, `grep`, `find`, and `ls` tools from global and project-local YAML files. [Documentation](agents/pi/.pi/agent/extensions/guardrails/guardrails.md)
+    - no extra setup required
+
 ## Vibe
 
 Located in [Vibe](agents/vibe).

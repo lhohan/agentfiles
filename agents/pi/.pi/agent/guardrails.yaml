@@ -1,0 +1,11 @@
+rules:
+  - name: block-jj-abandon
+    tools: [bash]
+    pattern: '\bjj abandon\b'
+    mode: block
+    reason: Protect working-copy history
+  - name: block-test
+    tools: [read]
+    pattern: '(^|/)*.hunk-review-skill\.md$'
+    mode: block
+    reason: TEST Do not read hunk-review-skill
