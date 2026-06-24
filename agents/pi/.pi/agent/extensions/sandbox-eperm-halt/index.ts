@@ -67,9 +67,9 @@ export default function sandboxEpermHalt(pi: ExtensionAPI) {
       { deliverAs: "steer" },
     );
 
-    // Stronger stop than guardrails: abort the current turn so the model
-    // can't keep trying within this turn. Guard ctx.isIdle() because abort
-    // is a no-op (and unnecessary) once the agent has already stopped.
+    // Abort the current turn so the model can't keep trying within this turn.
+    // Guard ctx.isIdle() because abort is a no-op (and unnecessary) once the
+    // agent has already stopped.
     if (!ctx.isIdle()) ctx.abort();
   });
 

@@ -20,6 +20,7 @@ import { join } from "node:path";
  * - config file locations and precedence
  * - rule fields and command match semantics
  * - config error handling
+ * - blocked-command stop behavior
  * - /guardrails command behavior
  */
 
@@ -516,6 +517,10 @@ export default function guardrailsExtension(pi: ExtensionAPI) {
       );
     }
 
+    // Match sandbox-eperm-halt: once a block rule fires, stop this turn so
+    // the model cannot keep trying equivalent commands or route around bash.
+    if (!ctx.isIdle()) ctx.abort();
+
     return {
       block: true,
       reason: buildBlockReason(match.block),
@@ -523,6 +528,9 @@ export default function guardrailsExtension(pi: ExtensionAPI) {
   });
 
   pi.on("turn_end", async () => {
+    steeredThisTurn = false;
+  });
+  pi.on("agent_start", async () => {
     steeredThisTurn = false;
   });
 

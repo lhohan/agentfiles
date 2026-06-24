@@ -45,6 +45,6 @@ This extension reuses the guardrails "stop the current turn" mechanism but diffe
 
 1. **Trigger event:** `tool_result` (post-execution), not `tool_call` (pre-execution). A sandbox EPERM cannot be known before the operation runs.
 2. **Tool scope:** All built-in tools, not just `bash`. This deliberately goes beyond the "command guardrails are bash-only" boundary — that CIR covered command safety; this covers sandbox containment failures, which occur across filesystem tools.
-3. **Stop strength:** Steering message **plus** `ctx.abort()` to halt the current turn, whereas guardrails only steers.
+3. **Trigger basis:** Sandbox EPERM Halt reacts to observed permission-denied failures from the sandbox, whereas guardrails reacts to configured command-pattern matches before execution.
 
 See [guardrails extension](../guardrails/guardrails.md) for command-pattern-based blocking.

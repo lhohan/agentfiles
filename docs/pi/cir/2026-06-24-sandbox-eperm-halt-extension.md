@@ -40,7 +40,7 @@ THEN the extension ignores it (the `isError` gate prevents false positives from 
 
 - **Operate on `tool_result`, not `tool_call`:** EPERM is unknowable pre-execution; this is the fundamental difference from guardrails.
 - **All built-in tools, not bash-only:** Sandbox containment failures occur on filesystem tools (`read`, `write`, `edit`, `grep`, `find`, `ls`); this deliberately goes beyond CIR `2026-06-24-command-guardrails-are-bash-only.md`, which covered *command* safety. Sandbox containment is a different concern.
-- **Steer + abort:** Same steering mechanism as guardrails (CIR `2026-06-24-blocked-bash-guardrails-stop-the-current-turn.md`), hardened with `ctx.abort()` to actually stop the turn rather than relying solely on model compliance.
+- **Steer + abort:** Use the same stop contract as current guardrails, but trigger it from observed sandbox-denied results rather than configured pre-execution command matches.
 - **Per-turn dedup flag, reset on `turn_end` and `agent_start`:** Guardrails uses `turn_end` only; the extra `agent_start` reset covers the abort path where `turn_end` may not fire.
 - **`isError` gate:** Required to avoid false positives from successful results that merely contain the phrase.
 - **Exclude custom/extension tools:** Non-standard error semantics; out of scope for v1.

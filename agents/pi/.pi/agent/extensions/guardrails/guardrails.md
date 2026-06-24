@@ -96,10 +96,11 @@ When a bash command is blocked, the extension does more than reject that one com
 
 1. The blocked command is rejected with a rule-specific reason (as before).
 2. A steering message is injected instructing the model to stop trying equivalent or nearby shell commands and ask the user how to proceed.
+3. The current turn is aborted so Pi cannot keep acting in the same turn after the block fires.
 
 Only the first blocked bash command in a turn triggers a steering message. Later blocks in the same turn still reject the command but do not emit duplicate steering messages. The steering flag resets at the end of each turn so a fresh message can be sent on the next turn.
 
-This is a best-effort signal, not a hard abort. The model may still attempt non-bash tools (read, write, edit) or ignore the steering message. In parallel tool mode, sibling bash calls from the same assistant response may all execute before the steering message is delivered.
+This is stronger than steer-only behavior, but still not absolute containment. In parallel tool mode, sibling tool calls from the same assistant response may already be in flight before the abort lands. The abort stops the rest of the current turn; it does not un-run work that already started.
 
 Warn-only rule matches never produce steering messages.
 
