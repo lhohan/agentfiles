@@ -209,6 +209,7 @@ allowlist = [
     "head",
     "jj",
     "join",
+    "just",
     "less",
     "ls",
     "md5sum",
@@ -355,7 +356,9 @@ create_parent_dirs = true
 
 [tools.read]
 permission = "always"
-allowlist = []
+allowlist = [
+    "/Users/hans/.vibe/plans/*",
+]
 denylist = []
 sensitive_patterns = [
     "**/.env",
