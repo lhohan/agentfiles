@@ -7,7 +7,7 @@ include_project_context = true
 include_prompt_detail = true
 include_model_info = true
 enable_commit_signature = false
-active_model = "deepseek-v4-flash"
+active_model = "default"
 instructions = "Use the skill 'karpathy-guidelines' for coding tasks."
 vim_keybindings = false
 disable_welcome_banner_animation = false
@@ -187,8 +187,8 @@ sensitive_patterns = []
 [tools.bash]
 permission = "ask"
 allowlist = [
-    "~/.local/bin/*",
     "basename",
+    "bd",
     "cargo test",
     "cat",
     "cd",
@@ -236,6 +236,7 @@ allowlist = [
     "wc",
     "which",
     "whoami",
+    "~/.local/bin/*",
 ]
 denylist = [
     "gdb",
