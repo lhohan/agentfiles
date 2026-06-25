@@ -1,7 +1,7 @@
 ---
 name: use-jujutsu
 description: This skill should be used for detailed guidance on Jujutsu (jj) VCS operations, including committing, pushing, searching history, and working with revisions/revsets. Use when the user asks "how do I use jj?", "translate git to jj", ask to interact with VCS using jj or for specific jj command syntax.
-version: 0.3.2
+version: 0.3.3
 ---
 
 # Using Jujutsu (jj) VCS
@@ -16,7 +16,6 @@ This guide provides the definitive instruction set for working with **Jujutsu (j
 - Create commit: `jj commit -m "message"`
 - Only commit related changes: `jj commit -m "message" <filesets>`
   - Example: `jj commit -m "fix auth bug" src/auth.rs tests/auth_test.rs`
-  - NEVER use `jj restore` to exclude files from a commit; use fileset commits instead.
 - Push: `jj git push`
 - Push main: `jj bookmark set main -r @- && jj git push`
 - Fetch remote: `jj git fetch --remote origin`
@@ -54,6 +53,7 @@ If location is ambiguous (for example, multiple checkouts/workspaces), confirm w
 - `descendants(@)` — All descendants of current revision
 
 ## Important Constraints
+- **Never run** `jj abandon`, `jj split`, `jj squash`, `jj restore` — these rewrite or discard working-copy history/changes. Use `jj commit` with filesets to select changes.
 - **Never use `git` commands in `.jj/` repositories**—translate to jj equivalent. This includes read-only commands like `git log` or `git status`.
 - **Do not mix `git` and `jj` operations**; they have incompatible internal models.
 - If a jj command fails, provide the error message and suggest alternatives.
