@@ -177,7 +177,7 @@ denylist = []
 sensitive_patterns = []
 
 [tools.task]
-permission = "ask"
+permission = "always"
 allowlist = [
     "explore",
 ]
@@ -185,8 +185,9 @@ denylist = []
 sensitive_patterns = []
 
 [tools.bash]
-permission = "ask"
+permission = "always"
 allowlist = [
+    "/Users/hans/.vibe/plans/*",
     "basename",
     "bd",
     "cargo test",
@@ -206,6 +207,7 @@ allowlist = [
     "git diff",
     "git log",
     "git status",
+    "grep",
     "head",
     "jj",
     "join",
@@ -220,6 +222,7 @@ allowlist = [
     "pwd",
     "readlink",
     "rg",
+    "rm",
     "sha1sum",
     "sha256sum",
     "shasum",
@@ -237,6 +240,7 @@ allowlist = [
     "wc",
     "which",
     "whoami",
+    "zola",
     "~/.local/bin/*",
 ]
 denylist = [
@@ -327,7 +331,7 @@ timeout = 120
 model = "mistral-vibe-cli-with-tools"
 
 [tools.web_fetch]
-permission = "ask"
+permission = "always"
 allowlist = []
 denylist = []
 sensitive_patterns = []
@@ -344,8 +348,10 @@ sensitive_patterns = []
 max_todos = 100
 
 [tools.write_file]
-permission = "ask"
-allowlist = []
+permission = "always"
+allowlist = [
+    "/Users/hans/.vibe/plans/*",
+]
 denylist = []
 sensitive_patterns = [
     "**/.env",
@@ -367,7 +373,7 @@ sensitive_patterns = [
 max_read_bytes = 64000
 
 [tools.edit]
-permission = "ask"
+permission = "always"
 allowlist = []
 denylist = []
 sensitive_patterns = [
