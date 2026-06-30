@@ -54,6 +54,7 @@ If location is ambiguous (for example, multiple checkouts/workspaces), confirm w
 
 ## Important Constraints
 - **Never run** `jj abandon`, `jj split`, `jj squash`, `jj restore` — these rewrite or discard working-copy history/changes. Use `jj commit` with filesets to select changes.
+- **The working copy is always a commit.** An empty working copy commit means "no uncommitted changes" — this is normal. Do not attempt to remove it.
 - **Never use `git` commands in `.jj/` repositories**—translate to jj equivalent. This includes read-only commands like `git log` or `git status`.
 - **Do not mix `git` and `jj` operations**; they have incompatible internal models.
 - If a jj command fails, provide the error message and suggest alternatives.
