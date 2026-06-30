@@ -60,7 +60,7 @@ Cmd::given()
     .expect_file_contains("AGENTS.md", "## Mandatory Bootstrap");
 ```
 
-After extraction, the test names the user-visible behavior directly:
+After extraction, the test names the user-visible behaviour directly:
 
 ```rust
 Cmd::given()

@@ -5,7 +5,7 @@
 Use this structure in all DSL examples:
 
 ```text
-SCENARIO "<behavior name>"
+SCENARIO "<behaviour name>"
   GIVEN <setup state>
   AND <additional setup>
   WHEN <action>
@@ -15,10 +15,10 @@ SCENARIO "<behavior name>"
 
 Rules:
 
-- Keep one behavior per scenario.
+- Keep one behaviour per scenario.
 - Keep setup in `GIVEN/AND` lines only.
 - For eager mode, keep execution in one `WHEN` line.
-- For deferred mode, keep request creation in `WHEN` and final `.execute()` in the last `THEN/AND` line.
+- For deferred mode, keep the action boundary explicit. If assertions are queued before execution, treat those calls as declarations and keep `.execute()` as the operation that runs them.
 - Keep validations in `THEN/AND` lines.
 
 ## Example 1: CLI DSL (Pseudocode)
@@ -60,11 +60,10 @@ SCENARIO "list articles in descending order"
   AND spec.add_file("articles/new.md", "# New")
   AND spec.add_file("articles/old.md", "# Old")
   AND spec.with_config("site_title: Example")
-  WHEN request = spec.get("/articles")
-  THEN request.expect_status_code(200)
-  AND request.expect_body_contains("New")
-  AND request.expect_contains_in_order(["New", "Old"])
-  AND request.execute()
+  WHEN response = spec.get("/articles").execute()
+  THEN response.expect_status_code(200)
+  AND response.expect_body_contains("New")
+  AND response.expect_contains_in_order(["New", "Old"])
 ```
 
 ```text
@@ -77,4 +76,17 @@ TYPE RequestBuilder:
   method: HttpMethod
   path: String
   assertions: List<Assertion>
+```
+
+Queued-assertion variant, if the host DSL intentionally supports it:
+
+```text
+SCENARIO "list articles in descending order"
+  GIVEN spec = ContentDsl.new()
+  AND spec.add_file("articles/new.md", "# New")
+  AND spec.add_file("articles/old.md", "# Old")
+  WHEN request = spec.get("/articles")
+  THEN request.expect_status_code(200)
+  AND request.expect_contains_in_order(["New", "Old"])
+  AND request.execute()
 ```

@@ -2,12 +2,12 @@
 
 This file provides a compact, illustrative suite for a CLI acceptance-test DSL in a familiar domain.
 
-Domain used: an `OrderReport` CLI that summarizes orders from an input file.
+Domain used: an `OrderReport` CLI that summarises orders from an input file.
 
 ## Scenario 1: Happy Path
 
 ```text
-SCENARIO "summarize completed orders for a day"
+SCENARIO "summarise completed orders for a day"
   GIVEN spec = OrderReport.given()
   AND spec.with_input_file("orders.csv", VALID_ORDERS)
   AND spec.status_filter("completed")
