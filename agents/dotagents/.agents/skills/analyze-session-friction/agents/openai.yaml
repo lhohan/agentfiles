@@ -1,0 +1,7 @@
+interface:
+  display_name: "Analyze Session Friction"
+  short_description: "Retrospective workflow improvement suggestions"
+  icon_small: "./assets/reflect-icon.svg"
+  icon_large: "./assets/reflect-icon.svg"
+  brand_color: "#2563EB"
+  default_prompt: "Use $analyze-session-friction to generate concrete workflow improvements from this session."
