@@ -79,6 +79,12 @@ If refresh fails (timeouts/command issues), state falls back to:
 
 The extension logs debug details via `pi.logger?.debug?.(...)`.
 
+## Session shim
+
+The extension reuses Pi's built-in `FooterComponent` instead of re-implementing the full footer. Pi v0.80.8+ expects the session object passed to `FooterComponent` to expose `modelRuntime`, so the extension builds a minimal façade that delegates OAuth detection back to the extension-facing `ctx.modelRegistry`.
+
+Only the methods actually used by the built-in footer are implemented. If Pi's footer starts calling additional `modelRuntime` methods, the façade must be extended or the footer renderer replaced.
+
 ## Maintenance notes
 
 When changing `jj-footer.ts`, keep this document updated if you change:
@@ -88,3 +94,4 @@ When changing `jj-footer.ts`, keep this document updated if you change:
 - JJ commands or revsets
 - refresh/watch strategy
 - error/fallback behaviour
+- `modelRuntime` façade methods

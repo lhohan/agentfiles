@@ -3,7 +3,7 @@ import {
   type ExtensionAPI,
   type ExtensionContext,
   type ReadonlyFooterDataProvider,
-} from "@mariozechner/pi-coding-agent";
+} from "@earendil-works/pi-coding-agent";
 import { existsSync, watch, type FSWatcher } from "node:fs";
 import { dirname, join } from "node:path";
 
@@ -263,6 +263,18 @@ function createWrappedFooterData(
   };
 }
 
+function createModelRuntimeFacade(ctx: ExtensionContext) {
+  return {
+    isUsingOAuth(providerId: string): boolean {
+      try {
+        return ctx.modelRegistry.isUsingOAuth({ provider: providerId });
+      } catch {
+        return false;
+      }
+    },
+  };
+}
+
 function createFooterSessionShim(ctx: ExtensionContext, pi: ExtensionAPI) {
   return {
     get state() {
@@ -273,6 +285,7 @@ function createFooterSessionShim(ctx: ExtensionContext, pi: ExtensionAPI) {
     },
     sessionManager: ctx.sessionManager,
     modelRegistry: ctx.modelRegistry,
+    modelRuntime: createModelRuntimeFacade(ctx),
     getContextUsage: () => ctx.getContextUsage(),
   };
 }
