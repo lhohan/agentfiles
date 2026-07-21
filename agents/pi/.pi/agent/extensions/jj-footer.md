@@ -6,31 +6,33 @@ Canonical maintainer documentation for the Pi extension at:
 
 ## Purpose
 
-When Pi runs in a Jujutsu repository, this extension *replaces* Pi's detached-HEAD footer label with a `jj`-aware label showing:
+When Pi runs in a Jujutsu repository, this extension adds a footer status line showing a `jj`-aware label:
 
 - nearest bookmark name
 - commits ahead of that bookmark (`↑N`)
 - working-copy file counts (`+`, `~`, `-`, `!`)
 
+The label is published additively with `ctx.ui.setStatus("jj-footer", …)` on Pi's shared extension status line. Pi's built-in footer (cwd/branch, token stats, context %, model, other extensions' statuses) stays fully intact — the extension never calls `setFooter`.
+
 ### Before:
 
-![Pi footer showing detached HEAD label](without-jj-footer.png)
+![Pi default footer without the jj status line](without-jj-footer.png)
 
-### After: Pi shows the active bookmark, commits ahead, and working-copy changes:
+### After: Pi shows the active bookmark, commits ahead, and working-copy changes on the jj status line:
 
-![Pi footer showing jj bookmark and status counts](with-jj-footer.png)
+![Pi footer with jj bookmark and status counts on the status line](with-jj-footer.png)
 
 Implementation details are documented here, alongside the source file.
 
 ## Behaviour summary
 
-The overall design philosophy of the extension is to make a targeted update to the existing footer rather than replacing it completely and duplicating information unnecessarily.
+The extension is additive: it publishes a status line rather than replacing Pi's footer.
 
-1. On `session_start`, the extension searches upward from `cwd` for a `.jj/` directory.
-2. If no JJ repo is found, it leaves the default footer behaviour.
-3. If a JJ repo is found, it installs a *wrapped* footer data provider.
-4. The wrapper only overrides `getGitBranch()` when Pi would show `detached`.
-5. The rendered label combines status counts and bookmark/ahead info.
+1. On `session_start`, the extension clears the `jj-footer` status key and disposes any controller left over from a prior session, then searches upward from `cwd` for a `.jj/` directory.
+2. If no JJ repo is found, it does nothing further — no status is published and the default footer is untouched.
+3. If a JJ repo is found, it creates the jj state controller and subscribes: on every refresh, the label is re-published with `ctx.ui.setStatus("jj-footer", …)`, dim-wrapped to match the built-in footer's rows.
+4. The initial state (`(loading…)` with zero counts) is published immediately on session start, so the line appears before the first refresh completes.
+5. On `session_shutdown`, the controller is disposed and the status key is cleared (`ctx?.ui?.setStatus?.("jj-footer", undefined)` — the `?.` chain is deliberate: Pi may not pass a full `ctx` to `session_shutdown` in future versions, and the clear must degrade silently rather than crash).
 
 Example label:
 
@@ -64,10 +66,10 @@ Because `jj status` runs with `--ignore-working-copy`, footer file counts reflec
 
 The extension uses both mechanisms intentionally:
 
-- `turn_end` event: refreshes footer state after agent actions
+- `turn_end` event: refreshes the label after agent actions
 - `fs.watch(.jj/, recursive)` with debounce: catches JJ metadata changes (commits/bookmarks)
 
-A queued refresh loop prevents overlapping refresh work and ensures the newest state is eventually shown.
+A queued refresh loop prevents overlapping refresh work and ensures the newest state is eventually shown. The controller's `notify()` listeners re-publish the label via `setStatus`; every publish re-renders the footer (Pi's `setExtensionStatus` requests a render unconditionally).
 
 ## Failure behaviour
 
@@ -77,13 +79,16 @@ If refresh fails (timeouts/command issues), state falls back to:
 - ahead: `0`
 - all file counts: `0`
 
-The extension logs debug details via `pi.logger?.debug?.(...)`.
+The fallback state still fires `notify()`, so the status line shows `(unavailable)` instead of silently keeping stale text. The extension logs debug details via `pi.logger?.debug?.(...)`.
 
-## Session shim
+## Status line
 
-The extension reuses Pi's built-in `FooterComponent` instead of re-implementing the full footer. Pi v0.80.8+ expects the session object passed to `FooterComponent` to expose `modelRuntime`, so the extension builds a minimal façade that delegates OAuth detection back to the extension-facing `ctx.modelRegistry`.
+The extension owns the single status key `"jj-footer"`:
 
-Only the methods actually used by the built-in footer are implemented. If Pi's footer starts calling additional `modelRuntime` methods, the façade must be extended or the footer renderer replaced.
+- `ctx.ui.setStatus("jj-footer", <label>)` publishes the current label; `setStatus("jj-footer", undefined)` clears it.
+- Labels are dim-wrapped (`ctx.ui.theme.fg("dim", …)`); `sanitizeStatusText` only collapses whitespace, so ANSI styling survives.
+- Pi renders all extension statuses on one shared footer line sorted by key; `"jj-footer"` sorts to a stable position relative to other extensions' keys.
+- The extension never calls `setFooter` and never touches Pi's internal session or footer surfaces, so built-in footer upgrades cannot crash it. This design is recorded in `docs/pi/cir/2026-08-09-jj-footer-additive-status-line.md`.
 
 ## Maintenance notes
 
@@ -94,4 +99,5 @@ When changing `jj-footer.ts`, keep this document updated if you change:
 - JJ commands or revsets
 - refresh/watch strategy
 - error/fallback behaviour
-- `modelRuntime` façade methods
+- status-line key / sort order (tune the key only after observing real output next to other extensions' statuses)
+- the additive `setStatus` contract or the no-`setFooter` invariant (see the CIR)

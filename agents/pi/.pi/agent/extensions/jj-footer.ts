@@ -1,15 +1,11 @@
-import {
-  FooterComponent,
-  type ExtensionAPI,
-  type ExtensionContext,
-  type ReadonlyFooterDataProvider,
-} from "@earendil-works/pi-coding-agent";
+import type { ExtensionAPI } from "@earendil-works/pi-coding-agent";
 import { existsSync, watch, type FSWatcher } from "node:fs";
 import { dirname, join } from "node:path";
 
 /**
  * Doc sync checklist (update docs when changing):
- * - footer label format/content
+ * - footer status-line key and clear-on-shutdown contract (guarded `?.` chain)
+ * - label format/content
  * - jj commands/revsets used for data collection
  * - status-code classification (+, ~, -, !)
  * - refresh/watch/error-fallback behaviour
@@ -240,56 +236,6 @@ function formatJjBranchLabel(state: JjState): string {
   return `${countParts.join(" ")} ${bookmarkWithAhead}`;
 }
 
-function createWrappedFooterData(
-  footerData: ReadonlyFooterDataProvider,
-  controller: JjStateController,
-): ReadonlyFooterDataProvider {
-  return {
-    getGitBranch(): string | null {
-      const branch = footerData.getGitBranch();
-      if (branch !== "detached") return branch;
-      if (!controller.isActive()) return branch;
-      return formatJjBranchLabel(controller.getState());
-    },
-    getExtensionStatuses() {
-      return footerData.getExtensionStatuses();
-    },
-    getAvailableProviderCount() {
-      return footerData.getAvailableProviderCount();
-    },
-    onBranchChange(callback) {
-      return footerData.onBranchChange(callback);
-    },
-  };
-}
-
-function createModelRuntimeFacade(ctx: ExtensionContext) {
-  return {
-    isUsingOAuth(providerId: string): boolean {
-      try {
-        return ctx.modelRegistry.isUsingOAuth({ provider: providerId });
-      } catch {
-        return false;
-      }
-    },
-  };
-}
-
-function createFooterSessionShim(ctx: ExtensionContext, pi: ExtensionAPI) {
-  return {
-    get state() {
-      return {
-        model: ctx.model,
-        thinkingLevel: pi.getThinkingLevel(),
-      };
-    },
-    sessionManager: ctx.sessionManager,
-    modelRegistry: ctx.modelRegistry,
-    modelRuntime: createModelRuntimeFacade(ctx),
-    getContextUsage: () => ctx.getContextUsage(),
-  };
-}
-
 // `jj` refresh strategy: dual mechanism for timely updates
 // 1. turn_end event: refreshes after agent actions so footer state stays current
 // 2. fs.watch on .jj/: catches jj metadata changes (commits, bookmarks) from any source
@@ -411,7 +357,6 @@ function createJjStateController(
 }
 
 export default function (pi: ExtensionAPI) {
-  let requestRefresh: (() => void) | undefined;
   let activeController: JjStateController | undefined;
 
   const clearController = () => {
@@ -420,64 +365,42 @@ export default function (pi: ExtensionAPI) {
   };
 
   pi.on("turn_end", () => {
-    requestRefresh?.();
+    void activeController?.refresh();
   });
 
-  pi.on("session_shutdown", () => {
-    requestRefresh = undefined;
+  pi.on("session_shutdown", (_event, ctx) => {
     clearController();
+    ctx?.ui?.setStatus?.("jj-footer", undefined);
   });
 
   pi.on("session_start", (_event, ctx) => {
-    requestRefresh = undefined;
+    // Session switch/fork/reload can fire session_start without a prior
+    // session_shutdown; clear any leftover controller and stale status first.
     clearController();
+    ctx.ui.setStatus("jj-footer", undefined);
 
     const jjRoot = findJjRoot(ctx.cwd);
-    if (!jjRoot) {
-      ctx.ui.setFooter(undefined);
-      return;
-    }
+    if (!jjRoot) return;
 
     const controller = createJjStateController(pi, jjRoot);
     activeController = controller;
 
-    const refreshNow = () => void controller.refresh();
-    requestRefresh = refreshNow;
+    // Closure-scoped: never module scope, where a value left over from a
+    // previous session could suppress the new session's first publish.
+    let lastPublished: string | undefined;
 
-    ctx.ui.setFooter((tui, _theme, footerData) => {
-      const footerComponent = new FooterComponent(
-        createFooterSessionShim(ctx, pi) as any,
-        createWrappedFooterData(footerData, controller),
+    const publish = () => {
+      const label = ctx.ui.theme.fg(
+        "dim",
+        formatJjBranchLabel(controller.getState()),
       );
+      if (label === lastPublished) return;
+      lastPublished = label;
+      ctx.ui.setStatus("jj-footer", label);
+    };
 
-      const unsubscribeState = controller.subscribe(() => {
-        footerComponent.invalidate();
-        tui.requestRender();
-      });
-
-      refreshNow();
-
-      return {
-        dispose() {
-          unsubscribeState();
-          footerComponent.dispose();
-
-          if (requestRefresh === refreshNow) {
-            requestRefresh = undefined;
-          }
-
-          if (activeController === controller) {
-            controller.dispose();
-            activeController = undefined;
-          }
-        },
-        invalidate() {
-          footerComponent.invalidate();
-        },
-        render(width: number): string[] {
-          return footerComponent.render(width);
-        },
-      };
-    });
+    controller.subscribe(publish);
+    publish();
+    void controller.refresh();
   });
 }
