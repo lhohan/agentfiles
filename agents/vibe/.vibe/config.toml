@@ -360,7 +360,17 @@ sensitive_patterns = [
 max_write_bytes = 64000
 create_parent_dirs = true
 
-[tools.read]
+[tools.edit]
+permission = "always"
+allowlist = []
+denylist = []
+sensitive_patterns = [
+    "**/.env",
+    "**/.env.*",
+]
+fuzzy_threshold = 0.9
+
+[tools.read_file]
 permission = "always"
 allowlist = [
     "/Users/hans/.vibe/plans/*",
@@ -371,13 +381,3 @@ sensitive_patterns = [
     "**/.env.*",
 ]
 max_read_bytes = 64000
-
-[tools.edit]
-permission = "always"
-allowlist = []
-denylist = []
-sensitive_patterns = [
-    "**/.env",
-    "**/.env.*",
-]
-fuzzy_threshold = 0.9
