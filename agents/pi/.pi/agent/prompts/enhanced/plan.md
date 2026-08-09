@@ -1,5 +1,5 @@
 ---
-model: opencode-go/glm-5.2,opencode-go/kimi-k2.6,openai-codex/gpt-5.5
+model: opencode-go/kimi-k3,opencode-go/glm-5.2,openai-codex/gpt-5.5
 thinking: high
 restore: false
 ---
