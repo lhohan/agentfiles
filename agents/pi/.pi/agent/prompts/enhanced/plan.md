@@ -1,5 +1,5 @@
 ---
-model: opencode-go/kimi-k3,opencode-go/glm-5.2,openai-codex/gpt-5.5
+model: opencode-go/hy3,opencode-go/gpt-5.6-luna,opencode-go/deepseek-v4-flash
 thinking: high
 restore: false
 ---

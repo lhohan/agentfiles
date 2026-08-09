@@ -23,6 +23,7 @@
     "opencode-go/kimi-k3",
     "opencode-go/deepseek-v4-flash",
     "opencode-go/deepseek-v4-pro",
+    "opencode/laguna-s-2.1-free",
     "mistral/mistral-medium-3.5",
     "opencode-go/minimax-m3",
     "opencode-go/glm-5.2",

@@ -46,7 +46,7 @@ Pi-specific decisions listed in reverse chronological order (most recent first).
 
 **Rationale** From source-code analysis, Pi's `ModelSelectorComponent` calls `settingsManager.setDefaultModelAndProvider()` immediately when the user selects a model via `/model` or `Ctrl+P`. The `findInitialModel()` resolution order (settings → provider defaults → first available) means the user's last selection always becomes the next session's starting model. There is no built-in distinction between "user's desired default" and "last-used model." A separate config key avoids competing with Pi's own persistence without patching or intercepting Pi internals.
 
-### pi-027: Use complementary models for plan drafting and plan critique [Accepted]
+### pi-027: Use complementary models for plan drafting and plan critique [Superseded by CIR 2026-08-10-pi-five-stage-model-routing]
 
 **In the context of** adding a `/review-plan` prompt to critically evaluate implementation plans
 

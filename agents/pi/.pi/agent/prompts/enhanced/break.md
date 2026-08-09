@@ -1,7 +1,7 @@
 ---
 description: Find failure modes, edge cases, and ways the software can break
 argument-hint: "[focus]"
-model: openai-codex/gpt-5.3-codex,opencode-go/deepseek-v4-pro
+model: opencode-go/gpt-5.6-luna,opencode-go/hy3,opencode-go/deepseek-v4-flash
 thinking: high
 restore: true
 ---
