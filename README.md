@@ -61,7 +61,7 @@ Located in [Pi](agents/pi).
 
 ### Extensions
 
-- A [Jujutsu-aware footer extension](agents/pi/.pi/agent/extensions/) that shows jj file counts plus the nearest bookmark name and ahead count in the TUI. Requires [Jujutsu (jj)](https://github.com/martinvonz/jj) on `PATH`. [Documentation](agents/pi/.pi/agent/extensions/jj-footer.md).
+- A [Jujutsu-aware footer extension](agents/pi/.pi/agent/extensions/) that shows the nearest bookmark name, commits ahead, the short working-copy change ID, and an explicit working-copy state (clean or `+/~/‑/!` file counts) on a dedicated TUI status line. Requires [Jujutsu (jj)](https://github.com/martinvonz/jj) on `PATH`. [Documentation](agents/pi/.pi/agent/extensions/jj-footer.md).
 
 - A [Questionnaire extension](agents/pi/.pi/agent/extensions/questionnaire.ts) for bounded multi-question clarification flows. [Documentation](agents/pi/.pi/agent/extensions/questionnaire.md).
 

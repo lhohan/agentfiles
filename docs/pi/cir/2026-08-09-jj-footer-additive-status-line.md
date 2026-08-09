@@ -11,7 +11,7 @@ This replaces the previous `jj-footer.ts` design, which called `ctx.ui.setFooter
 GIVEN Pi runs inside a Jujutsu repository (a `.jj/` directory exists at or above `cwd`)
 WHEN the session starts, a turn ends, or `.jj/` metadata changes on disk
 THEN the extension:
-- computes a jj label containing the nearest bookmark name, commits ahead of that bookmark (`↑N`), and working-copy file counts (`+`, `~`, `-`, `!`)
+- computes a jj label containing the nearest bookmark name, commits ahead of that bookmark (`↑N`), the short change ID of the working-copy commit (`@…`), and the working-copy state — explicit `clean` or file counts (`+`, `~`, `-`, `!`)
 - publishes it with `ctx.ui.setStatus("jj-footer", <label>)`
 
 GIVEN the jj label changes

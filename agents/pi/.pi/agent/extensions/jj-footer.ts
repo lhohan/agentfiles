@@ -20,6 +20,7 @@ type JjBookmarkAnchor = {
 type JjBookmarkInfo = {
   bookmark: string;
   ahead: number;
+  changeId: string;
 };
 
 type FileCounts = {
@@ -33,6 +34,16 @@ type JjState = {
   jjInfo: JjBookmarkInfo;
   fileCounts: FileCounts;
 };
+
+export type JjLabelRole = "accent" | "success" | "warning" | "error" | "muted";
+
+export type JjLabelPart = {
+  text: string;
+  role: JjLabelRole;
+};
+
+// Spans within a group are joined with a space; groups with " · ".
+export type JjLabelGroup = JjLabelPart[];
 
 type JjStateController = {
   getState(): JjState;
@@ -54,7 +65,7 @@ function findJjRoot(startDir: string): string | null {
   }
 }
 
-function formatCount(value: number): string {
+export function formatCount(value: number): string {
   if (!Number.isFinite(value)) return "∞";
 
   const units = ["", "k", "m", "b", "t"];
@@ -71,7 +82,7 @@ function formatCount(value: number): string {
   return value < 0 ? `-${formatted}` : formatted;
 }
 
-function parseJjBookmarkAnchor(stdout: string): JjBookmarkAnchor | null {
+export function parseJjBookmarkAnchor(stdout: string): JjBookmarkAnchor | null {
   const lines = stdout
     .split(/\r?\n/)
     .map((line) => line.trim())
@@ -94,7 +105,7 @@ function parseJjBookmarkAnchor(stdout: string): JjBookmarkAnchor | null {
  * `Untracked paths:` must NOT be classified — they happen to start with
  * status-code characters (`T`, `U`) but are followed by a letter, not a space.
  */
-function classifyJjStatusLine(
+export function classifyJjStatusLine(
   line: string,
 ): "added" | "changed" | "deleted" | "conflicted" | null {
   const trimmed = line.trimStart();
@@ -118,7 +129,7 @@ function classifyJjStatusLine(
   }
 }
 
-function parseJjStatusCounts(stdout: string): FileCounts {
+export function parseJjStatusCounts(stdout: string): FileCounts {
   const counts: FileCounts = {
     added: 0,
     changed: 0,
@@ -158,30 +169,54 @@ async function readJjBookmarkInfo(
   );
 
   const anchor = parseJjBookmarkAnchor(result.stdout ?? "");
-  if (!anchor) {
-    return { bookmark: "(no bookmark)", ahead: 0 };
-  }
 
-  const aheadResult = await pi.exec(
-    "jj",
-    [
-      "log",
-      "-r",
-      `${anchor.commitId}..@`,
-      "--ignore-working-copy",
-      "--no-graph",
-      "--no-pager",
-      "--color=never",
-      "-T",
-      'commit_id ++ "\\n"',
-    ],
-    { cwd, timeout: 2500 },
-  );
-  const ahead = (aheadResult.stdout ?? "")
-    .split(/\r?\n/)
-    .filter((line) => line.trim().length > 0).length;
+  const [aheadResult, changeIdResult] = await Promise.all([
+    anchor
+      ? pi.exec(
+          "jj",
+          [
+            "log",
+            "-r",
+            `${anchor.commitId}..@`,
+            "--ignore-working-copy",
+            "--no-graph",
+            "--no-pager",
+            "--color=never",
+            "-T",
+            'commit_id ++ "\\n"',
+          ],
+          { cwd, timeout: 2500 },
+        )
+      : Promise.resolve({ stdout: "" }),
+    pi.exec(
+      "jj",
+      [
+        "log",
+        "-r",
+        "@",
+        "--ignore-working-copy",
+        "--no-graph",
+        "--no-pager",
+        "--color=never",
+        "-T",
+        'change_id.short() ++ "\\n"',
+      ],
+      { cwd, timeout: 2500 },
+    ),
+  ]);
 
-  return { bookmark: anchor.bookmark, ahead };
+  const ahead = anchor
+    ? (aheadResult.stdout ?? "")
+        .split(/\r?\n/)
+        .filter((line) => line.trim().length > 0).length
+    : 0;
+  const changeId =
+    (changeIdResult.stdout ?? "")
+      .split(/\r?\n/)
+      .map((line) => line.trim())
+      .find((line) => line.length > 0) ?? "";
+
+  return { bookmark: anchor?.bookmark ?? "(no bookmark)", ahead, changeId };
 }
 
 async function readFileCounts(
@@ -206,34 +241,71 @@ async function readFileCounts(
   return parseJjStatusCounts(result.stdout ?? "");
 }
 
-function formatJjBranchLabel(state: JjState): string {
-  const countParts: string[] = [];
+/**
+ * Compose the jj status label as plain semantic segments.
+ *
+ * Groups are joined with " · " (muted) at render time; spans within a group
+ * are joined with a space. Roles map to existing theme colours only at the
+ * publishing boundary via `ctx.ui.theme.fg(role, text)`.
+ */
+export function buildJjLabelGroups(state: JjState): JjLabelGroup[] {
+  const bookmark = state.jjInfo.bookmark;
 
+  // Loading/unavailable are provisional states: do not fabricate a change id
+  // or a clean/dirty verdict next to them.
+  if (bookmark === "(loading…)" || bookmark === "(unavailable)") {
+    return [
+      [{ text: "jj", role: "accent" }],
+      [{ text: bookmark, role: bookmark === "(unavailable)" ? "error" : "muted" }],
+    ];
+  }
+
+  const bookmarkRole: JjLabelRole =
+    bookmark === "(no bookmark)" ? "muted" : "accent";
+  const aheadParts: JjLabelPart[] =
+    state.jjInfo.ahead > 0
+      ? [{ text: `↑${formatCount(state.jjInfo.ahead)}`, role: "muted" }]
+      : [];
+
+  const countParts: JjLabelPart[] = [];
   if (state.fileCounts.added > 0) {
-    countParts.push(`+${formatCount(state.fileCounts.added)}`);
+    countParts.push({ text: `+${formatCount(state.fileCounts.added)}`, role: "success" });
   }
-
   if (state.fileCounts.changed > 0) {
-    countParts.push(`~${formatCount(state.fileCounts.changed)}`);
+    countParts.push({ text: `~${formatCount(state.fileCounts.changed)}`, role: "warning" });
   }
-
   if (state.fileCounts.deleted > 0) {
-    countParts.push(`-${formatCount(state.fileCounts.deleted)}`);
+    countParts.push({ text: `-${formatCount(state.fileCounts.deleted)}`, role: "error" });
   }
-
   if (state.fileCounts.conflicted > 0) {
-    countParts.push(`!${formatCount(state.fileCounts.conflicted)}`);
+    countParts.push({ text: `!${formatCount(state.fileCounts.conflicted)}`, role: "error" });
   }
 
-  const ahead =
-    state.jjInfo.ahead > 0 ? `↑${formatCount(state.jjInfo.ahead)}` : "";
-  const bookmarkWithAhead = `${state.jjInfo.bookmark}${ahead}`;
+  const groups: JjLabelGroup[] = [
+    [{ text: "jj", role: "accent" }],
+    [{ text: bookmark, role: bookmarkRole }, ...aheadParts],
+  ];
 
-  if (countParts.length === 0) {
-    return bookmarkWithAhead;
+  if (state.jjInfo.changeId) {
+    groups.push([{ text: `@${state.jjInfo.changeId}`, role: "muted" }]);
   }
 
-  return `${countParts.join(" ")} ${bookmarkWithAhead}`;
+  groups.push(
+    countParts.length > 0
+      ? countParts
+      : [{ text: "clean", role: "success" }],
+  );
+
+  return groups;
+}
+
+export function renderJjLabel(
+  groups: JjLabelGroup[],
+  fg: (role: JjLabelRole, text: string) => string,
+): string {
+  return groups
+    .map((group) => group.map((part) => fg(part.role, part.text)).join(" "))
+    .join(fg("muted", " · "));
 }
 
 // `jj` refresh strategy: dual mechanism for timely updates
@@ -245,7 +317,7 @@ function createJjStateController(
   jjRoot: string,
 ): JjStateController {
   let state: JjState = {
-    jjInfo: { bookmark: "(loading…)", ahead: 0 },
+    jjInfo: { bookmark: "(loading…)", ahead: 0, changeId: "" },
     fileCounts: { added: 0, changed: 0, deleted: 0, conflicted: 0 },
   };
 
@@ -291,7 +363,7 @@ function createJjStateController(
         pi.logger?.debug?.("jj-footer: refresh failed", error);
         if (!disposed) {
           state = {
-            jjInfo: { bookmark: "(unavailable)", ahead: 0 },
+            jjInfo: { bookmark: "(unavailable)", ahead: 0, changeId: "" },
             fileCounts: { added: 0, changed: 0, deleted: 0, conflicted: 0 },
           };
         }
@@ -390,9 +462,9 @@ export default function (pi: ExtensionAPI) {
     let lastPublished: string | undefined;
 
     const publish = () => {
-      const label = ctx.ui.theme.fg(
-        "dim",
-        formatJjBranchLabel(controller.getState()),
+      const label = renderJjLabel(
+        buildJjLabelGroups(controller.getState()),
+        (role, text) => ctx.ui.theme.fg(role, text),
       );
       if (label === lastPublished) return;
       lastPublished = label;
