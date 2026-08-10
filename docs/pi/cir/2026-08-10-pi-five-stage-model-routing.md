@@ -38,6 +38,7 @@ THEN `opencode/laguna-s-2.1-free` is offered as an available model (it is listed
 - **Qwen3.7 Flash tertiary Implement slot dropped** because it exists only on OpenRouter; the only authenticated Qwen substitute (`opencode-go/qwen3.6-plus` at $0.50/$3.00) inverts the budget logic. Sub-budget cost arbitrage is deferred until an OpenRouter key exists.
 - **Fixed the stale `kimi-k2.6` secondary and trailing comma in `implement.md`** — treated as a typo, not intentional semantics; the previous Plan chain (`kimi-k3`, `glm-5.2`, `gpt-5.5`) is likewise replaced.
 - **Supersedes pi-027**, which set `/plan` = `openai-codex/gpt-5.4` and `/review-plan` = `opencode-go/deepseek-v4-pro`; the complementary-lens intent survives, but both model choices are outdated.
+- **Quality-first ordering (policy, 2026-08-10):** routing decisions rank model quality first; budget is a tiebreaker between near-equal models, never the headline justification. Premium models stay selectable via `/model` (the selector list is additive-only), so expensive models remain available for manual use when deeper reasoning is wanted. After the GLM-5.2/Kimi-K3 review: dropping or excluding a model must be evidence-based (benchmarked), not price-based; candidates with no benchmark evidence are marked unverified rather than assumed worse.
 
 ## Validation protocol (from the proposal)
 
