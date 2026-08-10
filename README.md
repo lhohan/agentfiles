@@ -48,6 +48,15 @@ Agent configuration files are managed with Mise and GNU Stow.
 - [document-change-intentions-using-change-intent-records](agents/dotagents/.agents/skills/document-change-intentions-using-change-intent-records/) is a new skill under evaluation for documenting change intent worth remembering with lightweight Change Intent Records (CIRs), based on Bryan Liles' [Change Intent Records](https://blog.bryanl.dev/posts/change-intent-records/) pattern.
 - [landing-the-plane](agents/dotagents/.agents/skills/landing-the-plane/) runs the end-of-task closure workflow.
 
+## Repository-local skills
+
+[`.agents/skills/`](.agents/skills/) holds repository-local skills that are never stowed or installed globally. They apply only to work done inside this repository.
+
+- [less-is-more](.agents/skills/less-is-more/) restrains agent-setup growth.
+- [agentfiles-commit-prefixes](.agents/skills/agentfiles-commit-prefixes/) guides commit subjects.
+- [extension-security-review](.agents/skills/extension-security-review/) reviews extensions/plugins before install.
+- [evaluate-model-routing](.agents/skills/evaluate-model-routing/) evaluates model routing across coding agents (Pi first) with per-agent profiles under `references/agents/`.
+
 ## Pi
 
 Located in [Pi](agents/pi).
