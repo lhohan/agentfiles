@@ -61,3 +61,10 @@ Evidence types: `benchmark`, `crowd-sourced`, `provider-doc`, `news`, `unverifie
 - **Primary evidence:** vision-language benchmarks (e.g. MMMU, DocVQA); model-store `input` capability for the agent's provider.
 - **Secondary evidence:** LMArena image tasks; provider model cards.
 - **Sufficiency criteria:** the stage must actually need images; a text-only model is not deficient for text-only stages.
+
+## instruction_following
+
+- **What it means:** accurately doing what the user asked on open-ended, general-purpose work: adhering to precise, multi-part instructions, answering with accurate knowledge, and producing clear, well-formed output — the skills a general assistant is judged on, independent of code-specific stages.
+- **Primary evidence:** LMArena blind-vote rankings (general quality); knowledge benchmarks (MMLU-Pro, GPQA); instruction-following suites (IFEval).
+- **Secondary evidence:** provider model cards (chat/assistant variants); crowd-sourced reports of instruction adherence; writing-quality blind comparisons.
+- **Sufficiency criteria:** evidence must cover open-ended, multi-turn instruction adherence and factual accuracy — not single-shot completions or code-only benchmarks.

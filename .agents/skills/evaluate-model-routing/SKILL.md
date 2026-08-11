@@ -1,17 +1,10 @@
 ---
 name: evaluate-model-routing
 description: >
-  Evaluate model routing across coding agents (Pi, OpenCode, Codex). Verifies an
-  agent profile against live configuration, researches capability evidence, and
-  recommends routing changes — or explicitly "no change" — without mutating
-  configuration. Use when reviewing whether the right model runs each stage of
-  an agent pipeline, or when a new model release should trigger a routing
-  re-evaluation.
+  Evaluate model routing across coding agents (Pi, OpenCode, Codex). Verifies an agent profile against live configuration, researches capability evidence, and recommends routing changes — or explicitly "no change" — without mutating configuration. Use when reviewing whether the right model runs each stage of an agent pipeline, or when a new model release should trigger a routing re-evaluation.
 ---
 
 # Evaluate Model Routing
-
-Repository-local skill (`.agents/skills/`). Do not stow or install globally.
 
 ## Inputs
 
@@ -29,8 +22,7 @@ If the requested agent has no profile, report that no profile exists and stop.
 | `references/capabilities.md` | Shared: capability ID → evaluation method |
 | `references/providers.md` | Shared: provider registry, free-tier notes, human-maintained "has auth?" column |
 
-Agent profiles document current configuration; they are not the configuration
-source of truth. Live tool configuration is authoritative.
+Agent profiles document current configuration; they are not the configuration source of truth. Live tool configuration is authoritative.
 
 ## Workflow
 
@@ -47,11 +39,11 @@ source of truth. Live tool configuration is authoritative.
 Stop before model research if any of these fail. Report the exact mismatch and the source path requiring attention.
 
 - Profile exists and its YAML frontmatter parses.
-- All task `source` paths resolve to real files.
-- For each task: normalize the prompt's `model:` frontmatter (split on commas) and the profile's `routes` (ordered `model_id` list) to ordered lists of exact `provider/model-id` tokens, and compare for equality. On divergence, report the first index, the offending `model_id`, and the source path.
+- Task `source`s are either prompt files (`path`) or config-sourced (`path --> dotted.key`). Every source path resolves to a real file; for config-sourced tasks the key resolves to a scalar value in that file (e.g. `agents/pi/.pi/agent/settings.json --> sessionStartModel.model`). A missing file, missing key, or non-scalar value is a verification failure.
+- For each task: normalize the source's model chain — for prompt files, the `model:` frontmatter split on commas; for config-sourced tasks, the resolved key value — and the profile's `routes` (ordered `model_id` list) to ordered lists of exact `provider/model-id` tokens, and compare for equality. On divergence, report the first index, the offending `model_id`, and the source path.
 - Every `model_id` appears in the `enabledModels` array of `enabled_models_source`.
 - Every task `id` exists in `references/tasks.md`.
-- Symmetry: every `*.md` stage under the profile's prompt directory (derived from task `source` paths) has a matching task entry, and every profile task maps to a real prompt file. Compare after normalizing `-` to `_` in stage filenames (e.g. prompt `review-plan.md` ↔ task `review_plan`). Report stages present in prompts but missing from the profile, and profile tasks with no backing prompt.
+- Symmetry (prompt-sourced tasks only): every `*.md` stage under the profile's prompt directory (derived from prompt-file task `source` paths) has a matching task entry, and every prompt-sourced task maps to a real prompt file. Compare after normalizing `-` to `_` in stage filenames (e.g. prompt `review-plan.md` ↔ task `review_plan`). Report stages present in prompts but missing from the profile, and profile tasks with no backing prompt. Config-sourced tasks are exempt — their validity is covered by the key-resolution rule above.
 - Every capability referenced in `tasks.md` exists as a heading in `references/capabilities.md`.
 - Every `model_id` is listed in `references/providers.md`; any unlisted model is flagged `unverified-provider` for manual confirmation.
 

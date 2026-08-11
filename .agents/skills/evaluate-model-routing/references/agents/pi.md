@@ -1,7 +1,6 @@
 ---
 agent: pi
 profile_version: 1
-session_start_model: mistral/mistral-medium-3.5
 enabled_models_source: agents/pi/.pi/agent/settings.json
 tasks:
   - id: plan
@@ -43,6 +42,11 @@ tasks:
         model_id: opencode-go/hy3
       - rank: 3
         model_id: opencode-go/deepseek-v4-flash
+  - id: general
+    source: agents/pi/.pi/agent/settings.json --> sessionStartModel.model
+    routes:
+      - rank: 1
+        model_id: mistral/mistral-medium-3.5
 ---
 # Pi Agent Profile
 
@@ -53,25 +57,17 @@ explicitly **out of scope** for this skill — do not document or verify them.
 ## Verification sources (read-only)
 
 - Prompt chains: `agents/pi/.pi/agent/prompts/enhanced/*.md` (`model:` frontmatter)
-- Enabled models: `agents/pi/.pi/agent/settings.json` (`enabledModels`)
+- Enabled models: `agents/pi/.pi/agent/settings.json` (`enabledModels`). Models can be added based on evaluation results.
 - Session-start model: `settings.json` (`sessionStartModel.model`)
 - Catalog metadata (context limits, pricing, inputs): `~/.pi/agent/models-store.json`
 - Routing rationale: `docs/pi/cir/2026-08-10-pi-five-stage-model-routing.md`
 - Related policy: `docs/pi/decisions.md` (pi-028 `sessionStartModel`, pi-006 prompt-owned model selection)
 
-Never read credential or secret files under `~/.pi/agent/`. Provider availability is confirmed
-manually via `references/providers.md`.
+Never read credential or secret files under `~/.pi/agent/`. Provider availability is confirmed manually via `references/providers.md`.
 
 ## Notes
 
-- Route chains are enforced by `pi-prompt-template-model@0.7.3`, which resolves
-  the prompt's `model:` frontmatter chain to the first available model.
-- The five routed stages share only two authenticated providers (`opencode-go`,
-  `opencode`). No OpenRouter key is configured — openrouter models are not routable.
-- Model-family diversity: Plan/Review Plan/Break rotate between HY3 and GPT-5.6-luna
-  (different families); Implement/Review core on DeepSeek V4 Flash. Proxy-level
-  diversity was deliberately traded away (all five stages route via opencode-go
-  except the Implement secondary).
+- Route chains are enforced by `pi-prompt-template-model@0.7.3`, which resolves the prompt's `model:` frontmatter chain to the first available model.
 
 ## Application checklist (only after explicit user approval)
 
