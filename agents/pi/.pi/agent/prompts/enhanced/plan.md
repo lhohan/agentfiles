@@ -1,5 +1,5 @@
 ---
-model: opencode-go/hy3,opencode-go/gpt-5.6-luna,opencode-go/deepseek-v4-flash
+model: opencode-go/hy3,openai-codex/gpt-5.6-luna,opencode-go/gpt-5.6-luna,opencode-go/glm-5.2,opencode-go/deepseek-v4-pro
 thinking: high
 restore: false
 ---

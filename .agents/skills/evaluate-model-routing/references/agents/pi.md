@@ -9,44 +9,60 @@ tasks:
       - rank: 1
         model_id: opencode-go/hy3
       - rank: 2
-        model_id: opencode-go/gpt-5.6-luna
+        model_id: openai-codex/gpt-5.6-luna
       - rank: 3
-        model_id: opencode-go/deepseek-v4-flash
+        model_id: opencode-go/gpt-5.6-luna
+      - rank: 4
+        model_id: opencode-go/glm-5.2
+      - rank: 5
+        model_id: opencode-go/deepseek-v4-pro
   - id: review_plan
     source: agents/pi/.pi/agent/prompts/enhanced/review-plan.md
     routes:
       - rank: 1
-        model_id: opencode-go/gpt-5.6-luna
+        model_id: openai-codex/gpt-5.6-sol
       - rank: 2
+        model_id: opencode-go/deepseek-v4-pro
+      - rank: 3
         model_id: opencode-go/hy3
   - id: implement
     source: agents/pi/.pi/agent/prompts/enhanced/implement.md
     routes:
       - rank: 1
-        model_id: opencode-go/deepseek-v4-flash
-      - rank: 2
         model_id: opencode/laguna-s-2.1-free
+      - rank: 2
+        model_id: opencode-go/deepseek-v4-flash
+      - rank: 3
+        model_id: openai-codex/gpt-5.6-luna
+      - rank: 4
+        model_id: opencode-go/gpt-5.6-luna
   - id: review
     source: agents/pi/.pi/agent/prompts/enhanced/review.md
     routes:
       - rank: 1
-        model_id: opencode-go/deepseek-v4-flash
+        model_id: openai-codex/gpt-5.6-terra
       - rank: 2
+        model_id: opencode-go/deepseek-v4-flash
+      - rank: 3
+        model_id: openai-codex/gpt-5.6-luna
+      - rank: 4
         model_id: opencode-go/gpt-5.6-luna
   - id: break
     source: agents/pi/.pi/agent/prompts/enhanced/break.md
     routes:
       - rank: 1
-        model_id: opencode-go/gpt-5.6-luna
-      - rank: 2
         model_id: opencode-go/hy3
+      - rank: 2
+        model_id: openai-codex/gpt-5.6-luna
       - rank: 3
-        model_id: opencode-go/deepseek-v4-flash
+        model_id: opencode-go/gpt-5.6-luna
+      - rank: 4
+        model_id: opencode-go/deepseek-v4-pro
   - id: general
     source: agents/pi/.pi/agent/settings.json --> sessionStartModel.model
     routes:
       - rank: 1
-        model_id: mistral/mistral-medium-3.5
+        model_id: openai-codex/gpt-5.6-luna
 ---
 # Pi Agent Profile
 
@@ -60,7 +76,7 @@ explicitly **out of scope** for this skill — do not document or verify them.
 - Enabled models: `agents/pi/.pi/agent/settings.json` (`enabledModels`). Models can be added based on evaluation results.
 - Session-start model: `settings.json` (`sessionStartModel.model`)
 - Catalog metadata (context limits, pricing, inputs): `~/.pi/agent/models-store.json`
-- Routing rationale: `docs/pi/cir/2026-08-10-pi-five-stage-model-routing.md`
+- Routing rationale: `docs/pi/cir/2026-08-13-pi-routing-openai-capacity-and-review-gates.md`
 - Related policy: `docs/pi/decisions.md` (pi-028 `sessionStartModel`, pi-006 prompt-owned model selection)
 
 Never read credential or secret files under `~/.pi/agent/`. Provider availability is confirmed manually via `references/providers.md`.
