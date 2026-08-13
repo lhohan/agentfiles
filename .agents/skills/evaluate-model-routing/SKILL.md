@@ -28,8 +28,8 @@ Agent profiles document current configuration; they are not the configuration so
 
 1. **Load and verify the profile (hard gate).** See [Profile verification](#profile-verification). If verification fails, report the exact mismatch and stop. Do not auto-repair.
 2. **Resolve task → capabilities.** For each task in the profile, look up the required capability IDs in `references/tasks.md`.
-3. **Capability investigation.** Evaluate each required capability using the method in `references/capabilities.md`. "Baseline models are sufficient" is a valid result — the evaluation is not forced to recommend a change.
-4. **Evidence research.** Consult the default evidence resources plus open-ended search for each candidate and baseline model. See [Evidence policy](#evidence-policy).
+3. **Capability investigation.** Evaluate each required capability using the portfolio in `references/capabilities.md`. "Baseline models are sufficient" is a valid result — the evaluation is not forced to recommend a change.
+4. **Evidence research.** Select evidence for each required capability, then research the baseline and candidate models. See [Evidence policy](#evidence-policy).
 5. **Operational reality.** Resolve display names to exact `provider/model-id` strings using `references/providers.md` and the agent's model store (e.g. `~/.pi/agent/models-store.json`). Check context limits, pricing, and catalog data. Do not check authentication or read credential files; flag provider availability for manual confirmation.
 6. **Routing evaluation.** Per stage, compare current primary/secondary/tertiary models with candidates. Check model-family diversity. Recommend one of: keep, replace, add secondary, add tertiary, or no change.
 7. **Validation and application.** Record A/B measures and rollback criteria. Provide the agent-specific application checklist from the profile. Keep application separate from recommendation — do not mutate routing without explicit user approval.
@@ -51,15 +51,60 @@ Missing, renamed, or conflicting sources are verification failures.
 
 ## Evidence policy
 
-Default resources always consulted:
+Use the capability-specific portfolio in `references/capabilities.md`; no benchmark is a universal default. Artificial Analysis is useful for discovering and normalising results, but inspect the component evaluation rather than treating a composite index as direct evidence. Use Aider Polyglot only for short-form editing evidence and LMArena only as a general preference or usability sanity check.
 
-1. Aider Polyglot Leaderboard (`aider.chat/docs/leaderboards/`) — code editing across 225 exercises in 6 languages.
-2. Artificial Analysis (`artificialanalysis.ai`) — Intelligence Index, Coding Agent Index (DeepSWE, Terminal-Bench, SWE-Atlas), cost-per-task, speed, endpoint accuracy.
-3. LMArena (`lmarena.ai`) — crowd-sourced blind voting as a general-quality sanity check.
+Research benchmark revisions, audits, release notes, provider model cards, and independent reports. Prefer primary benchmark sources for task construction and result metadata; use independent audits to assess benchmark quality. Search until every required capability has suitable evidence for each baseline and candidate, or a confirmed evidence gap.
 
-Open-ended search is unrestricted: benchmarks, release notes, provider model cards, blog posts. Consult SWE-bench (`github.com/swe-bench/SWE-bench`) and provider model cards when available. Search until the default resources are covered and each candidate has evidence or confirmed absence.
+### Benchmark-quality gates
 
-Tag every data point with source URL and type: `benchmark`, `crowd-sourced`, `provider-doc`, `news`, `unverified`. Distinguish "unverified" (no evidence found) from "rejected" (evidence against).
+Before using an evaluation, assess:
+
+- construct fit to the capability under investigation;
+- task provenance and likely contamination exposure;
+- verifier quality, specification fidelity, and audit history;
+- saturation and separation between frontier systems;
+- repository, language, and task diversity;
+- reproducibility, public artifacts, and trajectory availability;
+- model, agent, harness, scaffold, and tool effects;
+- sample size, repeated attempts, variance, and confidence intervals;
+- benchmark version and evaluation date.
+
+Classify each evaluation's role for the capability as:
+
+- `primary`: direct, credible evidence suitable for routing decisions;
+- `secondary`: relevant corroboration with material limitations;
+- `conditional`: usable only when its stated scope or caveat matches the decision;
+- `deprecated`: unsuitable for current frontier-routing decisions.
+
+A benchmark can have different roles for different capabilities. Do not turn these labels into weights or a synthetic ranking.
+
+### Current benchmark dispositions
+
+- Prefer [DeepSWE v1.1](https://github.com/datacurve-ai/deep-swe) for long-horizon software engineering and [Terminal-Bench v2.1](https://www.tbench.ai/leaderboard/terminal-bench/2.1) for agentic terminal use.
+- Treat [SWE-bench Verified](https://openai.com/index/why-we-no-longer-evaluate-swe-bench-verified/) as `deprecated` for frontier routing because contamination and saturation weaken separation. It may provide historical context.
+- Treat [SWE-bench Pro](https://openai.com/index/separating-signal-from-noise-coding-evaluations/) as `secondary` at most because a published audit found widespread task and verifier defects.
+- Treat [SWE-Bench ProMax](https://arxiv.org/abs/2608.09802) as `secondary`: it improves curation and task scale, but tasks are mined from public commits and results remain scaffold-sensitive.
+- Treat [SWE-bench Multilingual](https://www.swebench.com/multilingual.html) as `secondary` evidence of language breadth, not as contamination-resistant proof of general software-engineering ability.
+
+Do not embed leaderboard percentages in durable instructions. Research current results during each evaluation.
+
+### Result comparability
+
+For every reported result, record:
+
+- exact model ID or version and reasoning effort;
+- benchmark name, version, and split;
+- agent, harness, scaffold, and tools;
+- attempt count and metric definition;
+- evaluation date;
+- confidence interval or variance when available;
+- source URL and known caveats.
+
+Label the result as `model`, `agent-model system`, or `proxy-family` evidence. Most agentic benchmark results are agent-model-system evidence unless the model effect has been isolated. Never transfer a score between aliases or family members without the `proxy-family` label.
+
+Do not compare scores numerically across different benchmarks, versions, splits, harnesses, or model configurations. Present contradictions and uncertainty rather than averaging them.
+
+Tag every data point with a source URL and source type: `benchmark`, `crowd-sourced`, `provider-doc`, `news`, or `unverified`. Distinguish `unverified` (no suitable evidence found) from `rejected` (evidence against).
 
 ## Output contract
 
@@ -67,7 +112,8 @@ Produce:
 
 - Executive summary.
 - Capability investigation (task → capabilities → sufficiency verdicts).
-- Evidence-status table (candidate/baseline model, source URLs, evidence type, status).
+- Evidence-status table (candidate/baseline model, capability, evaluation role, result scope, score metadata, source URLs, source type, status, caveats).
+- Contradictory evidence and comparability limits.
 - Task-by-task review of the current routing.
 - Meaningful workflow risks.
 - Recommended routing (keep/replace/add secondary/add tertiary/no change per stage).

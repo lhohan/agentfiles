@@ -1,6 +1,7 @@
 # CIR: Generic model-routing evaluation skill with per-agent profiles
 
 **Date:** 2026-08-11
+**Last updated:** 2026-08-13
 **Scope:** `.agents/skills/evaluate-model-routing/` (SKILL.md + `references/`)
 
 ## Intent
@@ -22,6 +23,11 @@ explicitly supports "no change"
 
 AND the run must not read `~/.pi/agent/auth.json`, must not mutate any agent
 configuration, and must not apply routing changes without explicit user approval
+
+AND the review selects evidence by capability, audits benchmark quality, labels
+model-versus-harness scope, records enough metadata to establish score
+comparability, and presents contradictions rather than averaging incompatible
+results
 
 AND the review covers capability investigation (task → capabilities), tagged
 evidence (source URL + type), operational reality (context limits, pricing,
@@ -48,10 +54,21 @@ criteria.
 - No new provider, package, extension, or automation is required.
 - The human-maintained `references/providers.md` documents provider
   availability; the skill never probes auth.
-- Evidence policy: curated defaults always consulted (Aider Polyglot Leaderboard,
-  Artificial Analysis, LMArena) plus open-ended search; every data point tagged
-  with source URL and type (`benchmark`, `crowd-sourced`, `provider-doc`, `news`,
-  `unverified`); unverified ≠ rejected.
+- Evidence policy: select benchmarks by capability rather than requiring a fixed
+  default set. Artificial Analysis supports discovery and normalisation, but
+  component evaluations take precedence over composite indexes; Aider Polyglot
+  is limited to short-form editing evidence, and LMArena is a general preference
+  sanity check.
+- Assess construct fit, contamination exposure, verifier quality, saturation,
+  diversity, reproducibility, harness effects, uncertainty, recency, and version
+  before using a benchmark. Classify its role as `primary`, `secondary`,
+  `conditional`, or `deprecated` for the capability.
+- Every result records exact model and reasoning effort, benchmark version and
+  split, harness, attempts, metric, date, uncertainty when available, source,
+  caveats, and whether it is `model`, `agent-model system`, or `proxy-family`
+  evidence. Scores from incompatible configurations are not compared directly.
+- Every data point remains tagged with source URL and type (`benchmark`,
+  `crowd-sourced`, `provider-doc`, `news`, `unverified`); unverified ≠ rejected.
 - Cost is a tiebreaker between sufficiently comparable quality options; no
   weighted scoring or synthetic rankings; models never vote on themselves.
 
@@ -63,6 +80,20 @@ criteria.
   generic process.
 - **Shared `tasks.md` / `capabilities.md` / `providers.md` modules** so agents
   reuse task→capability mappings and evidence methods instead of duplicating them.
+- **Capability-aligned evidence portfolios** because repository understanding,
+  tool use, review, long-context behavior, and instruction following are
+  different constructs and require different evaluations.
+- Prefer **DeepSWE v1.1** for long-horizon software engineering and
+  **Terminal-Bench v2.1** for agentic terminal use. Treat SWE-bench Verified as
+  deprecated for frontier routing, SWE-bench Pro as secondary at most after its
+  task-quality audit, ProMax as scaffold-sensitive secondary evidence, and
+  SWE-bench Multilingual as language-breadth evidence.
+- Rejected **a universal four-benchmark scorecard** because its scores measure
+  different constructs under different harnesses and cannot be averaged or
+  compared as one model-capability ranking.
+- Rejected **fixed leaderboard percentages in durable instructions** because
+  benchmark versions, harnesses, and model results change; each evaluation must
+  research current results.
 - **Live configuration as source of truth**, with profile verification gating
   research — a profile that disagrees with the prompts or settings is a stopped
   evaluation, not a repair opportunity.
@@ -84,3 +115,6 @@ criteria.
   silently papered over.
 - Future model releases have a defined entry point for re-evaluation
   (validation step 13 of the plan).
+- Routing reports use current, capability-matched evidence without hiding
+  benchmark defects, harness confounding, contradictory results, or missing
+  coverage.
