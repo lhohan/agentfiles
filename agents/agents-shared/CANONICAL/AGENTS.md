@@ -11,6 +11,11 @@
 - **Context7 docs skill (`find-docs`)**: Use for library, tooling, and SDK documentation lookups. If docs intent is detected, run `find-docs` before `web_search` unless the user explicitly asks for broad web research.
 - **Code search**: Prefer ripgrep (`rg`) when available for searching code and text.
 
+## Shell and terminal execution
+
+- Do not assume the current terminal runs Bash; inspect the shell or use shell-native syntax.
+- Run Bash-specific snippets explicitly with `bash -lc` rather than sending Bash syntax to fish or another shell.
+
 ---
 
 ## Environment Limitations
