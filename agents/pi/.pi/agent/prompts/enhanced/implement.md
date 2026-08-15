@@ -1,6 +1,6 @@
 ---
 description: Implement features, fixes, or tasks using walking-skeleton and verification guidance
-model: opencode-go/deepseek-v4-pro,opencode-go/deepseek-v4-flash,openai-codex/gpt-5.6-luna,opencode/laguna-s-2.1-free
+model: opencode-go/gpt-5.6-luna,opencode-go/deepseek-v4-flash,openai-codex/gpt-5.6-luna,opencode-go/hy3,opencode/laguna-s-2.1-free
 thinking: high
 restore: false
 ---

@@ -25,12 +25,14 @@ tasks:
     source: agents/pi/.pi/agent/prompts/enhanced/implement.md
     routes:
       - rank: 1
-        model_id: opencode-go/deepseek-v4-pro
+        model_id: opencode-go/gpt-5.6-luna
       - rank: 2
         model_id: opencode-go/deepseek-v4-flash
       - rank: 3
         model_id: openai-codex/gpt-5.6-luna
       - rank: 4
+        model_id: opencode-go/hy3
+      - rank: 5
         model_id: opencode/laguna-s-2.1-free
   - id: review
     source: agents/pi/.pi/agent/prompts/enhanced/review.md
