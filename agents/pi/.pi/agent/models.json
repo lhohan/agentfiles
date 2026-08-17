@@ -6,8 +6,13 @@
         {
           "id": "zai-glm-5-2",
           "name": "Z.ai GLM 5.2",
-          "api": "mistral-conversations",
-          "reasoning": true,
+          "api": "openai-completions",
+          "baseUrl": "https://api.mistral.ai/v1",
+          "compat": {
+            "supportsDeveloperRole": false,
+            "supportsStore": false
+          },
+          "reasoning": false,
           "thinkingLevelMap": {
             "off": "none",
             "minimal": null,
