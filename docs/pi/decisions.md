@@ -4,6 +4,31 @@
 
 Pi-specific decisions listed in reverse chronological order (most recent first).
 
+### pi-030: Z.ai GLM 5.2 via Mistral — provider config and reasoning tradeoff [Accepted]
+
+**In the context of** configuring `zai-glm-5-2` (a Z.ai GLM third-party model served through Mistral's platform) as a coding-agent model in Pi 0.84.2
+
+**Facing** five distinct failures when using the original `mistral-conversations` API config:
+
+1. **Tool-call mangling** — GLM streams tool-call `function.name` and `function.arguments` in separate SSE deltas. The `mistral-conversations` parser (both old SDK-based and 0.84.2's rewritten native HTTP version) keys tool-call blocks on `${callId}:${index}`. When `toolCall.id` is absent in subsequent deltas, `callId` changes (falls back to a derived hash), creating a duplicate block with an empty name. Result: `name:"read", arguments:{}` and `name:"", arguments:{"path":"..."}` instead of one correct call.
+2. **404 (wrong URL path)** — `openai-completions` uses the OpenAI SDK which appends `/chat/completions` and expects `baseUrl` to include `/v1`. The provider-level `baseUrl` (`https://api.eu.mistral.ai`) produced `https://api.eu.mistral.ai/chat/completions` → 404. The native `mistral-conversations` SDK prepended `/v1` itself, which is why the original `baseUrl` worked there.
+3. **422: `role: "developer"`** — `detectCompat()` sets `supportsDeveloperRole: !isNonStandard` = `true` for the `mistral` provider. Combined with `reasoning: true`, Pi sends the system prompt as `role: "developer"` (an OpenAI-only role). Mistral rejects it: `"Input tag 'developer' found using 'role' does not match any of the expected tags: system, user, assistant, tool"`.
+4. **422: `store: false`** — `detectCompat()` sets `supportsStore: !isNonStandard` = `true` for `mistral`. Pi sends `"store": false` in the request body. Mistral rejects it: `"Extra inputs are not permitted"` at `body.store`.
+5. **`[object Object]` in output** — When `reasoning: true`, Mistral returns structured `content` arrays: `[{"type":"thinking","thinking":[{"type":"text","text":"..."}],"closed":true}]`. The `openai-completions` parser does `block.text += choice.delta.content`; when `content` is an array, JS coerces it to `[object Object]`, polluting the output with garbage and losing all thinking content.
+
+> **We decided** to configure `zai-glm-5-2` with `api: "openai-completions"`, a model-level `baseUrl: "https://api.mistral.ai/v1"` (global, not EU), `compat: { supportsDeveloperRole: false, supportsStore: false }`, and `reasoning: false`.
+
+**To achieve** a working coding-agent model with clean text output and correctly parsed tool calls, verified end-to-end via a capture proxy that logged Pi's exact outgoing request and Mistral's response.
+
+**Accepting** that:
+  - Extended thinking is disabled — GLM 5.2 operates without visible chain-of-thought reasoning. The `thinkingLevelMap` is retained but inert.
+  - The `mistral-conversations` parser handles structured thinking blocks correctly but its tool-call keying bug makes it unsuitable for a coding agent that relies on tools.
+  - The `openai-completions` parser handles tool calls correctly (index-based keying with name backfill) but cannot parse structured `content` arrays.
+  - The EU endpoint (`api.eu.mistral.ai`) exhibited intermittent connection failures during diagnosis; the global endpoint (`api.mistral.ai`) is stable.
+  - Restoring reasoning requires either an upstream Pi fix (openai-completions parser handling array-valued `content`) or a custom provider extension with a `streamSimple` handler that combines structured-thinking parsing with index-based tool-call keying.
+
+**Supersedes** the original `mistral-conversations` config for this model.
+
 ### pi-029: Answer extension comparison - sids/pi-extensions/answer vs mitsuhiko/agent-stuff/answer.ts [Provisional]
 
 **In the context of** evaluating answer-question extraction extension workflow for Pi
