@@ -54,5 +54,6 @@
 # - github.repo
 
 dolt.shared-server: true
-
 export.auto: false
+sync:
+    remote: "git+ssh://git@codeberg.org/hanlho/agentfiles.git"
