@@ -2,7 +2,7 @@
 
 Shared across coding agents. A task not listed here is a validation error in any agent profile.
 
-## plan
+## run_stage_plan
 
 - **Description:** produce an implementation-ready plan from a user request and repository inspection: enumerate options, surface unresolved decisions, estimate impact, and hand off to execution.
 - **Capabilities:** `reasoning`, `instruction_following`, `repository_understanding`, `long_context`
@@ -22,7 +22,7 @@ Shared across coding agents. A task not listed here is a validation error in any
 - **Description:** review open or uncommitted changes for bugs, security, quality, and compliance; report findings with severity and confidence without applying changes.
 - **Capabilities:** `review`, `software_engineering`, `reasoning`
 
-## break
+## run_stage_break
 
 - **Description:** adversarial failure-mode hunting: find ways the software can fail, leak, crash, or be abused; propose minimal repro ideas; do not validate the implementation.
 - **Capabilities:** `adversarial_analysis`, `review`, `software_engineering`

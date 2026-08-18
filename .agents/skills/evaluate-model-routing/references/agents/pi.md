@@ -3,8 +3,8 @@ agent: pi
 profile_version: 1
 enabled_models_source: agents/pi/.pi/agent/settings.json
 tasks:
-  - id: plan
-    source: agents/pi/.pi/agent/prompts/enhanced/plan.md
+  - id: run_stage_plan
+    source: agents/pi/.pi/agent/prompts/enhanced/run-stage-plan.md
     routes:
       - rank: 1
         model_id: opencode-go/glm-5.2
@@ -41,8 +41,8 @@ tasks:
         model_id: openai-codex/gpt-5.6-sol
       - rank: 2
         model_id: opencode-go/glm-5.2
-  - id: break
-    source: agents/pi/.pi/agent/prompts/enhanced/break.md
+  - id: run_stage_break
+    source: agents/pi/.pi/agent/prompts/enhanced/run-stage-break.md
     routes:
       - rank: 1
         model_id: opencode-go/hy3

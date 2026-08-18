@@ -43,6 +43,13 @@ Repository for agent configuration files. It uses [Mise](https://mise.jdx.dev) t
 ## Prompt-Skill Pattern
 
 - Slash-command prompts delegate to skills. Do not inline workflow content.
+- Shared workflow stages use matching `run-stage-*` names across harnesses where practical; keep instructions in tool-neutral skills and harness-specific prompts as thin adapters.
+
+## Design and Architecture
+
+- Treat source code and observed system behaviour as authoritative for what the system does.
+- Use decision logs and CIRs to understand why the system was designed that way; report any conflict between them and the current implementation.
+- For design or architecture work, use the relevant available design skill before deciding, then consult `docs/decisions.md`, `docs/<package>/decisions.md`, and relevant CIRs; record durable decisions using the established decision format.
 
 ## Beads Task Hygiene
 

@@ -57,7 +57,7 @@ Source types: `benchmark`, `crowd-sourced`, `provider-doc`, `news`, `unverified`
 ## adversarial_analysis
 
 - **What it means:** Actively finding failure modes, edge cases, abuse vectors, and assumptions the author did not anticipate.
-- **Primary evidence:** c-CRAB or CR-Bench for defect finding, paired with realistic local `/break` samples for the target workflow.
+- **Primary evidence:** c-CRAB or CR-Bench for defect finding, paired with realistic local `/run-stage-break` samples for the target workflow.
 - **Secondary evidence:** [CyberGym](https://openreview.net/forum?id=2YvbLQEdYt) for security-specific vulnerability discovery and reproduction.
 - **Conditional or deprecated:** CyberGym establishes a narrower security capability, not general adversarial analysis. General safety, refusal, and jailbreak scores do not establish software failure analysis.
 - **Sufficiency criteria:** Evidence shows non-obvious breakage with actionable reproduction ideas. Without direct public coverage or a local sample, report `unverified`.
