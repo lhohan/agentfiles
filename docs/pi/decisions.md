@@ -4,7 +4,9 @@
 
 Pi-specific decisions listed in reverse chronological order (most recent first).
 
-### pi-030: Z.ai GLM 5.2 via Mistral — provider config and reasoning tradeoff [Accepted]
+### pi-030: Z.ai GLM 5.2 via Mistral — provider config and reasoning tradeoff [Superseded]
+
+> **Superseded for the configuration choice by** `docs/pi/cir/2026-08-18-restore-native-mistral-adapter.md`. The failure analysis remains active historical reference.
 
 **In the context of** configuring `zai-glm-5-2` (a Z.ai GLM third-party model served through Mistral's platform) as a coding-agent model in Pi 0.84.2
 
