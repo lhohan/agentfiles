@@ -13,3 +13,11 @@ run = "./scripts/stow-task restow"
 [tasks.check]
 description = "Preview agent configuration links managed by Stow"
 run = "./scripts/stow-task check"
+
+[tasks.verify-links]
+description = "Verify every Stow-managed symlink is intact and points to the repo source"
+run = "./scripts/verify-links-task"
+
+[tasks.verify]
+description = "Run all consistency checks: stow preview and symlink verification"
+depends = ["check", "verify-links"]

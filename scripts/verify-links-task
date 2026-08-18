@@ -1,0 +1,95 @@
+#!/bin/sh
+# scripts/verify-links-task
+#
+# Verify that every Stow-managed symlink is intact and points to the repo source.
+# Uses `stow --simulate --verbose=2` per-package to determine what should be linked,
+# so .stow-local-ignore rules are honored automatically. A CONFLICT in one package
+# does not block checking the others.
+#
+# Catches the case where a tool (e.g. vibe itself) replaces a managed symlink
+# with a regular file. Exits 0 if all expected links are correct, 1 otherwise.
+#
+# Override defaults via env: AGENTFILES_STOW_DIR, AGENTFILES_STOW_TARGET.
+
+set -u
+
+stow_dir="${AGENTFILES_STOW_DIR:-agents}"
+target="${AGENTFILES_STOW_TARGET:-$HOME}"
+
+if [ ! -d "$stow_dir" ]; then
+    echo "verify-links: $stow_dir/ not found (run from repo root)" >&2
+    exit 2
+fi
+
+err_tmp="$(mktemp)"
+trap 'rm -f "$err_tmp"' EXIT INT TERM
+checked=0
+
+for pkg_dir in "$stow_dir"/*/; do
+    [ -d "$pkg_dir" ] || continue
+    pkg="${pkg_dir%/}"
+    pkg="${pkg##*/}"
+
+    stow_output=$(stow --simulate --verbose=2 --dir="$stow_dir" --target="$target" --no-folding "$pkg" 2>&1)
+
+    echo "$stow_output" | grep '^CONFLICT ' >> "$err_tmp" || true
+
+    # Stow emits either "LINK: <target_rel> => <source_rel>" (would create) or
+    # "--- Skipping <target_rel> as it already points to <source_rel>" (already
+    # correct). We treat both as a link we expect to verify.
+    echo "$stow_output" | grep -E '^(LINK: |--- Skipping )' | while IFS= read -r line; do
+        case "$line" in
+            "LINK: "*)
+                rest="${line#LINK: }"
+                target_rel="${rest%% => *}"
+                source_rel="${rest##* => }"
+                ;;
+            "--- Skipping "*)
+                rest="${line#--- Skipping }"
+                target_rel="${rest%% as it already points to *}"
+                source_rel="${rest##* as it already points to }"
+                ;;
+            *)
+                continue
+                ;;
+        esac
+
+        target_path="$target/$target_rel"
+        # source_rel is the symlink content, relative to the link's directory
+        # (i.e. dirname target_path), not to the target root.
+        target_dir=$(dirname -- "$target_path")
+        source_abs=$(cd "$target_dir" && cd "$(dirname -- "$source_rel")" && pwd)/$(basename -- "$source_rel")
+
+        if [ ! -e "$target_path" ] && [ ! -L "$target_path" ]; then
+            echo "MISSING: $target_path (expected link to $source_abs)" >> "$err_tmp"
+        elif [ ! -L "$target_path" ]; then
+            echo "NOT-A-LINK: $target_path (expected link to $source_abs)" >> "$err_tmp"
+        else
+            raw=$(readlink "$target_path")
+            case "$raw" in
+                /*) actual="$raw" ;;
+                *)
+                    link_dir=$(dirname -- "$target_path")
+                    target_dir=$(dirname -- "$raw")
+                    target_base=$(basename -- "$raw")
+                    resolved_dir=$(cd "$link_dir" && cd "$target_dir" && pwd)
+                    actual="$resolved_dir/$target_base"
+                    ;;
+            esac
+            if [ "$actual" != "$source_abs" ]; then
+                echo "WRONG-TARGET: $target_path -> $actual (expected $source_abs)" >> "$err_tmp"
+            fi
+        fi
+    done
+    checked=$((checked + $(echo "$stow_output" | grep -cE '^(LINK: |--- Skipping )')))
+done
+
+errors=$(wc -l < "$err_tmp" | tr -d ' ')
+
+if [ "$errors" -gt 0 ]; then
+    echo "verify-links: $errors error(s) found across $checked link(s) checked"
+    cat "$err_tmp"
+    exit 1
+fi
+
+echo "verify-links: all $checked link(s) OK"

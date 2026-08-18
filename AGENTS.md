@@ -21,6 +21,10 @@ Repository for agent configuration files. It uses [Mise](https://mise.jdx.dev) t
 - For new durable change intent and decisions, prefer Change Intent Records (CIRs) under `docs/<package>/cir/` or `docs/cir/` for repo-wide records.
 - A CIR may supersede an earlier decision record when it replaces or invalidates that prior decision.
 
+## Definition of Done
+
+- Before claiming any task complete, run `mise verify`. It runs all consistency checks (stow preview + symlink verification) and exits non-zero on any failure. Fix and re-run on failure; do not declare done until it passes.
+
 ## Stow/Mise Workflow
 
 - Use `mise` as the command entrypoint for Stow operations.
