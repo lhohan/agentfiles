@@ -56,7 +56,7 @@ tasks:
     source: agents/pi/.pi/agent/settings.json --> sessionStartModel.model
     routes:
       - rank: 1
-        model_id: opencode-go/minimax-m3
+        model_id: openai-codex/gpt-5.6-luna
 ---
 # Pi Agent Profile
 
