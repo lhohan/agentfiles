@@ -7,40 +7,32 @@ tasks:
     source: agents/pi/.pi/agent/prompts/enhanced/run-stage-plan.md
     routes:
       - rank: 1
-        model_id: opencode-go/glm-5.2
+        model_id: opencode-go/glm-5.3
       - rank: 2
-        model_id: opencode-go/deepseek-v4-pro
-      - rank: 3
-        model_id: opencode-go/hy3
+        model_id: mistral/zai-glm-5-2
   - id: review_plan
     source: agents/pi/.pi/agent/prompts/enhanced/review-plan.md
     routes:
       - rank: 1
         model_id: openai-codex/gpt-5.6-sol
       - rank: 2
-        model_id: opencode-go/deepseek-v4-pro
-      - rank: 3
-        model_id: opencode-go/hy3
+        model_id: mistral/zai-glm-5-2
   - id: implement
     source: agents/pi/.pi/agent/prompts/enhanced/implement.md
     routes:
       - rank: 1
-        model_id: opencode-go/gpt-5.6-luna
+        model_id: opencode-go/glm-5.3-flash
       - rank: 2
-        model_id: opencode-go/deepseek-v4-flash
+        model_id: opencode-go/gpt-5.6-luna
       - rank: 3
         model_id: openai-codex/gpt-5.6-luna
-      - rank: 4
-        model_id: opencode-go/hy3
-      - rank: 5
-        model_id: opencode/laguna-s-2.1-free
   - id: review
     source: agents/pi/.pi/agent/prompts/enhanced/review.md
     routes:
       - rank: 1
         model_id: openai-codex/gpt-5.6-sol
       - rank: 2
-        model_id: opencode-go/glm-5.2
+        model_id: mistral/zai-glm-5-2
   - id: run_stage_break
     source: agents/pi/.pi/agent/prompts/enhanced/run-stage-break.md
     routes:
@@ -50,8 +42,6 @@ tasks:
         model_id: openai-codex/gpt-5.6-luna
       - rank: 3
         model_id: opencode-go/gpt-5.6-luna
-      - rank: 4
-        model_id: opencode-go/deepseek-v4-pro
   - id: general
     source: agents/pi/.pi/agent/settings.json --> sessionStartModel.model
     routes:
@@ -83,6 +73,6 @@ Never read credential or secret files under `~/.pi/agent/`. Provider availabilit
 
 1. Edit the `model:` frontmatter in `agents/pi/.pi/agent/prompts/enhanced/<stage>.md`.
 2. Keep frontmatter limited to model controls (`model`, `thinking`, `restore`) per pi-019.
-3. Keep `enabledModels` additive-only — existing entries must not be trimmed.
+3. Keep `enabledModels` additive for routing changes. Routine hygiene may prune dormant models that have no route, extraction, or session-start role — see CIR `2026-08-31-pi-enabled-models-hygiene-prune.md`.
 4. New routed models must live on an already-authenticated provider.
 5. Record the change in the Pi routing CIR and update this profile.

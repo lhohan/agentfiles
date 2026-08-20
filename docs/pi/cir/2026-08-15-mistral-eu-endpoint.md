@@ -44,8 +44,10 @@ reason.
   `open-mixtral-8x7b`, `pixtral-12b`, `pixtral-large-latest`. None are in
   `enabledModels`. The regional catalog drifts as Mistral syncs endpoints, so
   this list is a snapshot, not a guarantee.
-- `enabledModels` remains additive-only; the existing `opencode-go/glm-5.2`
-  entry is kept alongside the new `mistral/zai-glm-5-2`.
+- At the time of this endpoint change, `enabledModels` remained additive-only and
+  the existing `opencode-go/glm-5.2` entry was kept alongside the new
+  `mistral/zai-glm-5-2`. The later hygiene decision in
+  `2026-08-31-pi-enabled-models-hygiene-prune.md` supersedes that retention choice.
 
 ## Decisions
 

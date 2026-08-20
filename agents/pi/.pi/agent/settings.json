@@ -1,5 +1,5 @@
 {
-  "lastChangelogVersion": "0.84.2",
+  "lastChangelogVersion": "0.84.4",
   "defaultProvider": "openai-codex",
   "defaultModel": "gpt-5.6-luna",
   "defaultThinkingLevel": "high",
@@ -18,21 +18,19 @@
     "npm:pi-answer@0.1.4"
   ],
   "enabledModels": [
-    "opencode-go/kimi-k2.6",
     "opencode-go/kimi-k2.7-code",
-    "opencode-go/kimi-k3",
     "opencode-go/deepseek-v4-flash",
-    "opencode-go/deepseek-v4-pro",
-    "opencode/laguna-s-2.1-free",
-    "mistral/mistral-medium-3.5",
-    "mistral/zai-glm-5-2",
     "opencode-go/minimax-m3",
-    "opencode-go/glm-5.2",
+    "opencode-go/glm-5.3",
+    "opencode-go/glm-5.3-flash",
+    "opencode-go/longcat-2.0",
     "opencode-go/gpt-5.6-luna",
     "opencode-go/hy3",
-    "opencode-go/qwen3.6-plus",
-    "opencode-go/qwen3.8-max",
-    "openai-codex/gpt-5.6-terra",
+    "opencode-go/hy4-preview",
+    "opencode-go/qwen3.8-flash",
+    "mistral/mistral-medium-3.5",
+    "mistral/zai-glm-5-2",
+    "mistral/mistral-small-2603",
     "openai-codex/gpt-5.6-sol",
     "openai-codex/gpt-5.6-luna"
   ],
@@ -56,8 +54,8 @@
         "id": "deepseek-v4-flash"
       },
       {
-        "provider": "openai-codex",
-        "id": "gpt-5.4-mini"
+        "provider": "mistral",
+        "id": "mistral-small-2603"
       }
     ],
     "answerTemplates": [

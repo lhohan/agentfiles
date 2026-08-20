@@ -1,5 +1,5 @@
 ---
-model: openai-codex/gpt-5.6-sol,opencode-go/glm-5.2
+model: openai-codex/gpt-5.6-sol,mistral/zai-glm-5-2
 thinking: high
 restore: true
 ---
