@@ -21,7 +21,7 @@ tasks:
     source: agents/pi/.pi/agent/prompts/enhanced/implement.md
     routes:
       - rank: 1
-        model_id: opencode-go/glm-5.3-flash
+        model_id: opencode-go/deepseek-v4.1-flash
       - rank: 2
         model_id: opencode-go/gpt-5.6-luna
       - rank: 3
