@@ -1,0 +1,148 @@
+{
+  "config_version": 1,
+  "judges": [{ "model": "opencode-go/hy4-preview", "thinking": "high" }],
+  "rank_threshold_coverage": 0.5,
+  "max_snapshot_age_days": 30,
+  "contested_tolerance": 0.05,
+  "effort_rank": ["low", "medium", "high", "xhigh", "max"],
+  "stage_weights": {
+    "run_stage_plan": {
+      "repository_understanding": 0.3,
+      "reasoning": 0.3,
+      "long_context": 0.2,
+      "instruction_following": 0.2
+    },
+    "review_plan": {
+      "reasoning": 0.4,
+      "adversarial_analysis": 0.3,
+      "repository_understanding": 0.3
+    },
+    "implement": {
+      "software_engineering": 0.5,
+      "tool_use": 0.3,
+      "repository_understanding": 0.2
+    },
+    "review": {
+      "review": 0.5,
+      "software_engineering": 0.3,
+      "reasoning": 0.2
+    },
+    "run_stage_break": {
+      "adversarial_analysis": 0.4,
+      "review": 0.3,
+      "software_engineering": 0.3
+    },
+    "general": {
+      "instruction_following": 0.3,
+      "reasoning": 0.3,
+      "long_context": 0.2,
+      "multimodal": 0.2
+    }
+  },
+  "benchmark_overrides": {
+    "swebench-multilingual": { "max_snapshot_age_days": 90 },
+    "swebench-multimodal": { "max_snapshot_age_days": 90 }
+  },
+  "model_aliases": [
+    {
+      "route_id": "opencode-go/glm-5.3",
+      "source": "deepswe",
+      "source_name": "glm-5-3",
+      "source_slug": "glm-5-3",
+      "canonical_release": "glm-5.3",
+      "evidence_scope": "model",
+      "verified": "2026-09-11",
+      "note": "Exact release match on the DeepSWE board."
+    },
+    {
+      "route_id": "opencode-go/glm-5.3",
+      "source": "tbench-v2.1",
+      "source_name": "GLM-5.3",
+      "source_slug": "glm-5.3",
+      "canonical_release": "glm-5.3",
+      "evidence_scope": "model",
+      "verified": "2026-09-11",
+      "note": "Exact release match on the Terminal-Bench v2.1 board."
+    },
+    {
+      "route_id": "mistral/zai-glm-5-2",
+      "source": "deepswe",
+      "source_name": "glm-5-2",
+      "source_slug": "glm-5-2",
+      "canonical_release": "glm-5.2",
+      "evidence_scope": "model",
+      "verified": "2026-09-11",
+      "note": "Exact release match on the DeepSWE board."
+    },
+    {
+      "route_id": "openai-codex/gpt-5.6-sol",
+      "source": "deepswe",
+      "source_name": "gpt-5-6-sol",
+      "source_slug": "gpt-5-6-sol",
+      "canonical_release": "gpt-5.6-sol",
+      "evidence_scope": "model",
+      "verified": "2026-09-11",
+      "note": "Exact release match on the DeepSWE board."
+    },
+    {
+      "route_id": "openai-codex/gpt-5.6-sol",
+      "source": "tbench-v2.1",
+      "source_name": "GPT-5.6 Sol",
+      "source_slug": "gpt-5.6-sol",
+      "canonical_release": "gpt-5.6-sol",
+      "evidence_scope": "model",
+      "verified": "2026-09-11",
+      "note": "Exact release match on the Terminal-Bench v2.1 board."
+    },
+    {
+      "route_id": "opencode-go/gpt-5.6-luna",
+      "source": "deepswe",
+      "source_name": "gpt-5-6-luna",
+      "source_slug": "gpt-5-6-luna",
+      "canonical_release": "gpt-5.6-luna",
+      "evidence_scope": "model",
+      "verified": "2026-09-11",
+      "note": "Published release is served by two providers; both routes claim this release."
+    },
+    {
+      "route_id": "openai-codex/gpt-5.6-luna",
+      "source": "deepswe",
+      "source_name": "gpt-5-6-luna",
+      "source_slug": "gpt-5-6-luna",
+      "canonical_release": "gpt-5.6-luna",
+      "evidence_scope": "model",
+      "verified": "2026-09-11",
+      "note": "Published release is served by two providers; both routes claim this release."
+    },
+    {
+      "route_id": "opencode-go/gpt-5.6-luna",
+      "source": "tbench-v2.1",
+      "source_name": "GPT-5.6 Luna",
+      "source_slug": "gpt-5.6-luna",
+      "canonical_release": "gpt-5.6-luna",
+      "evidence_scope": "model",
+      "verified": "2026-09-11",
+      "note": "Published release is served by two providers; both routes claim this release."
+    },
+    {
+      "route_id": "openai-codex/gpt-5.6-luna",
+      "source": "tbench-v2.1",
+      "source_name": "GPT-5.6 Luna",
+      "source_slug": "gpt-5.6-luna",
+      "canonical_release": "gpt-5.6-luna",
+      "evidence_scope": "model",
+      "verified": "2026-09-11",
+      "note": "Published release is served by two providers; both routes claim this release."
+    },
+    {
+      "route_id": "opencode-go/deepseek-v4.1-flash",
+      "source": "deepswe",
+      "source_name": "deepseek-v4-flash",
+      "source_slug": "deepseek-v4-flash",
+      "canonical_release": "deepseek-v4-flash",
+      "evidence_scope": "proxy-family",
+      "verified": "2026-09-11",
+      "note": "Board publishes deepseek-v4-flash; the routed alias is deepseek-v4.1-flash. Family evidence only, never scored."
+    }
+  ]
+}

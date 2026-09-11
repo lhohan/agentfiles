@@ -2,6 +2,12 @@
 
 Shared across coding agents. A task not listed here is a validation error in any agent profile.
 
+Each task's capability set is the input to the stage weighting in
+`config.json`. Weights are configured there, not here: the scripts cannot parse
+Markdown tables. The capability identifiers below are the join between this file,
+`capabilities.md`, and `config.json`; a test asserts that every capability named
+here is weighted in at least one stage.
+
 ## run_stage_plan
 
 - **Description:** produce an implementation-ready plan from a user request and repository inspection: enumerate options, surface unresolved decisions, estimate impact, and hand off to execution.

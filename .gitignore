@@ -13,3 +13,11 @@ npm-debug.log*
 # Project
 docs/plans/
 
+# Model-routing evaluation pipeline: raw source snapshots are cache, not history
+.agents/skills/evaluate-model-routing/scripts/cache/
+
+# Model-routing reviews: report.json is the committed audit artefact and embeds
+# the units, sources, and scorecard. These two are working files.
+docs/routing-reviews/*/observations.json
+docs/routing-reviews/*/scorecard.json
+

@@ -1,131 +1,138 @@
 ---
 name: evaluate-model-routing
 description: >
-  Evaluate model routing across coding agents (Pi, OpenCode, Codex). Verifies an agent profile against live configuration, researches capability evidence, and recommends routing changes — or explicitly "no change" — without mutating configuration. Use when reviewing whether the right model runs each stage of an agent pipeline, or when a new model release should trigger a routing re-evaluation.
+  Evaluate model routing across coding agents (Pi, OpenCode, Codex). Verifies an agent profile against live configuration, fetches published benchmark results, scores capabilities per stage with declared weights, adds an advisory judge assessment, and renders a fixed Markdown + HTML report with recommendations — or an explicit "no change" — without mutating configuration. Use when reviewing whether the right model runs each stage of an agent pipeline, or when a new model release should trigger a routing re-evaluation.
 ---
 
 # Evaluate Model Routing
 
+Deterministic scoring plus an advisory judge, over published benchmark data.
+Recommendation-only: this skill never changes routing.
+
 ## Inputs
 
-- Agent name (must have a profile under `references/agents/<agent>.md`).
-- Optional focus: a specific stage, capability, or candidate model.
+- Agent name, with a profile at `references/agents/<agent>.md`.
+- Optional focus: a stage, a capability, or candidate models to add.
+- Optional existing run directory to re-render.
 
-If the requested agent has no profile, report that no profile exists and stop.
+No profile means no evaluation: report that and stop.
 
-## Reference layout
+## References and scripts
 
-| File | Contents |
+| Path | Contents |
 |---|---|
-| `references/agents/<agent>.md` | Per-agent: task → source file mapping, route chains, verification notes (Markdown + YAML frontmatter) |
+| `references/agents/<agent>.md` | Per-agent: task → source mapping, route chains, application checklist |
 | `references/tasks.md` | Shared: task ID → description + required capability IDs |
-| `references/capabilities.md` | Shared: capability ID → evaluation method |
-| `references/providers.md` | Shared: provider registry, free-tier notes, human-maintained "has auth?" column |
+| `references/capabilities.md` | Shared: capability ID → what it means and how to assess it |
+| `references/providers.md` | Shared: provider registry; human-maintained availability |
+| `references/benchmarks.md` | Human registry: tier, role, fetch source, version policy, caveats |
+| `references/benchmarks.json` | Machine registry the scripts read; mirrors `benchmarks.md` |
+| `references/config.json` | Judge, thresholds, stage weights, alias records |
+| `references/evaluation-method.md` | Data model, scoring rules, judge contract, CLI contract |
+| `references/manifest.example.json` | Run manifest schema |
+| `scripts/evaluate.mjs` | Pipeline entry point |
 
-Agent profiles document current configuration; they are not the configuration source of truth. Live tool configuration is authoritative.
+Profiles document current configuration; live tool configuration is authoritative.
 
 ## Workflow
 
-1. **Load and verify the profile (hard gate).** See [Profile verification](#profile-verification). If verification fails, report the exact mismatch and stop. Do not auto-repair.
-2. **Resolve task → capabilities.** For each task in the profile, look up the required capability IDs in `references/tasks.md`.
-3. **Capability investigation.** Evaluate each required capability using the portfolio in `references/capabilities.md`. "Baseline models are sufficient" is a valid result — the evaluation is not forced to recommend a change.
-4. **Evidence research.** Select evidence for each required capability, then research the baseline and candidate models. See [Evidence policy](#evidence-policy).
-5. **Operational reality.** Resolve display names to exact `provider/model-id` strings using `references/providers.md` and the agent's model store (e.g. `~/.pi/agent/models-store.json`). Check context limits, pricing, and catalog data. Do not check authentication or read credential files; flag provider availability for manual confirmation.
-6. **Routing evaluation.** Per stage, compare current primary/secondary/tertiary models with candidates. Check model-family diversity. Recommend one of: keep, replace, add secondary, add tertiary, or no change.
-7. **Validation and application.** Record A/B measures and rollback criteria. Provide the agent-specific application checklist from the profile. Keep application separate from recommendation — do not mutate routing without explicit user approval.
+1. **Verify the profile (hard gate).** See [Profile verification](#profile-verification).
+   On any mismatch, report the exact mismatch and source path, then stop. Never
+   auto-repair.
+2. **Build the run manifest.** Write `manifest.json` with the agent, the verified
+   `enabled_models`, each stage's configured chain in rank order, and the
+   candidate set (baseline routes plus the models under consideration). The
+   scripts never parse profile Markdown; the manifest is the gate's outcome.
+3. **Fetch.** `node scripts/evaluate.mjs fetch --manifest <file>`. This records
+   snapshots, provenance, and comparable units. A failing source is reported and
+   becomes a coverage gap; it never becomes a number.
+4. **Score.** `node scripts/evaluate.mjs score --manifest <file>`. Percentiles are
+   computed inside a unit, capabilities and stages are weighted means over
+   present observations only, and coverage decides eligibility.
+5. **Judge (advisory).** `judge-prompt`, then run the printed isolated headless
+   command, then `judge-import`. A missing judge is a valid state.
+6. **Render.** `node scripts/evaluate.mjs render --manifest <file>`.
+7. **Recommend.** Read the scorecard, then add `recommendations` to the manifest
+   (one per stage, with rationale) and re-render. The renderer never invents a
+   recommendation.
+8. **Report and stop.** Present the report, the coverage gaps, the judge
+   divergences, and the validation plan. Application needs explicit approval and
+   follows the profile's checklist.
+
+Exit codes: 0 ok, 2 invalid input, 3 source failure, 4 no comparable data,
+5 judge schema mismatch, 6 replay mismatch. `replay` re-scores a committed
+`report.json` and must match.
 
 ## Profile verification
 
-Stop before model research if any of these fail. Report the exact mismatch and the source path requiring attention.
+Stop before any fetch if any of these fail. Report the exact mismatch and the
+source path needing attention.
 
-- Profile exists and its YAML frontmatter parses.
-- Task `source`s are either prompt files (`path`) or config-sourced (`path --> dotted.key`). Every source path resolves to a real file; for config-sourced tasks the key resolves to a scalar value in that file (e.g. `agents/pi/.pi/agent/settings.json --> sessionStartModel.model`). A missing file, missing key, or non-scalar value is a verification failure.
-- For each task: normalize the source's model chain — for prompt files, the `model:` frontmatter split on commas; for config-sourced tasks, the resolved key value — and the profile's `routes` (ordered `model_id` list) to ordered lists of exact `provider/model-id` tokens, and compare for equality. On divergence, report the first index, the offending `model_id`, and the source path.
+- The profile exists and its YAML frontmatter parses.
+- Task `source`s are prompt files (`path`) or config-sourced
+  (`path --> dotted.key`); every path resolves to a real file, and a
+  config-sourced key resolves to a scalar value (for example
+  `agents/pi/.pi/agent/settings.json --> sessionStartModel.model`).
+- For each task, the source's model chain — prompt `model:` frontmatter split on
+  commas, or the resolved config value — matches the profile's `routes` as
+  ordered lists of exact `provider/model-id` tokens. Report the first divergent
+  index, the offending `model_id`, and the source path.
 - Every `model_id` appears in the `enabledModels` array of `enabled_models_source`.
 - Every task `id` exists in `references/tasks.md`.
-- Symmetry (prompt-sourced tasks only): every `*.md` stage under the profile's prompt directory (derived from prompt-file task `source` paths) has a matching task entry, and every prompt-sourced task maps to a real prompt file. Compare after normalizing `-` to `_` in stage filenames (e.g. prompt `review-plan.md` ↔ task `review_plan`). Report stages present in prompts but missing from the profile, and profile tasks with no backing prompt. Config-sourced tasks are exempt — their validity is covered by the key-resolution rule above.
-- Every capability referenced in `tasks.md` exists as a heading in `references/capabilities.md`.
-- Every `model_id` is listed in `references/providers.md`; any unlisted model is flagged `unverified-provider` for manual confirmation.
+- Symmetry for prompt-sourced tasks: every stage prompt has a task entry and every
+  prompt-sourced task maps to a real prompt file (normalise `-` to `_`).
+  Config-sourced tasks are exempt.
+- Every capability referenced in `tasks.md` is a heading in `references/capabilities.md`.
+- Every `model_id`'s provider prefix is listed in `references/providers.md`;
+  otherwise flag `unverified-provider` for manual confirmation.
 
-Missing, renamed, or conflicting sources are verification failures.
+## Rules that keep the numbers honest
+
+- Score only what a benchmark actually publishes and what an alias record
+  actually claims. No imputation, no interpolation, no proxy score passed off as
+  the routed release.
+- Compare only inside one unit: `(benchmark, board, version, split, metric,
+  harness class)`. Never compare, average, or rank across units.
+- Show coverage and missing weight on every score. A stage below
+  `rank_threshold_coverage` is evidence-only: observations, no rank, no
+  composite, no recommendation.
+- Keep `model`, `agent-model-system`, and `proxy-family` scope visible on every
+  observation, and let a `proxy-family` observation never be the sole basis for a
+  recommendation.
+- Record published uncertainty; never combine it statistically. Report
+  contradictions and contested units instead of averaging them.
+- "No change" is a first-class result.
+- Cost is a tiebreaker between quality-comparable options, never the driver.
 
 ## Evidence policy
 
-Use the capability-specific portfolio in `references/capabilities.md`; no benchmark is a universal default. Artificial Analysis is useful for discovering and normalising results, but inspect the component evaluation rather than treating a composite index as direct evidence. Use Aider Polyglot only for short-form editing evidence and LMArena only as a general preference or usability sanity check.
+`references/benchmarks.md` holds the tier, role, and caveats of every framework.
+Tier A sources are fetched; tier B sources are evidence-only notes; tier C
+sources are recorded and excluded. A benchmark that cannot be fetched is a
+coverage gap, never a score. Judge provider pages, model cards, and release notes
+as claims, not as measurements, and label their source type.
 
-Research benchmark revisions, audits, release notes, provider model cards, and independent reports. Prefer primary benchmark sources for task construction and result metadata; use independent audits to assess benchmark quality. Search until every required capability has suitable evidence for each baseline and candidate, or a confirmed evidence gap.
-
-### Benchmark-quality gates
-
-Before using an evaluation, assess:
-
-- construct fit to the capability under investigation;
-- task provenance and likely contamination exposure;
-- verifier quality, specification fidelity, and audit history;
-- saturation and separation between frontier systems;
-- repository, language, and task diversity;
-- reproducibility, public artifacts, and trajectory availability;
-- model, agent, harness, scaffold, and tool effects;
-- sample size, repeated attempts, variance, and confidence intervals;
-- benchmark version and evaluation date.
-
-Classify each evaluation's role for the capability as:
-
-- `primary`: direct, credible evidence suitable for routing decisions;
-- `secondary`: relevant corroboration with material limitations;
-- `conditional`: usable only when its stated scope or caveat matches the decision;
-- `deprecated`: unsuitable for current frontier-routing decisions.
-
-A benchmark can have different roles for different capabilities. Do not turn these labels into weights or a synthetic ranking.
-
-### Current benchmark dispositions
-
-- Prefer [DeepSWE v1.1](https://github.com/datacurve-ai/deep-swe) for long-horizon software engineering and [Terminal-Bench v2.1](https://www.tbench.ai/leaderboard/terminal-bench/2.1) for agentic terminal use.
-- Treat [SWE-bench Verified](https://openai.com/index/why-we-no-longer-evaluate-swe-bench-verified/) as `deprecated` for frontier routing because contamination and saturation weaken separation. It may provide historical context.
-- Treat [SWE-bench Pro](https://openai.com/index/separating-signal-from-noise-coding-evaluations/) as `secondary` at most because a published audit found widespread task and verifier defects.
-- Treat [SWE-Bench ProMax](https://arxiv.org/abs/2608.09802) as `secondary`: it improves curation and task scale, but tasks are mined from public commits and results remain scaffold-sensitive.
-- Treat [SWE-bench Multilingual](https://www.swebench.com/multilingual.html) as `secondary` evidence of language breadth, not as contamination-resistant proof of general software-engineering ability.
-
-Do not embed leaderboard percentages in durable instructions. Research current results during each evaluation.
-
-### Result comparability
-
-For every reported result, record:
-
-- exact model ID or version and reasoning effort;
-- benchmark name, version, and split;
-- agent, harness, scaffold, and tools;
-- attempt count and metric definition;
-- evaluation date;
-- confidence interval or variance when available;
-- source URL and known caveats.
-
-Label the result as `model`, `agent-model system`, or `proxy-family` evidence. Most agentic benchmark results are agent-model-system evidence unless the model effect has been isolated. Never transfer a score between aliases or family members without the `proxy-family` label.
-
-Do not compare scores numerically across different benchmarks, versions, splits, harnesses, or model configurations. Present contradictions and uncertainty rather than averaging them.
-
-Tag every data point with a source URL and source type: `benchmark`, `crowd-sourced`, `provider-doc`, `news`, or `unverified`. Distinguish `unverified` (no suitable evidence found) from `rejected` (evidence against).
-
-## Output contract
-
-Produce:
-
-- Executive summary.
-- Capability investigation (task → capabilities → sufficiency verdicts).
-- Evidence-status table (candidate/baseline model, capability, evaluation role, result scope, score metadata, source URLs, source type, status, caveats).
-- Contradictory evidence and comparability limits.
-- Task-by-task review of the current routing.
-- Meaningful workflow risks.
-- Recommended routing (keep/replace/add secondary/add tertiary/no change per stage).
-- Validation and rollback criteria.
-- Confidence level.
-- Unresolved evidence.
-
-Avoid weighted scoring, synthetic numerical rankings, and price-led recommendations. Cost is a tiebreaker between sufficiently comparable quality options. Make "no change" a first-class result.
+If a candidate has no alias record for a board, do not guess the mapping: report
+the missing evidence, and add an alias record only when the published release is
+verified against `providers.md`.
 
 ## Policies
 
-- **Recommendation-only default.** Applying routing changes requires explicit user approval.
-- **No auth checks.** Never read credential files or probe API keys; provider availability is human-maintained in `references/providers.md` and confirmed manually.
-- **No model self-voting.** Model-generated opinions may appear as labelled evidence, but models do not vote on themselves and the skill invents no rankings.
-- **Baseline = current routing.** "Baseline models" means the models configured in the agent's routing today.
+- **Recommendation-only.** Applying routing changes needs explicit user approval;
+  this skill never writes routing, `enabledModels`, or provider configuration.
+- **No auth checks.** Never read credential files or probe API keys. Provider
+  availability is human-maintained in `references/providers.md`.
+- **No invented data.** The skill does not run benchmarks, does not estimate
+  scores, and does not turn a leaderboard name into a claim without an alias
+  record.
+- **Judge is advisory.** It cannot change a deterministic score; when the judge
+  is also a candidate, the report tags it `self-candidate`.
+
+## Tests
+
+```bash
+node --test ".agents/skills/evaluate-model-routing/scripts/tests/*.test.mjs"
+```
+
+Run these after changing an adapter, the scorer, the renderer, or the settings
+file. They run offline from committed fixtures.

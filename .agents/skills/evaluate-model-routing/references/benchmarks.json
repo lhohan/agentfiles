@@ -1,0 +1,323 @@
+{
+  "registry_version": 1,
+  "note": "Machine-readable mirror of references/benchmarks.md. Tier A entries are fetched by scripts/evaluate.mjs. Tier B is evidence-only. Tier C is excluded from the pipeline. A test asserts every entry here appears in benchmarks.md.",
+  "benchmarks": [
+    {
+      "id": "deepswe",
+      "name": "DeepSWE v1.1",
+      "tier": "A",
+      "adapter": "deepswe",
+      "board": "v1.1",
+      "version": "1.1",
+      "split": "default",
+      "metric": "pass_at_1",
+      "metric_label": "pass@1",
+      "direction": "higher",
+      "evidence_scope": "agent-model-system",
+      "capabilities": { "software_engineering": "primary" },
+      "source_url": "https://deepswe.datacurve.ai/",
+      "fetch_url": "https://deepswe.datacurve.ai/artifacts/v1.1/leaderboard-live.json",
+      "harness_classes": { "mini-swe-agent": "agent-cli" },
+      "licence": "not stated on the leaderboard payload",
+      "probe": {
+        "date": "2026-09-11",
+        "command": "curl -sSL https://deepswe.datacurve.ai/artifacts/v1.1/leaderboard-live.json",
+        "result": "HTTP 200, 94 KB JSON, key 'rows' with 70 configurations over 28 models, generated_at 2026-09-03"
+      },
+      "caveats": [
+        "Every row uses the same harness (mini-swe-agent), so a result is agent-model-system evidence unless the model effect is isolated.",
+        "Rows repeat a model at several reasoning efforts; the scorer keeps the highest published effort and records the alternatives.",
+        "Pass rates carry published run-to-run intervals (ci_lo, ci_hi); the pipeline records them and never combines them statistically.",
+        "Trajectory-level analysis is not published as data, so this source scores software_engineering only, not repository_understanding or long_context."
+      ]
+    },
+    {
+      "id": "tbench-v2.1",
+      "name": "Terminal-Bench v2.1",
+      "tier": "A",
+      "adapter": "tbench",
+      "board": "terminal-bench-2.1",
+      "version": "2.1",
+      "split": "default",
+      "metric": "accuracy",
+      "metric_label": "accuracy",
+      "direction": "higher",
+      "evidence_scope": "agent-model-system",
+      "capabilities": { "tool_use": "primary" },
+      "source_url": "https://www.tbench.ai/leaderboard/terminal-bench/2.1",
+      "fetch_url": "https://www.tbench.ai/leaderboard/terminal-bench/2.1",
+      "harness_classes": {
+        "Codex": "agent-cli",
+        "Claude Code": "agent-cli",
+        "Grok Build": "agent-cli",
+        "mini-SWE-agent": "agent-cli"
+      },
+      "licence": "site content; run logs are published separately by the maintainers",
+      "probe": {
+        "date": "2026-09-11",
+        "command": "curl -sSL https://www.tbench.ai/leaderboard/terminal-bench/2.1",
+        "result": "HTTP 200; 18 ranked rows inside the React Server Component flight payload; accuracy, accuracy_ci95_half_width, n_trials, pass_at_k published per row"
+      },
+      "caveats": [
+        "The rows are JSON inside the server-rendered flight payload, not a documented JSON endpoint. The adapter extracts the rows array and fails loudly if the shape changes.",
+        "Rows are agent+model+effort configurations; results are agent-model-system evidence.",
+        "The board has 13 distinct models after dedupe, so the scorer marks it small-board.",
+        "There is no public per-task results file for this board: the Hugging Face submissions dataset stores per-task rollout directories, which is not a machine-readable leaderboard."
+      ]
+    },
+    {
+      "id": "swebench-multilingual",
+      "name": "SWE-bench Multilingual",
+      "tier": "A",
+      "adapter": "swebench-site",
+      "board": "Multilingual",
+      "version": "2026-02-13",
+      "split": "default",
+      "metric": "resolved",
+      "metric_label": "resolved rate",
+      "direction": "higher",
+      "evidence_scope": "agent-model-system",
+      "capabilities": { "software_engineering": "secondary" },
+      "source_url": "https://www.swebench.com/multilingual.html",
+      "fetch_url": "https://raw.githubusercontent.com/SWE-bench/swe-bench.github.io/master/data/leaderboards.json",
+      "harness_classes": { "mini-SWE-agent": "agent-cli" },
+      "licence": "repository content, MIT-style site licence",
+      "probe": {
+        "date": "2026-09-11",
+        "command": "curl -sSL https://raw.githubusercontent.com/SWE-bench/swe-bench.github.io/master/data/leaderboards.json",
+        "result": "HTTP 200, 4 MB JSON, five boards (Multilingual 13 rows, Multimodal 22, Test 24, Verified 180, Lite 84); branch main returns 404, master returns 200"
+      },
+      "caveats": [
+        "Language-breadth evidence only. It is not evidence of contamination resistance or of general software-engineering ability.",
+        "All 13 rows use mini-SWE-agent, so the board is small and single-harness.",
+        "Probed 2026-09-11: no evaluated route in the current candidate set appears on this board, so it contributes a coverage gap today.",
+        "The adapter uses only submissions the publisher marks as checked."
+      ]
+    },
+    {
+      "id": "swebench-multimodal",
+      "name": "SWE-bench Multimodal",
+      "tier": "A",
+      "adapter": "swebench-site",
+      "board": "Multimodal",
+      "version": "2025-11-17",
+      "split": "default",
+      "metric": "resolved",
+      "metric_label": "resolved rate",
+      "direction": "higher",
+      "evidence_scope": "agent-model-system",
+      "capabilities": { "multimodal": "primary" },
+      "source_url": "https://www.swebench.com/multimodal.html",
+      "fetch_url": "https://raw.githubusercontent.com/SWE-bench/swe-bench.github.io/master/data/leaderboards.json",
+      "harness_classes": {
+        "SWE-agent": "agent-cli",
+        "SWE-agent JavaScript": "agent-cli",
+        "Refact.ai Agent": "agent-cli",
+        "OpenHands-Versa": "agent-cli",
+        "Zencoder": "agent-cli",
+        "Globant Code Fixer Agent": "agent-cli",
+        "Codefuse_Pycfuse_SVR": "agent-cli",
+        "Agentless": "bare-model",
+        "Agentless Lite": "bare-model",
+        "RAG": "bare-model",
+        "GUIRepair": "agent-cli+computer",
+        "SWE-agent Multimodal": "agent-cli+computer"
+      },
+      "licence": "repository content, MIT-style site licence",
+      "probe": {
+        "date": "2026-09-11",
+        "command": "curl -sSL https://raw.githubusercontent.com/SWE-bench/swe-bench.github.io/master/data/leaderboards.json",
+        "result": "HTTP 200; Multimodal board has 22 rows across 12 agent harnesses; 21 rows marked checked"
+      },
+      "caveats": [
+        "Task inputs include screenshots and UI images, so this is the only tier A source for the multimodal capability.",
+        "Rows split across three harness classes; only the agent-cli class reaches 7 distinct models, which the scorer excludes as a small board.",
+        "Probed 2026-09-11: no evaluated route in the current candidate set appears on this board.",
+        "Several rows belong to the 2025 model generation and show a wide spread between harnesses, so scores are agent-model-system evidence."
+      ]
+    },
+    {
+      "id": "contextbench",
+      "name": "ContextBench",
+      "tier": "B",
+      "evidence_only": true,
+      "capabilities": { "repository_understanding": "primary", "long_context": "primary" },
+      "source_url": "https://github.com/EuniAI/ContextBench",
+      "probe": {
+        "date": "2026-09-11",
+        "command": "curl -sSL https://contextbench.github.io/ and inspect /_next/static/chunks/*.js",
+        "result": "HTTP 200; the leaderboard table ships as a literal array inside a Turbopack chunk (model, performance.file/block/line precision+recall+f1, pass_at_1, patterns, dynamics). No JSON export, no documented API. The repository publishes task data (parquet/csv) but no result file."
+      },
+      "reason": "Results exist but are embedded as JavaScript module literals, not JSON. Extracting them needs a JavaScript parser, so the source stays evidence-only under the adapter rule.",
+      "caveats": [
+        "Agent-model-system evidence: it measures context selection inside one trajectory, not general repository understanding.",
+        "The page separates bare-model rows from mini-SWE-agent rows, which maps well to the model versus agent-model-system distinction, but the pipeline cannot read it yet.",
+        "Promotion path: a dedicated adapter that parses the chunk literal and asserts every entry has model and performance.file.f1. It needs a fixture test and loud failure on shape change."
+      ]
+    },
+    {
+      "id": "swe-atlas",
+      "name": "SWE Atlas (QnA, Test Writing, Refactoring)",
+      "tier": "B",
+      "evidence_only": true,
+      "capabilities": { "repository_understanding": "primary", "software_engineering": "secondary" },
+      "source_url": "https://labs.scale.com/leaderboard/sweatlas-qna",
+      "probe": {
+        "date": "2026-09-11",
+        "command": "curl -sSL https://labs.scale.com/leaderboard/sweatlas-qna",
+        "result": "HTTP 200. The flight payload carries methodology prose (scored by an LLM judge, Task Resolve Rate) but no rows. Rows are loaded client-side; no JSON endpoint found."
+      },
+      "reason": "No machine-readable result export. An LLM judge grades rubrics, so the top-level number also mixes judge behaviour with model behaviour.",
+      "caveats": [
+        "QnA, Test Writing, and Refactoring are separate boards; treat them as separate units if a source ever becomes readable.",
+        "Needs a JavaScript runtime or an undocumented API, both outside the adapter rule."
+      ]
+    },
+    {
+      "id": "swebench-promax",
+      "name": "SWE-bench ProMax",
+      "tier": "C",
+      "capabilities": { "software_engineering": "secondary", "repository_understanding": "secondary" },
+      "source_url": "https://arxiv.org/abs/2608.09802",
+      "reason": "Excluded from the pipeline: tasks are mined from public commits and results stay scaffold-sensitive.",
+      "caveats": ["Secondary at most. Better curation and scale do not remove contamination exposure."]
+    },
+    {
+      "id": "swebench-pro",
+      "name": "SWE-bench Pro",
+      "tier": "C",
+      "capabilities": { "software_engineering": "secondary" },
+      "source_url": "https://scale.com/leaderboard/swe_bench_pro_public",
+      "reason": "Excluded from the pipeline: a published audit found widespread task and verifier defects.",
+      "caveats": ["Secondary at most. Use only with the audit caveat stated."]
+    },
+    {
+      "id": "swebench-verified",
+      "name": "SWE-bench Verified",
+      "tier": "C",
+      "capabilities": { "software_engineering": "deprecated", "repository_understanding": "deprecated" },
+      "source_url": "https://openai.com/index/why-we-no-longer-evaluate-swe-bench-verified/",
+      "reason": "Deprecated for frontier routing: contamination and saturation weaken separation. The board is still fetched for population context but no capability maps to it.",
+      "caveats": ["Historical context only."]
+    },
+    {
+      "id": "c-crab",
+      "name": "c-CRAB",
+      "tier": "B",
+      "evidence_only": true,
+      "capabilities": { "review": "primary", "adversarial_analysis": "primary" },
+      "source_url": "https://arxiv.org/abs/2603.23448",
+      "probe": {
+        "date": "2026-09-11",
+        "command": "no public result export located for the paper",
+        "result": "no machine-readable results"
+      },
+      "reason": "Closest construct fit for code review, but no fetchable result table.",
+      "caveats": [
+        "Measures whether review feedback guides a fixed coding agent to pass tests derived from human-raised issues; it does not measure valid findings absent from those reviews.",
+        "Plan review still needs local samples: no coding-review benchmark establishes plan-review quality."
+      ]
+    },
+    {
+      "id": "cr-bench",
+      "name": "CR-Bench",
+      "tier": "B",
+      "evidence_only": true,
+      "capabilities": { "review": "secondary", "adversarial_analysis": "secondary" },
+      "source_url": "https://arxiv.org/abs/2603.11078",
+      "probe": { "date": "2026-09-11", "command": "no public result export located", "result": "no machine-readable results" },
+      "reason": "Reports defect precision, recall, usefulness, and signal-to-noise, but without a fetchable export.",
+      "caveats": ["Inherits SWE-bench provenance and uses an LLM judge; judge version and human agreement must be recorded with any result."]
+    },
+    {
+      "id": "cybergym",
+      "name": "CyberGym",
+      "tier": "B",
+      "evidence_only": true,
+      "capabilities": { "adversarial_analysis": "secondary", "review": "conditional" },
+      "source_url": "https://openreview.net/forum?id=2YvbLQEdYt",
+      "probe": { "date": "2026-09-11", "command": "curl -sSL https://github.com/sunblaze-ucb/cybergym", "result": "HTTP 200 repository; results published through third-party leaderboards only" },
+      "reason": "Security-specific, and results are not exported from a first-party leaderboard.",
+      "caveats": ["Establishes vulnerability discovery and reproduction, not general adversarial analysis."]
+    },
+    {
+      "id": "ifbench",
+      "name": "IFBench",
+      "tier": "B",
+      "evidence_only": true,
+      "capabilities": { "instruction_following": "primary" },
+      "source_url": "https://github.com/allenai/IFBench",
+      "probe": { "date": "2026-09-11", "command": "curl -sSL https://github.com/allenai/IFBench", "result": "HTTP 200 repository with tasks and harness; published results live on the Artificial Analysis component page behind a key" },
+      "reason": "The task set is open, but result tables for frontier models are not published in machine-readable form.",
+      "caveats": ["Verifiable out-of-domain constraints; not evidence of multi-turn constraint retention."]
+    },
+    {
+      "id": "multichallenge",
+      "name": "MultiChallenge",
+      "tier": "B",
+      "evidence_only": true,
+      "capabilities": { "instruction_following": "primary" },
+      "source_url": "https://arxiv.org/abs/2501.17399",
+      "probe": { "date": "2026-09-11", "command": "curl -sSL https://huggingface.co/api/datasets/scaleai/MultiChallenge", "result": "HTTP 200 dataset metadata; no leaderboard export" },
+      "reason": "Realistic multi-turn instruction following, but the dataset is published without a result table.",
+      "caveats": ["Judge-graded; record the judge version with any result."]
+    },
+    {
+      "id": "aider-polyglot",
+      "name": "Aider Polyglot",
+      "tier": "C",
+      "capabilities": { "software_engineering": "conditional", "repository_understanding": "conditional" },
+      "source_url": "https://aider.chat/docs/leaderboards/",
+      "probe": { "date": "2026-09-11", "command": "curl -sSL https://aider.chat/docs/leaderboards/", "result": "HTTP 200 HTML page; no JSON or CSV export" },
+      "reason": "Conditional short-form editing evidence, and the leaderboard is HTML only.",
+      "caveats": ["Editing a small file with a provided diff is not repository-scale implementation evidence."]
+    },
+    {
+      "id": "artificial-analysis",
+      "name": "Artificial Analysis component evaluations",
+      "tier": "B",
+      "evidence_only": true,
+      "capabilities": { "reasoning": "conditional" },
+      "source_url": "https://artificialanalysis.ai/evaluations",
+      "probe": {
+        "date": "2026-09-11",
+        "command": "curl -sS https://artificialanalysis.ai/api/v2/data/llms/models",
+        "result": "HTTP 401 without an API key; component evaluation pages are also key-gated"
+      },
+      "reason": "Key-gated. Useful for discovery and normalisation, but the composite index must not be used as a direct score.",
+      "caveats": [
+        "Prefer a component evaluation over the composite index, and record which component was used.",
+        "A knowledge or preference score is not interchangeable with a reasoning score."
+      ]
+    },
+    {
+      "id": "lmarena",
+      "name": "LMArena",
+      "tier": "B",
+      "evidence_only": true,
+      "capabilities": { "instruction_following": "secondary" },
+      "source_url": "https://lmarena.ai/",
+      "probe": { "date": "2026-09-11", "command": "curl -sSL https://lmarena.ai/", "result": "HTTP 200 page; preference votes are published as datasets, not as per-model result tables" },
+      "reason": "Preference and usability sanity check only; the vote data is crowd-sourced and not a capability result table.",
+      "caveats": ["Mixes many constructs. Never the sole basis for a routing decision."]
+    },
+    {
+      "id": "mmmu",
+      "name": "MMMU",
+      "tier": "C",
+      "capabilities": { "multimodal": "conditional" },
+      "source_url": "https://mmmu-benchmark.github.io/",
+      "reason": "Excluded from the pipeline: generic vision reasoning, not coding-workflow visual evidence.",
+      "caveats": ["Supports perception claims only."]
+    },
+    {
+      "id": "docvqa",
+      "name": "DocVQA",
+      "tier": "C",
+      "capabilities": { "multimodal": "conditional" },
+      "source_url": "https://www.docvqa.org/",
+      "reason": "Excluded from the pipeline: document visual question answering, not coding-workflow visual evidence.",
+      "caveats": ["Supports perception claims only."]
+    }
+  ]
+}

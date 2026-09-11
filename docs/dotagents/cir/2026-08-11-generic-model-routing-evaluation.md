@@ -1,7 +1,8 @@
 # CIR: Generic model-routing evaluation skill with per-agent profiles
 
 **Date:** 2026-08-11
-**Last updated:** 2026-08-13
+**Last updated:** 2026-09-11
+**Superseded in part by:** [`2026-09-11-semi-deterministic-model-routing-evaluation-pipeline.md`](2026-09-11-semi-deterministic-model-routing-evaluation-pipeline.md). The two constraints below that forbid weighted scoring and model self-voting no longer hold; everything else here still applies.
 **Scope:** `.agents/skills/evaluate-model-routing/` (SKILL.md + `references/`)
 
 ## Intent

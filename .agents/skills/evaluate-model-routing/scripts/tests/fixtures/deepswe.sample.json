@@ -1,0 +1,74 @@
+{
+ "rows": [
+  {
+   "model": "gpt-5-6-sol",
+   "harness": "mini-swe-agent",
+   "reasoning_effort": "max",
+   "pass_at_1": 0.7266666666666667,
+   "n_runs": 4,
+   "n_attempted": 450,
+   "ci_lo": 0.6983684441682949,
+   "ci_hi": 0.7549648891650385,
+   "ci_method": "95% run-to-run: SE across repeated whole-benchmark passes (1.96 * std(runs)/sqrt(R))"
+  },
+  {
+   "model": "gpt-5-6-sol",
+   "harness": "mini-swe-agent",
+   "reasoning_effort": "xhigh",
+   "pass_at_1": 0.7073170731707317,
+   "n_runs": 4,
+   "n_attempted": 451,
+   "ci_lo": 0.6991259559533886,
+   "ci_hi": 0.7155081903880748,
+   "ci_method": "95% run-to-run: SE across repeated whole-benchmark passes (1.96 * std(runs)/sqrt(R))"
+  },
+  {
+   "model": "gpt-5-6-sol",
+   "harness": "mini-swe-agent",
+   "reasoning_effort": "high",
+   "pass_at_1": 0.6940133037694013,
+   "n_runs": 4,
+   "n_attempted": 451,
+   "ci_lo": 0.679691851565629,
+   "ci_hi": 0.7083347559731736,
+   "ci_method": "95% run-to-run: SE across repeated whole-benchmark passes (1.96 * std(runs)/sqrt(R))"
+  },
+  {
+   "model": "glm-5-3",
+   "harness": "mini-swe-agent",
+   "reasoning_effort": "max",
+   "pass_at_1": 0.6895787139689579,
+   "n_runs": 4,
+   "n_attempted": 451,
+   "ci_lo": 0.6593922012533708,
+   "ci_hi": 0.7197652266845449,
+   "ci_method": "95% run-to-run: SE across repeated whole-benchmark passes (1.96 * std(runs)/sqrt(R))"
+  },
+  {
+   "model": "gpt-5-6-sol",
+   "harness": "mini-swe-agent",
+   "reasoning_effort": "medium",
+   "pass_at_1": 0.6106194690265486,
+   "n_runs": 4,
+   "n_attempted": 452,
+   "ci_lo": 0.5947858925334765,
+   "ci_hi": 0.6264530455196208,
+   "ci_method": "95% run-to-run: SE across repeated whole-benchmark passes (1.96 * std(runs)/sqrt(R))"
+  },
+  {
+   "model": "deepseek-v4-flash",
+   "harness": "mini-swe-agent",
+   "reasoning_effort": "max",
+   "pass_at_1": 0.5331858407079646,
+   "n_runs": 4,
+   "n_attempted": 452,
+   "ci_lo": 0.4975163385576403,
+   "ci_hi": 0.5688553428582889,
+   "ci_method": "95% run-to-run: SE across repeated whole-benchmark passes (1.96 * std(runs)/sqrt(R))"
+  }
+ ],
+ "generated_at": "2026-09-03T22:24:37.984682+00:00",
+ "n_tasks_in_set": 113,
+ "scope": "Every DeepSWE rollout across imported Pier jobs, grouped by configuration (harness + model + reasoning effort)",
+ "unit": "pass@1 is attempt pass rate over scored rollout attempts. pass@4 is tasks with at least one passing rollout divided by tasks attempted. Context-window failures and agent timeouts are scored failures; provider/verifier/network errors are excluded. Efficiency aggregates are over every scored attempt."
+}

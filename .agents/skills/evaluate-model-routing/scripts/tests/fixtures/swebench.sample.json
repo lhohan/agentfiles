@@ -1,0 +1,335 @@
+{
+ "leaderboards": [
+  {
+   "name": "Multilingual",
+   "results": [
+    {
+     "name": "Gemini 3 Flash",
+     "model_display": "Gemini 3 Flash",
+     "model_org": "Google DeepMind",
+     "agent": "mini-SWE-agent",
+     "reasoning_effort": null,
+     "resolved": 72.7,
+     "date": "2026-02-13",
+     "tags": [
+      "Model: gemini-3-flash",
+      "Org: Google DeepMind",
+      "System: Attempts - 1",
+      "Mini: 2.0.0a0"
+     ],
+     "checked": true
+    },
+    {
+     "name": "Claude 4.6 Opus",
+     "model_display": "Claude 4.6 Opus",
+     "model_org": "Anthropic",
+     "agent": "mini-SWE-agent",
+     "reasoning_effort": null,
+     "resolved": 72,
+     "date": "2026-02-13",
+     "tags": [
+      "Model: claude-opus-4-6",
+      "Org: Anthropic",
+      "System: Attempts - 1",
+      "Mini: 2.0.0a0"
+     ],
+     "checked": true
+    },
+    {
+     "name": "Claude 4.5 Opus",
+     "model_display": "Claude 4.5 Opus",
+     "model_org": "Anthropic",
+     "agent": "mini-SWE-agent",
+     "reasoning_effort": null,
+     "resolved": 70.7,
+     "date": "2026-02-13",
+     "tags": [
+      "Model: claude-opus-4-5-20251101",
+      "Org: Anthropic",
+      "System: Attempts - 1",
+      "Mini: 2.0.0a0"
+     ],
+     "checked": true
+    },
+    {
+     "name": "GLM 5",
+     "model_display": "GLM 5",
+     "model_org": "Z.ai",
+     "agent": "mini-SWE-agent",
+     "reasoning_effort": null,
+     "resolved": 69.7,
+     "date": "2026-02-13",
+     "tags": [
+      "Model: glm-5",
+      "Org: Z.ai",
+      "System: Attempts - 1",
+      "Mini: 2.0.0a0"
+     ],
+     "checked": true
+    }
+   ]
+  },
+  {
+   "name": "Test",
+   "results": [
+    {
+     "name": "Sonar Foundation Agent + Claude 4.5 Opus",
+     "model_display": "Claude 4.5 Opus",
+     "model_org": "Anthropic",
+     "agent": "Sonar Foundation Agent",
+     "reasoning_effort": null,
+     "resolved": 52.62,
+     "date": "2025-12-19",
+     "tags": [
+      "Model: claude-opus-4-5",
+      "Org: Sonar",
+      "System: Attempts - 1"
+     ],
+     "checked": false
+    },
+    {
+     "name": "Salesforce AI Research SAGE (bash-only)",
+     "model_display": "Multiple",
+     "model_org": "Anthropic",
+     "agent": "Salesforce AI Research SAGE",
+     "reasoning_effort": null,
+     "resolved": 44.25,
+     "date": "2025-10-27",
+     "tags": [
+      "Model: claude-sonnet-4.5",
+      "Model: gpt-5",
+      "Org: Salesforce AI Research",
+      "System: Attempts - 2+"
+     ],
+     "checked": false
+    },
+    {
+     "name": "Atlassian Rovo Dev (2025-06-05)",
+     "model_display": "Undisclosed",
+     "model_org": null,
+     "agent": "Atlassian Rovo Dev",
+     "reasoning_effort": null,
+     "resolved": 41.98,
+     "date": "2025-06-05",
+     "tags": [
+      "Org: Atlassian",
+      "System: Attempts - 1"
+     ],
+     "checked": false
+    },
+    {
+     "name": "Amazon Q Developer Agent (v20250405-dev)",
+     "model_display": "Undisclosed",
+     "model_org": null,
+     "agent": "Amazon Q Developer Agent",
+     "reasoning_effort": null,
+     "resolved": 37.1,
+     "date": "2025-05-22",
+     "tags": [
+      "Org: AWS",
+      "System: Attempts - 2+"
+     ],
+     "checked": false
+    }
+   ]
+  },
+  {
+   "name": "Verified",
+   "results": [
+    {
+     "name": "Sonar Foundation Agent + Claude 4.5 Opus",
+     "model_display": "Claude 4.5 Opus",
+     "model_org": "Anthropic",
+     "agent": "Sonar Foundation Agent",
+     "reasoning_effort": null,
+     "resolved": 79.2,
+     "date": "2025-12-05",
+     "tags": [
+      "Model: claude-opus-4-5",
+      "Org: Sonar",
+      "System: Attempts - 1"
+     ],
+     "checked": false
+    },
+    {
+     "name": "live-SWE-agent + Claude 4.5 Opus medium (20251101)",
+     "model_display": "Claude 4.5 Opus",
+     "model_org": "Anthropic",
+     "agent": "live-SWE-agent",
+     "reasoning_effort": "medium",
+     "resolved": 79.2,
+     "date": "2025-12-15",
+     "tags": [
+      "Model: claude-opus-4-5-20251101",
+      "Org: UIUC",
+      "System: Attempts - 1"
+     ],
+     "checked": false
+    },
+    {
+     "name": "TRAE + Doubao-Seed-Code",
+     "model_display": "Doubao-Seed-Code",
+     "model_org": "ByteDance",
+     "agent": "TRAE",
+     "reasoning_effort": null,
+     "resolved": 78.8,
+     "date": "2025-09-28",
+     "tags": [
+      "Model: Doubao-Seed-Code",
+      "Model: Doubao-Seed-1.6",
+      "Org: ByteDance",
+      "System: Attempts - 2+"
+     ],
+     "checked": false
+    },
+    {
+     "name": "live-SWE-agent + Gemini 3 Pro Preview (2025-11-18)",
+     "model_display": "Gemini 3 Pro Preview",
+     "model_org": "Google DeepMind",
+     "agent": "live-SWE-agent",
+     "reasoning_effort": null,
+     "resolved": 77.4,
+     "date": "2025-11-20",
+     "tags": [
+      "Model: gemini-3-pro-preview",
+      "Org: UIUC",
+      "System: Attempts - 1"
+     ],
+     "checked": "false (See README.md for info on how to get your results verified)"
+    }
+   ]
+  },
+  {
+   "name": "Lite",
+   "results": [
+    {
+     "name": "ExpeRepair-v1.0 + Claude 4 Sonnet",
+     "model_display": "Claude 4 Sonnet",
+     "model_org": "Anthropic",
+     "agent": "ExpeRepair-v1.0",
+     "reasoning_effort": null,
+     "resolved": 60.33,
+     "date": "2025-06-25",
+     "tags": [
+      "Model: claude-4-sonnet-20250514",
+      "Model: o3-mini",
+      "Model: o4-mini",
+      "System: Attempts - 2+"
+     ],
+     "checked": false
+    },
+    {
+     "name": "Refact.ai Agent",
+     "model_display": "Multiple",
+     "model_org": "Anthropic",
+     "agent": "Refact.ai Agent",
+     "reasoning_effort": null,
+     "resolved": 60,
+     "date": "2025-04-25",
+     "tags": [
+      "Model: claude-3-7-sonnet-20250219",
+      "Model: o4-mini",
+      "Org: Refact.ai",
+      "System: Attempts - 1"
+     ],
+     "checked": false
+    },
+    {
+     "name": "KGCompass + Claude 4 Sonnet (20250514)",
+     "model_display": "Claude 4 Sonnet",
+     "model_org": "Anthropic",
+     "agent": "KGCompass",
+     "reasoning_effort": null,
+     "resolved": 58.33,
+     "date": "2025-09-06",
+     "tags": [
+      "Model: claude-4-sonnet-20250514",
+      "Org: GLEAM-Lab",
+      "System: Attempts - 2+"
+     ],
+     "checked": false
+    },
+    {
+     "name": "SWE-agent + Claude 4 Sonnet",
+     "model_display": "Claude 4 Sonnet",
+     "model_org": "Anthropic",
+     "agent": "SWE-agent",
+     "reasoning_effort": null,
+     "resolved": 56.67,
+     "date": "2025-05-26",
+     "tags": [
+      "Model: claude-4-sonnet-20250514",
+      "Org: SWE-agent",
+      "System: Attempts - 1"
+     ],
+     "checked": true
+    }
+   ]
+  },
+  {
+   "name": "Multimodal",
+   "results": [
+    {
+     "name": "GUIRepair + o3 (2025-04-16)",
+     "model_display": "o3",
+     "model_org": "OpenAI",
+     "agent": "GUIRepair",
+     "reasoning_effort": null,
+     "resolved": 35.98,
+     "date": "2025-07-01",
+     "tags": [
+      "Model: o3-2025-04-16",
+      "Org: GUIRepair",
+      "System: Attempts - 1"
+     ],
+     "checked": true
+    },
+    {
+     "name": "Codefuse_Pycfuse_SVR",
+     "model_display": "o3",
+     "model_org": "OpenAI",
+     "agent": "Codefuse_Pycfuse_SVR",
+     "reasoning_effort": null,
+     "resolved": 35.98,
+     "date": "2025-11-17",
+     "tags": [
+      "Model: o3-2025-04-16",
+      "Org: Codefuse",
+      "System: Attempts - 1"
+     ],
+     "checked": true
+    },
+    {
+     "name": "Refact.ai Agent",
+     "model_display": "Claude 4 Sonnet",
+     "model_org": "Anthropic",
+     "agent": "Refact.ai Agent",
+     "reasoning_effort": null,
+     "resolved": 35.59,
+     "date": "2025-06-11",
+     "tags": [
+      "Model: claude-4-sonnet",
+      "Org: Refact.ai",
+      "System: Attempts - 1"
+     ],
+     "checked": false
+    },
+    {
+     "name": "OpenHands-Versa (Claude-Sonnet 4)",
+     "model_display": "Claude Sonnet 4",
+     "model_org": "Anthropic",
+     "agent": "OpenHands-Versa",
+     "reasoning_effort": null,
+     "resolved": 34.43,
+     "date": "2025-05-28",
+     "tags": [
+      "Model: claude-4-sonnet-20250514",
+      "Org: OpenHands",
+      "System: Attempts - 1"
+     ],
+     "checked": true
+    }
+   ]
+  }
+ ]
+}

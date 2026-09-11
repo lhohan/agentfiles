@@ -1,0 +1,49 @@
+{
+  "manifest_version": 1,
+  "agent": "pi",
+  "profile": ".agents/skills/evaluate-model-routing/references/agents/pi.md",
+  "profile_verified_at": "2026-09-11",
+  "run_date": "2026-09-11",
+  "run_slug": "routing-refresh",
+  "enabled_models": [
+    "opencode-go/glm-5.3",
+    "opencode-go/deepseek-v4.1-flash",
+    "opencode-go/gpt-5.6-luna",
+    "openai-codex/gpt-5.6-sol",
+    "openai-codex/gpt-5.6-luna",
+    "opencode-go/hy3",
+    "mistral/zai-glm-5-2"
+  ],
+  "candidates": [
+    "opencode-go/glm-5.3",
+    "opencode-go/deepseek-v4.1-flash",
+    "opencode-go/gpt-5.6-luna",
+    "openai-codex/gpt-5.6-sol",
+    "openai-codex/gpt-5.6-luna",
+    "opencode-go/hy3",
+    "mistral/zai-glm-5-2"
+  ],
+  "stages": [
+    { "task": "run_stage_plan", "routes": [{ "rank": 1, "model_id": "opencode-go/glm-5.3" }, { "rank": 2, "model_id": "mistral/zai-glm-5-2" }] },
+    { "task": "review_plan", "routes": [{ "rank": 1, "model_id": "openai-codex/gpt-5.6-sol" }, { "rank": 2, "model_id": "mistral/zai-glm-5-2" }] },
+    {
+      "task": "implement",
+      "routes": [
+        { "rank": 1, "model_id": "opencode-go/deepseek-v4.1-flash" },
+        { "rank": 2, "model_id": "opencode-go/gpt-5.6-luna" },
+        { "rank": 3, "model_id": "openai-codex/gpt-5.6-luna" }
+      ]
+    },
+    { "task": "review", "routes": [{ "rank": 1, "model_id": "openai-codex/gpt-5.6-sol" }, { "rank": 2, "model_id": "mistral/zai-glm-5-2" }] },
+    {
+      "task": "run_stage_break",
+      "routes": [
+        { "rank": 1, "model_id": "opencode-go/hy3" },
+        { "rank": 2, "model_id": "openai-codex/gpt-5.6-luna" },
+        { "rank": 3, "model_id": "opencode-go/gpt-5.6-luna" }
+      ]
+    },
+    { "task": "general", "routes": [{ "rank": 1, "model_id": "openai-codex/gpt-5.6-luna" }] }
+  ],
+  "recommendations": []
+}

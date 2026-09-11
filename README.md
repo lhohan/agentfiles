@@ -55,7 +55,7 @@ Agent configuration files are managed with Mise and GNU Stow.
 - [less-is-more](.agents/skills/less-is-more/) restrains agent-setup growth.
 - [agentfiles-commit-prefixes](.agents/skills/agentfiles-commit-prefixes/) guides commit subjects.
 - [extension-security-review](.agents/skills/extension-security-review/) reviews extensions/plugins before install.
-- [evaluate-model-routing](.agents/skills/evaluate-model-routing/) evaluates model routing across coding agents (Pi first) with per-agent profiles under `references/agents/`.
+- [evaluate-model-routing](.agents/skills/evaluate-model-routing/) evaluates model routing across coding agents (Pi first). It verifies a per-agent profile, fetches published benchmark results with zero-dependency Node scripts, scores capabilities per stage with declared weights, adds an advisory judge assessment, and renders a fixed Markdown + HTML report under `docs/routing-reviews/`. It is recommendation-only and never changes routing.
 
 ## Pi
 
