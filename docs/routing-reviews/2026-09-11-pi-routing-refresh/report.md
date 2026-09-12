@@ -6,7 +6,7 @@
 - Profile: .agents/skills/evaluate-model-routing/references/agents/pi.md (verified 2026-09-11)
 - Run: 2026-09-11-routing-refresh
 - Reference time: 2026-09-12T06:13:45.076Z
-- Pipeline version: 4; config hash: 3905af56bb3b1fca; manifest hash: a9c2650a6b69c019
+- Pipeline version: 5; config hash: 3905af56bb3b1fca; manifest hash: 17463f13e5b4c52c
 - Coverage threshold: 0.5; maximum snapshot age: 30 days; contested tolerance: 0.05
 - Judge: opencode-go/hy4-preview (thinking high)
 
@@ -28,7 +28,7 @@ Sources:
 - All tier A sources responded.
 - A judge assessment is present.
 
-Pipeline version 4, judge prompt version 3. Judge opencode-go/hy4-preview answered with low confidence and agreed with the deterministic outcome: no routing change is supported in any stage. Four judge rounds found and closed four defects: a published release claimed by two providers resolved to only one route; equal scores split into different ranks on the route name; the judge prompt omitted rank, alias scope, snapshot age, and the tie method; and the report could not say why a capability was uncovered. Two open items remain: contested_tolerance applies inside a unit, not to the gap between routes, so a small route gap still reads as an ordering; and published confidence intervals are recorded but not used to judge route separation when they overlap. Judge confidence varied between runs (low, high, low, low) on near-identical evidence, so treat that field as advisory only.
+Pipeline version 5, judge prompt version 3. Judge opencode-go/hy4-preview answered with low confidence and agreed with the deterministic outcome: no routing change is supported in any stage. Judge calibration on frozen fixtures with planted defects scored 3/3, which replaces the judge's self-reported confidence, a field that varied (low, high, low, low) across runs on near-identical evidence and carries no signal. Open items are tracked as blocking tasks: interval-aware rank separation (agf-h6b), re-deriving the capability set with a declared evidence channel (agf-iog), and provider price and context limits for quality-tied routes (agf-ox1).
 
 ## 3. Baseline route table and re-evaluation
 
@@ -207,6 +207,8 @@ Divergence from the scorecard:
 - I would flag the two-provider luna aliasing as a route-identity risk (the pipeline cannot distinguish providers that share a published release), whereas the scorecard records it only as an alias_rule without drawing that consequence.
 
 The judge is advisory. It cannot change a deterministic score.
+
+Judge calibration: 3/3 planted defects detected on frozen fixtures (prompt version 3, 3 fixtures). Detection is keyword-based and is a proxy for attention, not for correctness.
 
 ## 7. Divergences and contradictions
 

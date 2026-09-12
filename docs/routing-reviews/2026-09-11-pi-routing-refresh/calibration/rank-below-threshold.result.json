@@ -1,0 +1,26 @@
+{
+  "strengths": [
+    "The candidate route p/candidate has one route_evidence entry with \"state\": \"scored\" and \"source_scope\": \"model\", i.e. the routed release rather than \"proxy-family, never scored\", and an \"alias_rule\": \"exact release match\", so attribution is exact.",
+    "The supporting unit \"calib|v1|agent-cli\" is \"status\": \"scored\" with \"snapshot_age_days\": 0, which is within \"max_snapshot_age_days\": 30, and \"population_size\": 20, so the observation is fresh and meets the snapshot-age threshold.",
+    "In the implement stage, p/candidate is listed with \"eligible\": true and \"missing_capabilities\": [], so it is not excluded for missing capabilities.",
+    "The stage weight is a single explicit capability, \"weights\": { \"software_engineering\": 1 }, so missing weight is displayed rather than redistributed (coverage definition), with no hidden multi-capability weighting."
+  ],
+  "risks": [
+    "Coverage is too low to decide: the only row has \"coverage\": 0.2, which is below \"rank_threshold_coverage\": 0.5. By the coverage definition (present weight divided by total stage weight), the row does not meet the coverage required for a rank, and missing weight is displayed and never redistributed; the scorecard therefore cannot support a routing change.",
+    "The baseline p/baseline has \"route_evidence\": [], so the baseline is unrankable. The stage signal is \"baseline_unrankable\", which the glossary defines as 'The baseline route has no eligible evidence, so eligible candidates are listed with no baseline comparison. This is not a claim that the baseline is worse.' Thus p/candidate's \"rank\": 1 does not show it is ahead of p/baseline.",
+    "The row lists \"score\": 0.9 and \"rank\": 1 even though its coverage is below the threshold; per the glossary, a stage row below the coverage threshold is \"state: evidence only\" with 'no rank, no composite, and no recommendation exist'. Any use of that rank/score as a decision basis would be unsupported.",
+    "There is only one scored observation (benchmark \"deepswe\") in one unit; \"contested_tolerance\": 0.05 is 'not yet applied to the gap between two routes in a stage', and no baseline evidence exists, so the gap between p/candidate and p/baseline is unmeasured.",
+    "The unit's \"population\": [] is empty, so the population behind \"percentile\": 0.8 is not displayed; the percentile definition says tied models share one percentile and exact rank differences inside a unit are not meaningful, so the single observation has limited resolution."
+  ],
+  "disqualifiers": [
+    "\"coverage\": 0.2 is below \"rank_threshold_coverage\": 0.5, so the implement stage is in an evidence-only state with no rank, composite, or recommendation; this disqualifies recommending p/candidate over p/baseline for implement.",
+    "The stage signal is \"baseline_unrankable\", not \"candidate_ahead\"; with p/baseline having \"route_evidence\": [], no eligible baseline comparison exists, so the scorecard does not support a routing change from \"p/baseline\" to \"p/candidate\".",
+    "The recorded \"rank\": 1 and \"score\": 0.9 for p/candidate conflict with the below-threshold \"coverage\": 0.2 / evidence-only state, so they cannot qualify as a supported rank or composite."
+  ],
+  "confidence": "low",
+  "divergence": [
+    "The implement row for p/candidate combines \"coverage\": 0.2 (below \"rank_threshold_coverage\": 0.5) with \"rank\": 1 and \"score\": 0.9. The glossary says a stage row below the coverage threshold is \"state: evidence only\" and has 'no rank, no composite, and no recommendation exist', so the presence of \"rank\": 1 diverges from the coverage/evidence-only rule.",
+    "Because the only route's \"coverage\": 0.2 does not reach \"rank_threshold_coverage\": 0.5, the glossary's \"signal: no_comparable_evidence\" ('No route reaches the coverage threshold for this stage, so the stage carries no rank.') describes the coverage facts, but the reported stage signal is \"baseline_unrankable\". The signal diverges from the no-route-meets-threshold condition (or at least does not record it).",
+    "The candidate row's \"rank\": 1 might be read as p/candidate being ahead, but the stage signal is \"baseline_unrankable\" (baseline has \"route_evidence\": []) and the glossary says this is 'not a claim that the baseline is worse'; this diverges from the absence of a \"candidate_ahead\" signal and from the missing baseline comparison."
+  ]
+}

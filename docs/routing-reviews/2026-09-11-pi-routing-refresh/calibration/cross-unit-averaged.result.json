@@ -1,0 +1,26 @@
+{
+  "strengths": [
+    "The implement stage’s only row, \"route_id\": \"p/candidate\", is eligible with \"rank\": 1 and \"coverage\": 1; this meets the \"rank_threshold_coverage\": 0.5.",
+    "Candidate evidence for p/candidate is \"source_scope\": \"model\" and \"state\": \"scored\", and the available unit \"calib|v1|agent-cli\" has \"status\": \"scored\", \"snapshot_age_days\": 0 within \"max_snapshot_age_days\": 30.",
+    "A single eligible candidate is ranked in the stage, so the stage is not empty and the candidate’s coverage is not below threshold."
+  ],
+  "risks": [
+    "Baseline \"p/baseline\" has no stage row in stages.implement.rows and \"route_evidence\": [] for p/baseline, so it has no eligible evidence and cannot support a baseline comparison.",
+    "The candidate’s second evidence entry uses \"unit_key\": \"calib2|v1|agent-cli\", but \"units\" contains only \"unit_key\": \"calib|v1|agent-cli\"; the second observation has no unit record, so its population and snapshot are unverified.",
+    "Unit \"calib|v1|agent-cli\" reports \"population_size\": 20 with \"population\": [], so the inputs behind its percentile are not listed or verifiable.",
+    "The candidate’s two evidence entries are for different benchmarks (deepswe and tbench-v2.1) and carry different \"percentile\" values, showing mixed evidence across units; contested_tolerance is defined for two observations of one route in one unit and is not applied across benchmarks or to route-to-route stage gaps.",
+    "Because the baseline is unrankable, the evaluation is too incomplete to decide a routing change relative to the baseline even though the candidate itself meets the coverage threshold."
+  ],
+  "disqualifiers": [
+    "No routing change from \"p/baseline\" to \"p/candidate\" is supported: the scorecard lacks an eligible baseline row/evidence, so the asserted \"signal\": \"candidate_ahead\" has no valid baseline to exceed.",
+    "The \"signal\": \"candidate_ahead\" is inconsistent with a baseline that has no eligible evidence; per glossary this is the \"signal: baseline_unrankable\" pattern, not a claim that the baseline is worse.",
+    "Evidence tied to \"calib2|v1|agent-cli\" is not usable for a scoring decision because its unit is absent from \"units\", leaving no verified population or snapshot."
+  ],
+  "confidence": "low",
+  "divergence": [
+    "stages.implement.rows contains only \"p/candidate\" and route_evidence for \"p/baseline\" is empty, yet stage_signals.implement.signal is \"candidate_ahead\"; the glossary defines \"signal: baseline_unrankable\" for a baseline route with no eligible evidence.",
+    "route_evidence[\"p/candidate\"] references \"unit_key\": \"calib2|v1|agent-cli\", but units contains only \"unit_key\": \"calib|v1|agent-cli\".",
+    "units[0] has \"population_size\": 20 but \"population\": [], leaving percentile inputs unlisted.",
+    "route_evidence[\"p/candidate\"] has two entries with different \"percentile\" values across deepswe and tbench-v2.1; contested_tolerance is stated to apply to two observations of one route in one unit and is \"not yet applied\" to the gap between two routes in a stage, so no contested/consistency resolution covers this cross-unit spread."
+  ]
+}

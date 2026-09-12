@@ -1,0 +1,23 @@
+{
+  "strengths": [
+    "The candidate route 'p/candidate' has an eligible implement-stage row: the scorecard shows \"coverage\": 1 (meets rank_threshold_coverage: 0.5), \"eligible\": true, \"rank\": 1, and \"missing_capabilities\": [], so the stage carries a rank rather than being evidence-only.",
+    "Evidence freshness is within policy: the unit 'calib|v1|agent-cli' has \"snapshot_age_days\": 0 against \"max_snapshot_age_days\": 30 and \"status\": \"scored\".",
+    "The scorecard records traceable provenance for the candidate evidence (benchmark 'deepswe', unit_key 'calib|v1|agent-cli', publisher_name 'other-release', alias_rule, source_scope), and transparently exposes the baseline gap (route_evidence for 'p/baseline' is empty)."
+  ],
+  "risks": [
+    "The baseline 'p/baseline' has empty route_evidence and no implement-stage row, so it is unrankable; the candidate's \"rank\": 1 is the only row and does not demonstrate a win over an eligible baseline.",
+    "Breadth is thin: only one benchmark ('deepswe') and one unit support the candidate, and that unit lists \"population_size\": 20 but an empty \"population\": [] array, so the percentile and any tie/contested logic cannot be verified from the provided population.",
+    "Provenance ambiguity: the entry's \"alias_rule\": \"exact release match\" suggests the routed release (model), but \"source_scope\": \"proxy-family\" indicates family-level evidence; publisher_name 'other-release' must be reconciled with the route 'p/candidate'.",
+    "The stage signal 'candidate_ahead' invites over-claim: the glossary states baseline_unrankable is 'not a claim that the baseline is worse', so the signal should not be read as evidence the baseline is inferior."
+  ],
+  "disqualifiers": [
+    "Coverage is too low to decide a routing change: the baseline has no eligible evidence (empty route_evidence, no stage row), so no eligible baseline comparison exists. The scorecard does not support recommending 'p/candidate' over 'p/baseline', and the 'candidate_ahead' signal is not backed by an eligible baseline.",
+    "The candidate's only route_evidence entry has \"state\": \"scored\" while \"source_scope\": \"proxy-family\"; the glossary says proxy-family is 'never scored'. If enforced, this entry is not valid scored evidence, which would leave the candidate without scored routed-release evidence and disqualifies reliance on its scored row."
+  ],
+  "confidence": "low",
+  "divergence": [
+    "I diverge from the stage signal 'candidate_ahead': the baseline 'p/baseline' has empty route_evidence and no stage row, which matches the glossary's 'baseline_unrankable' condition (no eligible baseline evidence), not 'candidate_ahead' (which requires an eligible baseline).",
+    "I diverge from treating the candidate evidence as valid scored model evidence: \"source_scope\": \"proxy-family\" (glossary: 'never scored') conflicts with \"state\": \"scored\", and \"alias_rule\": \"exact release match\" conflicts with a family-level proxy scope.",
+    "I diverge from reading the candidate's \"rank\": 1 as a comparative result: the stage has only one row and the baseline has no eligible evidence, so the scorecard supports no head-to-head comparison."
+  ]
+}

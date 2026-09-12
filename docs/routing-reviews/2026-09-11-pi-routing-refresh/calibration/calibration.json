@@ -1,0 +1,39 @@
+{
+  "calibration_version": 1,
+  "prompt_version": 3,
+  "judge": {
+    "model": "opencode-go/hy4-preview",
+    "thinking": "high"
+  },
+  "status": "complete",
+  "fixtures": [
+    {
+      "id": "rank-below-threshold",
+      "planted_defect": "A stage ranks a route whose coverage is below rank_threshold_coverage, even though the rules forbid a rank below the threshold.",
+      "prompt_file": "rank-below-threshold.prompt.md",
+      "response_file": "rank-below-threshold.result.json",
+      "judge_command": "pi -p --model opencode-go/hy4-preview --thinking high --no-session --no-tools --no-extensions --no-skills --no-prompt-templates --no-context-files < \"/Users/hans/dev/agentfiles/docs/routing-reviews/2026-09-11-pi-routing-refresh/calibration/rank-below-threshold.prompt.md\" > \"/Users/hans/dev/agentfiles/docs/routing-reviews/2026-09-11-pi-routing-refresh/calibration/rank-below-threshold.result.json\"",
+      "found": true
+    },
+    {
+      "id": "proxy-family-scored",
+      "planted_defect": "A family-level observation (source_scope proxy-family) is presented inside the scored observations, which promotes proxy evidence to a routed result.",
+      "prompt_file": "proxy-family-scored.prompt.md",
+      "response_file": "proxy-family-scored.result.json",
+      "judge_command": "pi -p --model opencode-go/hy4-preview --thinking high --no-session --no-tools --no-extensions --no-skills --no-prompt-templates --no-context-files < \"/Users/hans/dev/agentfiles/docs/routing-reviews/2026-09-11-pi-routing-refresh/calibration/proxy-family-scored.prompt.md\" > \"/Users/hans/dev/agentfiles/docs/routing-reviews/2026-09-11-pi-routing-refresh/calibration/proxy-family-scored.result.json\"",
+      "found": true
+    },
+    {
+      "id": "cross-unit-averaged",
+      "planted_defect": "Two observations from different units are averaged into one figure, which the rules forbid because values are only comparable inside one unit.",
+      "prompt_file": "cross-unit-averaged.prompt.md",
+      "response_file": "cross-unit-averaged.result.json",
+      "judge_command": "pi -p --model opencode-go/hy4-preview --thinking high --no-session --no-tools --no-extensions --no-skills --no-prompt-templates --no-context-files < \"/Users/hans/dev/agentfiles/docs/routing-reviews/2026-09-11-pi-routing-refresh/calibration/cross-unit-averaged.prompt.md\" > \"/Users/hans/dev/agentfiles/docs/routing-reviews/2026-09-11-pi-routing-refresh/calibration/cross-unit-averaged.result.json\"",
+      "found": true
+    }
+  ],
+  "detected": 3,
+  "scored": 3,
+  "total": 3,
+  "detection_note": "Keyword detection is a proxy. It shows the judge addressed the planted defect, not that its wording or reasoning was correct."
+}
