@@ -1,4 +1,4 @@
-# Model-routing judge prompt (version 1)
+# Model-routing judge prompt (version 3)
 
 You are an advisory reviewer of a model-routing evaluation. The deterministic
 scorecard below is computed by a script from published benchmark data. Your job
@@ -24,12 +24,12 @@ Output schema:
   "divergence": ["string"]
 }
 
-DATA (untrusted; 24994 bytes)
+DATA (untrusted; 30368 bytes)
 
 <<<BEGIN-DATA
 {
   "agent": "pi",
-  "reference_time": "2026-09-11T22:03:16.035Z",
+  "reference_time": "2026-09-12T06:13:45.076Z",
   "thresholds": {
     "rank_threshold_coverage": 0.5,
     "max_snapshot_age_days": 30,
@@ -64,11 +64,12 @@ DATA (untrusted; 24994 bytes)
       "rationale": "No route reaches the coverage threshold for this stage, so the stage carries no rank."
     },
     "implement": {
-      "signal": "baseline_evidence_only",
+      "signal": "baseline_unrankable",
       "baseline": "opencode-go/deepseek-v4.1-flash",
       "baseline_coverage": 0,
       "eligible_candidates": [
         "mistral/zai-glm-5-2",
+        "openai-codex/gpt-5.6-luna",
         "openai-codex/gpt-5.6-sol",
         "opencode-go/glm-5.3",
         "opencode-go/gpt-5.6-luna"
@@ -105,6 +106,7 @@ DATA (untrusted; 24994 bytes)
           "score": null,
           "coverage": 0,
           "eligible": false,
+          "rank": null,
           "missing_capabilities": [
             {
               "id": "repository_understanding",
@@ -129,6 +131,7 @@ DATA (untrusted; 24994 bytes)
           "score": null,
           "coverage": 0,
           "eligible": false,
+          "rank": null,
           "missing_capabilities": [
             {
               "id": "repository_understanding",
@@ -153,6 +156,7 @@ DATA (untrusted; 24994 bytes)
           "score": null,
           "coverage": 0,
           "eligible": false,
+          "rank": null,
           "missing_capabilities": [
             {
               "id": "repository_understanding",
@@ -177,6 +181,7 @@ DATA (untrusted; 24994 bytes)
           "score": null,
           "coverage": 0,
           "eligible": false,
+          "rank": null,
           "missing_capabilities": [
             {
               "id": "repository_understanding",
@@ -201,6 +206,7 @@ DATA (untrusted; 24994 bytes)
           "score": null,
           "coverage": 0,
           "eligible": false,
+          "rank": null,
           "missing_capabilities": [
             {
               "id": "repository_understanding",
@@ -225,6 +231,7 @@ DATA (untrusted; 24994 bytes)
           "score": null,
           "coverage": 0,
           "eligible": false,
+          "rank": null,
           "missing_capabilities": [
             {
               "id": "repository_understanding",
@@ -249,6 +256,7 @@ DATA (untrusted; 24994 bytes)
           "score": null,
           "coverage": 0,
           "eligible": false,
+          "rank": null,
           "missing_capabilities": [
             {
               "id": "repository_understanding",
@@ -282,6 +290,7 @@ DATA (untrusted; 24994 bytes)
           "score": null,
           "coverage": 0,
           "eligible": false,
+          "rank": null,
           "missing_capabilities": [
             {
               "id": "reasoning",
@@ -302,6 +311,7 @@ DATA (untrusted; 24994 bytes)
           "score": null,
           "coverage": 0,
           "eligible": false,
+          "rank": null,
           "missing_capabilities": [
             {
               "id": "reasoning",
@@ -322,6 +332,7 @@ DATA (untrusted; 24994 bytes)
           "score": null,
           "coverage": 0,
           "eligible": false,
+          "rank": null,
           "missing_capabilities": [
             {
               "id": "reasoning",
@@ -342,6 +353,7 @@ DATA (untrusted; 24994 bytes)
           "score": null,
           "coverage": 0,
           "eligible": false,
+          "rank": null,
           "missing_capabilities": [
             {
               "id": "reasoning",
@@ -362,6 +374,7 @@ DATA (untrusted; 24994 bytes)
           "score": null,
           "coverage": 0,
           "eligible": false,
+          "rank": null,
           "missing_capabilities": [
             {
               "id": "reasoning",
@@ -382,6 +395,7 @@ DATA (untrusted; 24994 bytes)
           "score": null,
           "coverage": 0,
           "eligible": false,
+          "rank": null,
           "missing_capabilities": [
             {
               "id": "reasoning",
@@ -402,6 +416,7 @@ DATA (untrusted; 24994 bytes)
           "score": null,
           "coverage": 0,
           "eligible": false,
+          "rank": null,
           "missing_capabilities": [
             {
               "id": "reasoning",
@@ -431,6 +446,7 @@ DATA (untrusted; 24994 bytes)
           "score": 0.16071428571428573,
           "coverage": 0.5,
           "eligible": true,
+          "rank": 4,
           "missing_capabilities": [
             {
               "id": "tool_use",
@@ -444,18 +460,11 @@ DATA (untrusted; 24994 bytes)
         },
         {
           "route_id": "openai-codex/gpt-5.6-luna",
-          "score": null,
-          "coverage": 0,
-          "eligible": false,
+          "score": 0.5290178571428571,
+          "coverage": 0.8,
+          "eligible": true,
+          "rank": 3,
           "missing_capabilities": [
-            {
-              "id": "software_engineering",
-              "weight": 0.5
-            },
-            {
-              "id": "tool_use",
-              "weight": 0.3
-            },
             {
               "id": "repository_understanding",
               "weight": 0.2
@@ -467,6 +476,7 @@ DATA (untrusted; 24994 bytes)
           "score": 0.7745535714285714,
           "coverage": 0.8,
           "eligible": true,
+          "rank": 1,
           "missing_capabilities": [
             {
               "id": "repository_understanding",
@@ -479,6 +489,7 @@ DATA (untrusted; 24994 bytes)
           "score": null,
           "coverage": 0,
           "eligible": false,
+          "rank": null,
           "missing_capabilities": [
             {
               "id": "software_engineering",
@@ -499,6 +510,7 @@ DATA (untrusted; 24994 bytes)
           "score": 0.734375,
           "coverage": 0.8,
           "eligible": true,
+          "rank": 2,
           "missing_capabilities": [
             {
               "id": "repository_understanding",
@@ -511,6 +523,7 @@ DATA (untrusted; 24994 bytes)
           "score": 0.5290178571428571,
           "coverage": 0.8,
           "eligible": true,
+          "rank": 3,
           "missing_capabilities": [
             {
               "id": "repository_understanding",
@@ -523,6 +536,7 @@ DATA (untrusted; 24994 bytes)
           "score": null,
           "coverage": 0,
           "eligible": false,
+          "rank": null,
           "missing_capabilities": [
             {
               "id": "software_engineering",
@@ -552,6 +566,7 @@ DATA (untrusted; 24994 bytes)
           "score": null,
           "coverage": 0.3,
           "eligible": false,
+          "rank": null,
           "missing_capabilities": [
             {
               "id": "review",
@@ -566,16 +581,13 @@ DATA (untrusted; 24994 bytes)
         {
           "route_id": "openai-codex/gpt-5.6-luna",
           "score": null,
-          "coverage": 0,
+          "coverage": 0.3,
           "eligible": false,
+          "rank": null,
           "missing_capabilities": [
             {
               "id": "review",
               "weight": 0.5
-            },
-            {
-              "id": "software_engineering",
-              "weight": 0.3
             },
             {
               "id": "reasoning",
@@ -588,6 +600,7 @@ DATA (untrusted; 24994 bytes)
           "score": null,
           "coverage": 0.3,
           "eligible": false,
+          "rank": null,
           "missing_capabilities": [
             {
               "id": "review",
@@ -604,6 +617,7 @@ DATA (untrusted; 24994 bytes)
           "score": null,
           "coverage": 0,
           "eligible": false,
+          "rank": null,
           "missing_capabilities": [
             {
               "id": "review",
@@ -624,6 +638,7 @@ DATA (untrusted; 24994 bytes)
           "score": null,
           "coverage": 0.3,
           "eligible": false,
+          "rank": null,
           "missing_capabilities": [
             {
               "id": "review",
@@ -640,6 +655,7 @@ DATA (untrusted; 24994 bytes)
           "score": null,
           "coverage": 0.3,
           "eligible": false,
+          "rank": null,
           "missing_capabilities": [
             {
               "id": "review",
@@ -656,6 +672,7 @@ DATA (untrusted; 24994 bytes)
           "score": null,
           "coverage": 0,
           "eligible": false,
+          "rank": null,
           "missing_capabilities": [
             {
               "id": "review",
@@ -685,6 +702,7 @@ DATA (untrusted; 24994 bytes)
           "score": null,
           "coverage": 0.3,
           "eligible": false,
+          "rank": null,
           "missing_capabilities": [
             {
               "id": "adversarial_analysis",
@@ -699,8 +717,9 @@ DATA (untrusted; 24994 bytes)
         {
           "route_id": "openai-codex/gpt-5.6-luna",
           "score": null,
-          "coverage": 0,
+          "coverage": 0.3,
           "eligible": false,
+          "rank": null,
           "missing_capabilities": [
             {
               "id": "adversarial_analysis",
@@ -708,10 +727,6 @@ DATA (untrusted; 24994 bytes)
             },
             {
               "id": "review",
-              "weight": 0.3
-            },
-            {
-              "id": "software_engineering",
               "weight": 0.3
             }
           ]
@@ -721,6 +736,7 @@ DATA (untrusted; 24994 bytes)
           "score": null,
           "coverage": 0.3,
           "eligible": false,
+          "rank": null,
           "missing_capabilities": [
             {
               "id": "adversarial_analysis",
@@ -737,6 +753,7 @@ DATA (untrusted; 24994 bytes)
           "score": null,
           "coverage": 0,
           "eligible": false,
+          "rank": null,
           "missing_capabilities": [
             {
               "id": "adversarial_analysis",
@@ -757,6 +774,7 @@ DATA (untrusted; 24994 bytes)
           "score": null,
           "coverage": 0.3,
           "eligible": false,
+          "rank": null,
           "missing_capabilities": [
             {
               "id": "adversarial_analysis",
@@ -773,6 +791,7 @@ DATA (untrusted; 24994 bytes)
           "score": null,
           "coverage": 0.3,
           "eligible": false,
+          "rank": null,
           "missing_capabilities": [
             {
               "id": "adversarial_analysis",
@@ -789,6 +808,7 @@ DATA (untrusted; 24994 bytes)
           "score": null,
           "coverage": 0,
           "eligible": false,
+          "rank": null,
           "missing_capabilities": [
             {
               "id": "adversarial_analysis",
@@ -819,6 +839,7 @@ DATA (untrusted; 24994 bytes)
           "score": null,
           "coverage": 0,
           "eligible": false,
+          "rank": null,
           "missing_capabilities": [
             {
               "id": "instruction_following",
@@ -843,6 +864,7 @@ DATA (untrusted; 24994 bytes)
           "score": null,
           "coverage": 0,
           "eligible": false,
+          "rank": null,
           "missing_capabilities": [
             {
               "id": "instruction_following",
@@ -867,6 +889,7 @@ DATA (untrusted; 24994 bytes)
           "score": null,
           "coverage": 0,
           "eligible": false,
+          "rank": null,
           "missing_capabilities": [
             {
               "id": "instruction_following",
@@ -891,6 +914,7 @@ DATA (untrusted; 24994 bytes)
           "score": null,
           "coverage": 0,
           "eligible": false,
+          "rank": null,
           "missing_capabilities": [
             {
               "id": "instruction_following",
@@ -915,6 +939,7 @@ DATA (untrusted; 24994 bytes)
           "score": null,
           "coverage": 0,
           "eligible": false,
+          "rank": null,
           "missing_capabilities": [
             {
               "id": "instruction_following",
@@ -939,6 +964,7 @@ DATA (untrusted; 24994 bytes)
           "score": null,
           "coverage": 0,
           "eligible": false,
+          "rank": null,
           "missing_capabilities": [
             {
               "id": "instruction_following",
@@ -963,6 +989,7 @@ DATA (untrusted; 24994 bytes)
           "score": null,
           "coverage": 0,
           "eligible": false,
+          "rank": null,
           "missing_capabilities": [
             {
               "id": "instruction_following",
@@ -985,11 +1012,119 @@ DATA (untrusted; 24994 bytes)
       ]
     }
   },
+  "route_evidence": {
+    "mistral/zai-glm-5-2": [
+      {
+        "benchmark": "deepswe",
+        "unit_key": "deepswe|v1.1|1.1|default|pass_at_1|agent-cli",
+        "state": "scored",
+        "source_scope": "model",
+        "percentile": 0.16071428571428573,
+        "publisher_name": "glm-5-2",
+        "alias_rule": "Exact release match on the DeepSWE board."
+      }
+    ],
+    "openai-codex/gpt-5.6-luna": [
+      {
+        "benchmark": "deepswe",
+        "unit_key": "deepswe|v1.1|1.1|default|pass_at_1|agent-cli",
+        "state": "scored",
+        "source_scope": "model",
+        "percentile": 0.6964285714285714,
+        "publisher_name": "gpt-5-6-luna",
+        "alias_rule": "Published release is served by two providers; both routes claim this release."
+      },
+      {
+        "benchmark": "tbench-v2.1",
+        "unit_key": "tbench-v2.1|terminal-bench-2.1|2.1|default|accuracy|agent-cli",
+        "state": "scored",
+        "source_scope": "model",
+        "percentile": 0.25,
+        "publisher_name": "GPT-5.6 Luna",
+        "alias_rule": "Published release is served by two providers; both routes claim this release."
+      }
+    ],
+    "openai-codex/gpt-5.6-sol": [
+      {
+        "benchmark": "deepswe",
+        "unit_key": "deepswe|v1.1|1.1|default|pass_at_1|agent-cli",
+        "state": "scored",
+        "source_scope": "model",
+        "percentile": 0.875,
+        "publisher_name": "gpt-5-6-sol",
+        "alias_rule": "Exact release match on the DeepSWE board."
+      },
+      {
+        "benchmark": "tbench-v2.1",
+        "unit_key": "tbench-v2.1|terminal-bench-2.1|2.1|default|accuracy|agent-cli",
+        "state": "scored",
+        "source_scope": "model",
+        "percentile": 0.6071428571428571,
+        "publisher_name": "GPT-5.6 Sol",
+        "alias_rule": "Exact release match on the Terminal-Bench v2.1 board."
+      }
+    ],
+    "opencode-go/deepseek-v4.1-flash": [
+      {
+        "benchmark": "deepswe",
+        "unit_key": "deepswe|v1.1|1.1|default|pass_at_1|agent-cli",
+        "state": "proxy-family (deliberately not scored)",
+        "source_scope": "proxy-family",
+        "percentile": 0.2857142857142857,
+        "publisher_name": "deepseek-v4-flash",
+        "alias_rule": "Board publishes deepseek-v4-flash; the routed alias is deepseek-v4.1-flash. Family evidence only, never scored."
+      }
+    ],
+    "opencode-go/glm-5.3": [
+      {
+        "benchmark": "deepswe",
+        "unit_key": "deepswe|v1.1|1.1|default|pass_at_1|agent-cli",
+        "state": "scored",
+        "source_scope": "model",
+        "percentile": 0.7678571428571429,
+        "publisher_name": "glm-5-3",
+        "alias_rule": "Exact release match on the DeepSWE board."
+      },
+      {
+        "benchmark": "tbench-v2.1",
+        "unit_key": "tbench-v2.1|terminal-bench-2.1|2.1|default|accuracy|agent-cli",
+        "state": "scored",
+        "source_scope": "model",
+        "percentile": 0.6785714285714286,
+        "publisher_name": "GLM-5.3",
+        "alias_rule": "Exact release match on the Terminal-Bench v2.1 board."
+      }
+    ],
+    "opencode-go/gpt-5.6-luna": [
+      {
+        "benchmark": "deepswe",
+        "unit_key": "deepswe|v1.1|1.1|default|pass_at_1|agent-cli",
+        "state": "scored",
+        "source_scope": "model",
+        "percentile": 0.6964285714285714,
+        "publisher_name": "gpt-5-6-luna",
+        "alias_rule": "Published release is served by two providers; both routes claim this release."
+      },
+      {
+        "benchmark": "tbench-v2.1",
+        "unit_key": "tbench-v2.1|terminal-bench-2.1|2.1|default|accuracy|agent-cli",
+        "state": "scored",
+        "source_scope": "model",
+        "percentile": 0.25,
+        "publisher_name": "GPT-5.6 Luna",
+        "alias_rule": "Published release is served by two providers; both routes claim this release."
+      }
+    ],
+    "opencode-go/hy3": []
+  },
   "units": [
     {
       "unit_key": "deepswe|v1.1|1.1|default|pass_at_1|agent-cli",
       "status": "scored",
       "population_size": 28,
+      "snapshot_retrieved_at": "2026-09-12T06:13:44.434Z",
+      "snapshot_age_days": 0,
+      "max_snapshot_age_days": 30,
       "population": [
         {
           "model": "claude-fable-5",
@@ -1305,6 +1440,9 @@ DATA (untrusted; 24994 bytes)
       "unit_key": "tbench-v2.1|terminal-bench-2.1|2.1|default|accuracy|agent-cli",
       "status": "scored",
       "population_size": 14,
+      "snapshot_retrieved_at": "2026-09-12T06:13:44.696Z",
+      "snapshot_age_days": 0,
+      "max_snapshot_age_days": 30,
       "population": [
         {
           "model": "Fable 5",
@@ -1466,6 +1604,9 @@ DATA (untrusted; 24994 bytes)
       "unit_key": "swebench-multilingual|Multilingual|2026-02-13|default|resolved|agent-cli",
       "status": "scored",
       "population_size": 13,
+      "snapshot_retrieved_at": "2026-09-12T06:13:45.062Z",
+      "snapshot_age_days": 0,
+      "max_snapshot_age_days": 90,
       "population": [
         {
           "model": "Claude 4.5 Haiku",
@@ -1551,6 +1692,9 @@ DATA (untrusted; 24994 bytes)
       "unit_key": "swebench-multimodal|Multimodal|2025-11-17|default|resolved|agent-cli",
       "status": "small-board-excluded",
       "population_size": 6,
+      "snapshot_retrieved_at": "2026-09-12T06:13:45.062Z",
+      "snapshot_age_days": 0,
+      "max_snapshot_age_days": 90,
       "population": [
         {
           "model": "Claude Sonnet 3.5",
@@ -1594,6 +1738,9 @@ DATA (untrusted; 24994 bytes)
       "unit_key": "swebench-multimodal|Multimodal|2025-11-17|default|resolved|agent-cli+computer",
       "status": "small-board-excluded",
       "population_size": 6,
+      "snapshot_retrieved_at": "2026-09-12T06:13:45.062Z",
+      "snapshot_age_days": 0,
+      "max_snapshot_age_days": 90,
       "population": [
         {
           "model": "Claude 3.5 Sonnet",
@@ -1637,6 +1784,9 @@ DATA (untrusted; 24994 bytes)
       "unit_key": "swebench-multimodal|Multimodal|2025-11-17|default|resolved|bare-model",
       "status": "small-board-excluded",
       "population_size": 2,
+      "snapshot_retrieved_at": "2026-09-12T06:13:45.062Z",
+      "snapshot_age_days": 0,
+      "max_snapshot_age_days": 90,
       "population": [
         {
           "model": "Claude 3.5 Sonnet",
@@ -1652,6 +1802,17 @@ DATA (untrusted; 24994 bytes)
         }
       ]
     }
-  ]
+  ],
+  "glossary": {
+    "signal: no_comparable_evidence": "No route reaches the coverage threshold for this stage, so the stage carries no rank.",
+    "signal: baseline_unrankable": "The baseline route has no eligible evidence, so eligible candidates are listed with no baseline comparison. This is not a claim that the baseline is worse.",
+    "signal: candidate_ahead": "At least one eligible candidate scores above the eligible baseline.",
+    "signal: baseline_ahead": "No eligible candidate scores above the eligible baseline.",
+    "state: evidence only": "A stage row below the coverage threshold: observations are shown, but no rank, no composite, and no recommendation exist.",
+    "coverage": "Present weight divided by total stage weight. Missing weight is displayed and never redistributed.",
+    "percentile": "Computed inside one unit as (models below + 0.5 x models tied) / population, inverted for lower-is-better metrics. Tied models share one percentile, so exact rank differences inside a unit are not meaningful.",
+    "contested_tolerance": "The gap that counts as a disagreement between two observations of one route in one unit. It is not yet applied to the gap between two routes in a stage.",
+    "route_evidence entry": "unit_key names the comparable unit; publisher_name is the name the board publishes; alias_rule records why a published name maps to this route; source_scope records whether the evidence is the routed release (model) or family-level (proxy-family, never scored)."
+  }
 }
 END-DATA>>>

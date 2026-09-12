@@ -1,34 +1,34 @@
 {
   "model": "opencode-go/hy4-preview",
   "thinking": "high",
-  "prompt_version": 1,
-  "received_at": "2026-09-12T06:06:51.095Z",
+  "prompt_version": 3,
+  "received_at": "2026-09-12T06:16:21.144Z",
   "assessment": {
     "strengths": [
-      "The scorecard transparently withholds ranks where evidence is insufficient: for run_stage_plan, review_plan, review, run_stage_break, and general it reports signal \"no_comparable_evidence\" with the rationale \"No route reaches the coverage threshold for this stage, so the stage carries no rank.\"",
-      "In the implement stage the scorecard does not fabricate a winner: it reports signal \"baseline_evidence_only\" and the rationale \"The baseline route has no eligible evidence for this stage; eligible candidates are listed without a baseline comparison\", with baseline_coverage 0 for opencode-go/deepseek-v4.1-flash.",
-      "Per-stage weights and missing_capabilities are published, so gaps are explicit; for example, the review stage weights capability \"review\" at 0.5 and every row lists it missing, consistent with the \"no_comparable_evidence\" rationale.",
-      "Benchmark units are labeled by status and small boards are excluded: the swebench-multimodal units are \"small-board-excluded\" (population_size 6 and 2) and are not used to produce ranks.",
-      "The candidate_routes and baseline mapping are fully enumerated, and the implement stage lists eligible_candidates (mistral/zai-glm-5-2, openai-codex/gpt-5.6-sol, opencode-go/glm-5.3, opencode-go/gpt-5.6-luna) rather than silently ranking them against an ineligible baseline."
+      "The scorecard applies its coverage threshold consistently: five of six stages report no_comparable_evidence, so it does not manufacture ranks where no route has comparable evidence.",
+      "Freshness is satisfied for the only scored units (DeepSWE and Terminal-Bench v2.1); their snapshot age is within max_snapshot_age_days, so staleness is not a limiting factor.",
+      "Proxy evidence is handled conservatively: the routed opencode-go/deepseek-v4.1-flash baseline is recorded as proxy-family (deliberately not scored) with baseline coverage zero, and the scorecard flags baseline_unrankable rather than claiming the baseline is worse.",
+      "Alias provenance is auditable: each evidence row records unit_key, publisher_name and alias_rule, capturing why a published board name maps to a route (e.g., the gpt-5.6-luna release claimed by two providers; deepseek-v4-flash vs the routed deepseek-v4.1-flash alias).",
+      "Missing weight is reported per row and never redistributed (per the glossary), so the partial-coverage nature of the implement stage stays visible instead of being hidden."
     ],
     "risks": [
-      "Coverage is too low to decide for five of six stages: run_stage_plan, review_plan, review, run_stage_break, and general all carry \"no_comparable_evidence\" and the quoted \"No route reaches the coverage threshold\" rationale, so the scorecard supports no routing change or rank for those stages.",
-      "For implement, the baseline route opencode-go/deepseek-v4.1-flash is ineligible (score null, baseline_coverage 0) and the quoted rationale confirms eligible candidates are listed \"without a baseline comparison\"; therefore the scorecard does not support switching the implement route to any eligible candidate.",
-      "Key capabilities are missing across all routes in several stages (e.g., \"review\" in review, \"adversarial_analysis\" in run_stage_break, \"multimodal\" in general), so even the highest-coverage implement candidates remain partially uncovered and no stage except implement reaches the rank_threshold_coverage.",
-      "Route-to-benchmark mapping is imperfect: the deepswe population contains \"deepseek-v4-flash\", but candidate route opencode-go/deepseek-v4.1-flash still has coverage 0 and score null in implement, so a naming/version mismatch can zero out coverage for a route that appears in raw data.",
-      "The general stage assigns weight 0.2 to \"multimodal\", but the only multimodal units are \"small-board-excluded\", so no route can cover that weight and general coverage is 0 for every row."
+      "Coverage is too low to decide almost all routing: five stages (run_stage_plan, review_plan, review, run_stage_break, general) have no eligible route and no comparable evidence, so their baselines cannot be confirmed or changed.",
+      "For the only stage with eligible candidates (implement), the baseline opencode-go/deepseek-v4.1-flash has no scored evidence (baseline coverage zero), so the scorecard emits baseline_unrankable with no baseline comparison; switching to the top-ranked eligible candidate is not supported by the scorecard.",
+      "Evidence breadth is narrow: all scored observations come from only two benchmarks (DeepSWE and Terminal-Bench v2.1), which in the implement stage cover only the software-engineering and tool-use capabilities. The repository-understanding capability is missing for every eligible implement row, and reasoning, review, long-context, adversarial-analysis, instruction-following and multimodal have no scored evidence, leaving most stage weights unmeasured.",
+      "The two gpt-5.6-luna routes (openai-codex and opencode-go) carry identical evidence, coverage and rank because one published release is claimed by both providers; the scorecard provides no provider-level evidence to distinguish them, so preferring one is arbitrary on this data.",
+      "Terminal-Bench v2.1 has a small population, and the glossary states tied models share one percentile and that contested_tolerance is not applied to gaps between two routes in a stage; the separation between eligible implement candidates should not be treated as a robust ordering.",
+      "opencode-go/hy3 has no evidence entries at all and is the baseline for run_stage_break, a stage with no comparable evidence; the scored swebench-multilingual unit also has no route aliased to it and contributes no usable capability evidence."
     ],
     "disqualifiers": [
-      "No routing change is supported for any stage. Five stages are disqualified by \"no_comparable_evidence\" and coverage too low to decide; the implement stage is disqualified by \"baseline_evidence_only\" plus the rationale that the baseline has no eligible evidence and candidates are listed without a baseline comparison.",
-      "The current baselines must remain in place for the purpose of this review because the scorecard provides no comparable evidence to justify replacement: run_stage_plan opencode-go/glm-5.3, review_plan and review openai-codex/gpt-5.6-sol, implement opencode-go/deepseek-v4.1-flash, run_stage_break opencode-go/hy3, general openai-codex/gpt-5.6-luna.",
-      "Any recommendation to adopt an implement candidate (mistral/zai-glm-5-2, openai-codex/gpt-5.6-sol, opencode-go/glm-5.3, opencode-go/gpt-5.6-luna) is disqualified: those candidates are eligible but there is no baseline comparison, and rule 2 forbids recommending an unsupported change."
+      "No route is scored as disqualified: the deepseek-v4.1-flash baseline is excluded from scoring as proxy-family evidence rather than disqualified, and opencode-go/hy3 is simply absent from the evidence base. The limiting factor is insufficient coverage, not disqualification."
     ],
     "confidence": "low",
     "divergence": [
-      "Internal signal/rationale divergence in implement: the signal is \"baseline_evidence_only\", yet baseline_coverage is 0 and the rationale says \"The baseline route has no eligible evidence for this stage; eligible candidates are listed without a baseline comparison\"; the detailed rows show non-baseline candidates eligible while the baseline is ineligible, so the evidence is candidate-side, not baseline-side.",
-      "The general stage weights \"multimodal\" at 0.2, but all multimodal benchmark units are \"small-board-excluded\" (population_size 6 and 2, status \"small-board-excluded\"), so the weighted capability has no usable population; this diverges from the intent of weighting a capability that cannot be covered by any route.",
-      "Benchmark populations contain model names that resemble candidate routes (e.g., \"GLM-5.3\", \"GPT-5.6 Sol\", \"GPT-5.6 Luna\" in tbench-v2.1; \"glm-5-3\", \"gpt-5-6-sol\", \"gpt-5-6-luna\" in deepswe), yet the scorecard maps most of these to low or zero staged coverage; the mapped coverage figures, not raw benchmark presence, drive eligibility, which is a mapping divergence worth flagging.",
-      "The mistral/zai-glm-5-2 row in implement is eligible at exactly the rank_threshold_coverage while three other candidates exceed it; the scorecard does not publish a rank or margin, so I do not infer or restate any ordering beyond the explicit eligible_candidates list."
+      "A naive reading of the implement stage sees an ordered set of eligible candidates with a clear leader and might conclude the implement baseline should be replaced; the scorecard diverges from that reading because its stage signal is baseline_unrankable, the baseline has no eligible evidence, and no candidate_ahead or baseline_ahead verdict is issued.",
+      "The two gpt-5.6-luna routes do not diverge in the scorecard — they share identical evidence, coverage and rank — yet they are distinct candidate routes in the routing table; the data cannot separate them, so any preference is extra-evidential.",
+      "DeepSWE carries family-level evidence for opencode-go/deepseek-v4.1-flash (publisher deepseek-v4-flash) that is deliberately not scored, which diverges from a naive assumption that the baseline has an observation and explains why baseline coverage is zero.",
+      "The swebench-multilingual unit is scored and fresh, but no route_evidence entry aliases any candidate to it; this board diverges from the routes under evaluation and contributes zero measured capability, highlighting a coverage gap rather than a comparable observation.",
+      "Per the glossary, contested_tolerance is not applied to gaps between two routes in a stage, so the implement ordering diverges from a tolerance-aware reading in which the eligible candidates could be effectively tied."
     ]
   }
 }
