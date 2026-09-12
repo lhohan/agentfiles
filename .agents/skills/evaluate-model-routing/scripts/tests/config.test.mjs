@@ -5,7 +5,7 @@ import { mkdtempSync, writeFileSync } from 'node:fs';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import test from 'node:test';
-import { loadConfig, resolveAlias } from '../lib/config.mjs';
+import { loadConfig, resolveAliases } from '../lib/config.mjs';
 
 const dir = mkdtempSync(join(tmpdir(), 'emr-config-'));
 
@@ -66,8 +66,8 @@ test('one published release may be served by several provider routes', () => {
     { route_id: 'p/b', source: 'bench', source_name: 'a', canonical_release: 'a', evidence_scope: 'model' },
   ]));
   const config = loadConfig(path);
-  const alias = resolveAlias(config, { sourceIds: ['bench'], sourceSlug: 'a', sourceName: 'A' });
-  assert.equal(alias.route_id, 'p/a');
+  const aliases = resolveAliases(config, { sourceIds: ['bench'], sourceSlug: 'a', sourceName: 'A' });
+  assert.deepEqual(aliases.map((alias) => alias.route_id), ['p/a', 'p/b'], 'both provider routes receive the observation');
 });
 
 test('an unknown alias key is rejected', () => {
@@ -82,8 +82,8 @@ test('alias source matching is scoped to the benchmark or adapter id', () => {
     { route_id: 'p/a', source: 'deepswe', source_name: 'a', source_slug: 'a', canonical_release: 'a', evidence_scope: 'model' },
   ]));
   const config = loadConfig(path);
-  assert.equal(resolveAlias(config, { sourceIds: ['tbench-v2.1'], sourceSlug: 'a', sourceName: 'a' }), null);
-  assert.notEqual(resolveAlias(config, { sourceIds: ['deepswe'], sourceSlug: 'a', sourceName: 'a' }), null);
+  assert.deepEqual(resolveAliases(config, { sourceIds: ['tbench-v2.1'], sourceSlug: 'a', sourceName: 'a' }), []);
+  assert.notEqual(resolveAliases(config, { sourceIds: ['deepswe'], sourceSlug: 'a', sourceName: 'a' }).length, 0);
 });
 
 test('an invalid judge entry is rejected', () => {

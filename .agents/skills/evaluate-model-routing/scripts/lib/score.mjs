@@ -2,7 +2,7 @@
 // scores are weighted means over what is present. Nothing is imputed.
 
 import { ROLE_WEIGHTS } from './registry.mjs';
-import { maxAgeFor, resolveAlias } from './config.mjs';
+import { maxAgeFor, resolveAliases } from './config.mjs';
 
 export const SMALL_BOARD_EXCLUDED = 10;
 export const SMALL_BOARD_FLAGGED = 20;
@@ -108,44 +108,45 @@ export function score({ config, registry, manifest, units, referenceTime }) {
     if (excluded) continue;
 
     for (const [index, row] of unit.population.entries()) {
-      const alias = resolveAlias(config, {
+      const aliases = resolveAliases(config, {
         sourceIds: [unit.benchmark, unit.adapter],
         sourceSlug: row.modelKey,
         sourceName: row.modelDisplay,
       });
-      if (!alias) continue;
-      const observation = {
-        route_id: alias.route_id,
-        unit_key: unit.unit_key,
-        benchmark: unit.benchmark,
-        benchmark_name: unit.benchmark_name,
-        board: unit.board,
-        version: unit.version,
-        split: unit.split,
-        metric: unit.metric,
-        harness_class: unit.harness_class,
-        harness_label: row.harnessLabel,
-        effort: row.effort,
-        model_display: row.modelDisplay,
-        value: row.value,
-        percentile: ranks[index],
-        attempts: row.attempts,
-        date: row.date,
-        uncertainty: row.uncertainty,
-        caveat: row.caveat,
-        source_scope: alias.evidence_scope,
-        alias: {
-          source_name: alias.source_name,
-          canonical_release: alias.canonical_release,
-          verified: alias.verified ?? null,
-          note: alias.note ?? null,
-        },
-        capabilities: entry.capabilities ?? {},
-        url: entry.source_url,
-        source_type: 'benchmark',
-      };
-      if (!routeObservations.has(alias.route_id)) routeObservations.set(alias.route_id, []);
-      routeObservations.get(alias.route_id).push(observation);
+      for (const alias of aliases) {
+        const observation = {
+          route_id: alias.route_id,
+          unit_key: unit.unit_key,
+          benchmark: unit.benchmark,
+          benchmark_name: unit.benchmark_name,
+          board: unit.board,
+          version: unit.version,
+          split: unit.split,
+          metric: unit.metric,
+          harness_class: unit.harness_class,
+          harness_label: row.harnessLabel,
+          effort: row.effort,
+          model_display: row.modelDisplay,
+          value: row.value,
+          percentile: ranks[index],
+          attempts: row.attempts,
+          date: row.date,
+          uncertainty: row.uncertainty,
+          caveat: row.caveat,
+          source_scope: alias.evidence_scope,
+          alias: {
+            source_name: alias.source_name,
+            canonical_release: alias.canonical_release,
+            verified: alias.verified ?? null,
+            note: alias.note ?? null,
+          },
+          capabilities: entry.capabilities ?? {},
+          url: entry.source_url,
+          source_type: 'benchmark',
+        };
+        if (!routeObservations.has(alias.route_id)) routeObservations.set(alias.route_id, []);
+        routeObservations.get(alias.route_id).push(observation);
+      }
     }
   }
 
@@ -223,9 +224,19 @@ export function score({ config, registry, manifest, units, referenceTime }) {
       });
     }
     const eligible = rows.filter((row) => row.eligible).sort((a, b) => (b.score ?? 0) - (a.score ?? 0) || a.route_id.localeCompare(b.route_id));
-    eligible.forEach((row, index) => {
-      row.rank = index + 1;
-    });
+    // Equal scores must share a rank: a tie is not an ordering claim.
+    let rank = 0;
+    let previous = null;
+    for (const row of eligible) {
+      if (previous === null || Math.abs((row.score ?? 0) - previous) > 1e-12) {
+        rank += 1;
+        previous = row.score ?? 0;
+      }
+      row.rank = rank;
+    }
+    for (const row of eligible) {
+      row.tied_with = eligible.filter((other) => other !== row && other.rank === row.rank).map((other) => other.route_id);
+    }
     stageReports[stage] = { weights, rank_threshold_coverage: threshold, rows };
   }
 
@@ -259,7 +270,7 @@ export function score({ config, registry, manifest, units, referenceTime }) {
     }
     if (!baselineRow || !baselineRow.eligible) {
       signals[stage] = {
-        signal: 'baseline_evidence_only',
+        signal: 'baseline_unrankable',
         baseline: baselineRoute ?? null,
         baseline_coverage: baselineRow?.coverage ?? 0,
         eligible_candidates: eligibleCandidates,

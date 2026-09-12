@@ -10,6 +10,7 @@ import test from 'node:test';
 import { buildUnits } from '../lib/units.mjs';
 import * as deepswe from '../lib/sources/deepswe.mjs';
 import * as tbench from '../lib/sources/tbench.mjs';
+import { PROMPT_VERSION } from '../lib/judge.mjs';
 
 const skillDir = resolve(import.meta.dirname, '..', '..');
 const cli = join(skillDir, 'scripts', 'evaluate.mjs');
@@ -76,7 +77,7 @@ test('judge-import stores a schema-valid assessment with exit 0', () => {
   const stored = JSON.parse(readFileSync(good, 'utf8'));
   assert.equal(stored.model, 'opencode-go/hy4-preview');
   assert.equal(stored.thinking, 'high');
-  assert.equal(stored.prompt_version, 1);
+  assert.equal(stored.prompt_version, PROMPT_VERSION);
   assert.ok(stored.received_at);
 });
 

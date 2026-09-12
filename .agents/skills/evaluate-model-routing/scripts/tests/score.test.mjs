@@ -138,6 +138,21 @@ test('a below-threshold stage reports no composite and no rank', () => {
   assert.equal(result.signals.implement.signal, 'no_comparable_evidence');
 });
 
+test('one published release scores for every provider route that claims it', () => {
+  const config = {
+    ...CONFIG,
+    model_aliases: [
+      { route_id: 'p/a', source: 'bench', source_name: 'a', source_slug: 'a', canonical_release: 'a', evidence_scope: 'model' },
+      { route_id: 'p/b', source: 'bench', source_name: 'a', source_slug: 'a', canonical_release: 'a', evidence_scope: 'model' },
+    ],
+  };
+  const result = run(rows(20), { candidates: ['p/a', 'p/b'], stages: [{ task: 'implement', routes: [{ rank: 1, model_id: 'p/a' }] }] }, config);
+  const first = result.routes['p/a'].observations[0];
+  const second = result.routes['p/b'].observations[0];
+  assert.equal(first.percentile, second.percentile, 'the same published row yields the same percentile for both routes');
+  assert.equal(result.stages.implement.rows.find((row) => row.route_id === 'p/b').coverage, 0.5);
+});
+
 test('proxy-family observations stay visible and unscored', () => {
   const result = run(rows(20));
   const route = result.routes['p/proxy'];
@@ -182,9 +197,35 @@ test('disagreements ignore observations from different units', () => {
   assert.deepEqual(conflicts, []);
 });
 
-test('an ineligible baseline yields the baseline_evidence_only signal', () => {
+test('routes with equal evidence share a rank instead of splitting on the route name', () => {
+  const entries = [ENTRY, { ...ENTRY, id: 'bench2', adapter: 'bench' }];
+  const sharedRows = rows(20);
+  const units = buildUnits({
+    entries,
+    rows: [...sharedRows, ...sharedRows.map((row) => ({ ...row, benchmark: 'bench2' }))],
+    snapshot: SNAPSHOT,
+    effortOrder: CONFIG.effort_rank,
+  });
+  const registry = { byId: new Map(entries.map((entry) => [entry.id, entry])), benchmarks: entries };
+  const config = { ...CONFIG, model_aliases: [
+    { route_id: 'p/a', source: 'bench', source_name: 'a', source_slug: 'a', canonical_release: 'a', evidence_scope: 'model' },
+    { route_id: 'p/b', source: 'bench', source_name: 'b', source_slug: 'b', canonical_release: 'b', evidence_scope: 'model' },
+    { route_id: 'p/c', source: 'bench2', source_name: 'a', source_slug: 'a', canonical_release: 'a', evidence_scope: 'model' },
+    { route_id: 'p/d', source: 'bench2', source_name: 'b', source_slug: 'b', canonical_release: 'b', evidence_scope: 'model' },
+  ] };
+  const manifest = { candidates: ['p/a', 'p/b', 'p/c', 'p/d'], stages: [{ task: 'implement', routes: [{ rank: 1, model_id: 'p/a' }] }] };
+  const result = score({ config, registry, manifest, units, referenceTime: '2026-09-11T00:00:00.000Z' });
+  const byRoute = new Map(result.stages.implement.rows.map((row) => [row.route_id, row]));
+  // bench and bench2 publish the same values, so p/a ties with p/c and p/b ties with p/d.
+  assert.equal(byRoute.get('p/a').score, byRoute.get('p/c').score);
+  assert.equal(byRoute.get('p/a').rank, byRoute.get('p/c').rank);
+  assert.deepEqual(byRoute.get('p/a').tied_with, ['p/c']);
+  assert.notEqual(byRoute.get('p/a').rank, byRoute.get('p/b').rank);
+});
+
+test('an ineligible baseline yields the baseline_unrankable signal', () => {
   const result = run(rows(20), { candidates: ['p/a', 'p/b', 'p/proxy'], stages: [{ task: 'implement', routes: [{ rank: 1, model_id: 'p/proxy' }] }] });
-  assert.equal(result.signals.implement.signal, 'baseline_evidence_only');
+  assert.equal(result.signals.implement.signal, 'baseline_unrankable');
   assert.deepEqual(result.signals.implement.baseline, 'p/proxy');
   assert.deepEqual(result.signals.implement.eligible_candidates, ['p/a', 'p/b']);
 });

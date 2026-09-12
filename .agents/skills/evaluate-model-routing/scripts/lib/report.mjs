@@ -3,7 +3,7 @@
 
 import { stripInternal } from './util.mjs';
 
-export const PIPELINE_VERSION = 1;
+export const PIPELINE_VERSION = 3;
 export const REPORT_SECTIONS = [
   'Run metadata',
   'Executive summary',
@@ -65,6 +65,11 @@ function fmt(value, digits = 3) {
 
 function pct(value) {
   return typeof value === 'number' ? `${(value * 100).toFixed(1)}%` : 'n/a';
+}
+
+function rankLabel(row) {
+  if (row.rank === null || row.rank === undefined) return '-';
+  return row.tied_with?.length > 0 ? `${row.rank} (tied with ${row.tied_with.join(', ')})` : `${row.rank}`;
 }
 
 function uniqueCapabilities(report) {
@@ -186,7 +191,7 @@ export function renderMarkdown(report) {
     const ranked = [...stageReport.rows].sort((a, b) => (a.rank ?? Number.MAX_SAFE_INTEGER) - (b.rank ?? Number.MAX_SAFE_INTEGER) || a.route_id.localeCompare(b.route_id));
     for (const row of ranked) {
       out.push(
-        `| ${row.rank ?? '-'} | ${row.route_id} | ${row.score === null ? 'n/a' : fmt(row.score)} | ${pct(row.coverage)} | ${fmt(row.scored_weight, 2)} | ${row.eligible ? 'ranked' : 'evidence only'} | ${row.missing_capabilities.map((entry) => `${entry.id} (${entry.weight})`).join(', ') || 'none'} |`,
+        `| ${rankLabel(row)} | ${row.route_id} | ${row.score === null ? 'n/a' : fmt(row.score)} | ${pct(row.coverage)} | ${fmt(row.scored_weight, 2)} | ${row.eligible ? 'ranked' : 'evidence only'} | ${row.missing_capabilities.map((entry) => `${entry.id} (${entry.weight})`).join(', ') || 'none'} |`,
       );
     }
     out.push('');
@@ -346,7 +351,7 @@ ${htmlTable(['Source', 'Status', 'Retrieved', 'SHA-256', 'URL'], sourceRows)}</s
       const rows = [...stageReport.rows]
         .sort((a, b) => (a.rank ?? Number.MAX_SAFE_INTEGER) - (b.rank ?? Number.MAX_SAFE_INTEGER) || a.route_id.localeCompare(b.route_id))
         .map((row) => [
-          escapeHtml(row.rank ?? '-'),
+          escapeHtml(rankLabel(row)),
           escapeHtml(row.route_id),
           escapeHtml(row.score === null ? 'n/a' : fmt(row.score)),
           escapeHtml(pct(row.coverage)),

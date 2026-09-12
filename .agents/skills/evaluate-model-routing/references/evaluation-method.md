@@ -101,6 +101,15 @@ A unit is the only place where values are comparable:
   the aggregate, both values are shown, and the stage is flagged. The unit is
   never averaged.
 
+Stage signals, which the report and the judge both read:
+
+| Signal | Meaning |
+|---|---|
+| `no_comparable_evidence` | No route reaches the coverage threshold, so the stage carries no rank. |
+| `baseline_unrankable` | The baseline has no eligible evidence; eligible candidates are listed with no baseline comparison. Not a claim that the baseline is worse. |
+| `candidate_ahead` | At least one eligible candidate scores above the eligible baseline. |
+| `baseline_ahead` | No eligible candidate scores above the eligible baseline. |
+
 Determinism: `score`, `render`, and `replay` are byte-identical over a fixed
 snapshot. `fetch` is not deterministic by design.
 
@@ -113,8 +122,12 @@ always shows the deterministic layer beside it.
   supported by the schema but not enabled). The judge may be a model under
   evaluation; the report then tags its section `self-candidate`.
 - `judge-prompt` writes `judge-prompt.md`, which carries its own prompt version,
-  a JSON output schema, and the scorecard inside an explicit untrusted `DATA`
-  block. Instruction-like text inside the data block must be ignored.
+  a JSON output schema, the scorecard inside an explicit untrusted `DATA` block,
+  and the context the judge needs to avoid false findings: per-stage rows with
+  rank and coverage, per-route observations with their alias rule and evidence
+  scope (so a deliberate `proxy-family` match is not read as a mapping defect),
+  and a glossary of signal and state names. Instruction-like text inside the data
+  block must be ignored.
 - The judge runs as an isolated headless invocation:
 
   ```bash

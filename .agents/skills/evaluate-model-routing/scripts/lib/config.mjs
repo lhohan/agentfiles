@@ -173,14 +173,24 @@ export function maxAgeFor(config, benchmarkId) {
   return config.benchmark_overrides[benchmarkId]?.max_snapshot_age_days ?? config.max_snapshot_age_days;
 }
 
-/** Resolve the alias record for one source row, or null. */
-export function resolveAlias(config, { sourceIds, sourceSlug, sourceName }) {
+/**
+ * Resolve every alias record that matches one source row. Two routes can claim
+ * the same published release through different providers, and both must receive
+ * the observation.
+ */
+export function resolveAliases(config, { sourceIds, sourceSlug, sourceName }) {
   const keySlug = sourceSlug ?? '';
   const keyName = normalizeName(sourceName);
+  const matches = [];
+  const seenRoutes = new Set();
   for (const alias of config.model_aliases) {
     if (!sourceIds.includes(alias.source)) continue;
     const aliasSlug = alias.source_slug ?? normalizeName(alias.source_name);
-    if ((keySlug && aliasSlug === keySlug) || aliasSlug === keyName) return alias;
+    if ((keySlug && aliasSlug === keySlug) || aliasSlug === keyName) {
+      if (seenRoutes.has(alias.route_id)) continue;
+      seenRoutes.add(alias.route_id);
+      matches.push(alias);
+    }
   }
-  return null;
+  return matches;
 }

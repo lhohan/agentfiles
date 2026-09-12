@@ -4,7 +4,7 @@
 
 import { CliError, EXIT, invalidInput } from './errors.mjs';
 
-export const PROMPT_VERSION = 1;
+export const PROMPT_VERSION = 3;
 
 const ASSESSMENT_KEYS = ['strengths', 'risks', 'disqualifiers', 'confidence', 'divergence'];
 
@@ -31,17 +31,60 @@ export function buildJudgePrompt({ config, report }) {
             score: row.score,
             coverage: row.coverage,
             eligible: row.eligible,
+            rank: row.rank ?? null,
             missing_capabilities: row.missing_capabilities,
           })),
         },
       ]),
     ),
+    route_evidence: Object.fromEntries(
+      report.candidates.map((route) => {
+        const routeReport = report.scorecard.routes[route] ?? { observations: [], unscored_observations: [] };
+        return [
+          route,
+          [
+            ...routeReport.observations.map((observation) => ({
+              benchmark: observation.benchmark,
+              unit_key: observation.unit_key,
+              state: 'scored',
+              source_scope: observation.source_scope,
+              percentile: observation.percentile,
+              publisher_name: observation.model_display,
+              alias_rule: observation.alias.note ?? null,
+            })),
+            ...routeReport.unscored_observations.map((observation) => ({
+              benchmark: observation.benchmark,
+              unit_key: observation.unit_key,
+              state: observation.source_scope === 'proxy-family' ? 'proxy-family (deliberately not scored)' : 'contested (excluded)',
+              source_scope: observation.source_scope,
+              percentile: observation.percentile,
+              publisher_name: observation.model_display,
+              alias_rule: observation.alias.note ?? null,
+            })),
+          ],
+        ];
+      }),
+    ),
     units: report.scorecard.units.map((unit) => ({
       unit_key: unit.unit_key,
       status: unit.status,
       population_size: unit.population_size,
+      snapshot_retrieved_at: unit.snapshot.retrieved_at,
+      snapshot_age_days: unit.snapshot_age_days ?? null,
+      max_snapshot_age_days: unit.max_snapshot_age_days ?? null,
       population: unit.population.map((row) => ({ model: row.model_display, value: row.value, percentile: row.percentile, uncertainty: row.uncertainty })),
     })),
+    glossary: {
+      'signal: no_comparable_evidence': 'No route reaches the coverage threshold for this stage, so the stage carries no rank.',
+      'signal: baseline_unrankable': 'The baseline route has no eligible evidence, so eligible candidates are listed with no baseline comparison. This is not a claim that the baseline is worse.',
+      'signal: candidate_ahead': 'At least one eligible candidate scores above the eligible baseline.',
+      'signal: baseline_ahead': 'No eligible candidate scores above the eligible baseline.',
+      'state: evidence only': 'A stage row below the coverage threshold: observations are shown, but no rank, no composite, and no recommendation exist.',
+      'coverage': 'Present weight divided by total stage weight. Missing weight is displayed and never redistributed.',
+      'percentile': 'Computed inside one unit as (models below + 0.5 x models tied) / population, inverted for lower-is-better metrics. Tied models share one percentile, so exact rank differences inside a unit are not meaningful.',
+      'contested_tolerance': 'The gap that counts as a disagreement between two observations of one route in one unit. It is not yet applied to the gap between two routes in a stage.',
+      'route_evidence entry': 'unit_key names the comparable unit; publisher_name is the name the board publishes; alias_rule records why a published name maps to this route; source_scope records whether the evidence is the routed release (model) or family-level (proxy-family, never scored).',
+    },
   };
   return `# Model-routing judge prompt (version ${PROMPT_VERSION})
 
