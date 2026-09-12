@@ -17,6 +17,7 @@ import { score } from './lib/score.mjs';
 import { buildReport, renderHtml, renderMarkdown } from './lib/report.mjs';
 import { buildJudgePrompt, judgePromptFilename, validateJudgeResult } from './lib/judge.mjs';
 import { calibrate } from './lib/calibration.mjs';
+import { writeIndex } from './lib/index-page.mjs';
 import { readJson, stableStringify, writeJson } from './lib/util.mjs';
 
 const REQUIRED_NODE_MAJOR = 20;
@@ -32,6 +33,7 @@ Commands:
   judge-import  Validate a judge response and store it
   replay        Re-score report.json and compare with the embedded scorecard
   judge-calibrate  Check the judge against frozen scorecards with planted defects
+  index         Write index.html listing every review under the review root
   all           fetch, score, judge-prompt, render (recommendations may follow)
 
 Options:
@@ -40,6 +42,7 @@ Options:
   --run <dir>            Run directory (default: docs/routing-reviews/<date>-<agent>-<slug>)
   --sources <a,b>        Restrict fetch to these adapters
   --judge-result <file>  Judge response (default: <run>/judge-result.json)
+  --root <dir>           Review root for the index (default: docs/routing-reviews)
   --json                 Print machine-readable output on stdout
   --help                 Print this help
 
@@ -71,6 +74,7 @@ function parseArgs(argv) {
     else if (arg === '--run') options.run = takeValue();
     else if (arg === '--sources') options.sources = takeValue().split(',').map((value) => value.trim()).filter(Boolean);
     else if (arg === '--judge-result') options.judgeResult = takeValue();
+    else if (arg === '--root') options.root = takeValue();
     else if (arg.startsWith('--')) {
       throw invalidInput(`Unknown option ${arg}`, 'Option is not part of the CLI contract', ['Run: node evaluate.mjs --help']);
     } else positionals.push(arg);
@@ -263,6 +267,13 @@ function commandJudgeCalibrate({ options, config, runDir }) {
   return EXIT.ok;
 }
 
+function commandIndex({ options }) {
+  const root = resolve(options.root ?? join(REPO_ROOT, 'docs', 'routing-reviews'));
+  const result = writeIndex({ root });
+  emit(options, { command: 'index', ...result }, [`Wrote ${result.path} (${result.complete} complete review(s), ${result.runs - result.complete} incomplete)`]);
+  return EXIT.ok;
+}
+
 function commandReplay({ options, runDir }) {
   const path = join(runDir, 'report.json');
   if (!existsSync(path)) {
@@ -310,7 +321,7 @@ async function main() {
   const [command, ...rest] = positionals;
   if (rest.length > 0) throw invalidInput(`Unexpected argument "${rest[0]}"`, 'Only one command is accepted', ['Run: node evaluate.mjs --help']);
 
-  const context = loadInputs(options);
+  const context = command === 'index' ? { options } : loadInputs(options);
   switch (command) {
     case 'fetch':
       return await commandFetch(context);
@@ -324,6 +335,8 @@ async function main() {
       return commandJudgeImport(context);
     case 'judge-calibrate':
       return commandJudgeCalibrate(context);
+    case 'index':
+      return commandIndex(context);
     case 'replay':
       return commandReplay(context);
     case 'all':

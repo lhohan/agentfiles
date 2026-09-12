@@ -173,6 +173,19 @@ One directory per review: `docs/routing-reviews/YYYY-MM-DD-<agent>-<slug>/`
 containing `report.json`, `report.md`, and `report.html` (self-contained, inline
 CSS, no CDN). Raw snapshots live in `scripts/cache/` and are gitignored.
 
+`index.html` in the review root lists every run: date, agent, ranked stages,
+evidence-only stages, judge state, calibration figure, and recommendation
+decisions, with links to each report. Run `node scripts/evaluate.mjs index` to
+rebuild it. A run directory without a `report.json` appears in the index as an
+incomplete run, never silently omitted.
+
+The HTML report tints the capability matrix: scored cells move from red to green
+with the percentile value, and empty cells take a tint by reason (`no alias`
+amber, `excluded unit` violet, `evidence only` blue, `no source` and
+`not on board` neutral). Colour repeats what the text already states, and every
+cell carries a tooltip with the full explanation; the legend sits under section
+4. The Markdown report stays plain text.
+
 Intermediates in the same directory: `observations.json` (units and source
 provenance), `scorecard.json` (scores), `judge-prompt.md`, `judge-result.json`.
 Commit `manifest.json`, `judge-prompt.md`, and the three report files;
@@ -224,10 +237,12 @@ node .agents/skills/evaluate-model-routing/scripts/evaluate.mjs <command> [optio
 | `judge-import` | judge response | validated `judge-result.json` | 0 ok; 2 missing file; 5 schema mismatch |
 | `replay` | `report.json` | scorecard on stdout | 0 ok; 6 mismatch |
 | `judge-calibrate` | frozen fixtures | prompts, `calibration.json` | 0 ok; 7 calibration miss |
+| `index` | every run directory under the review root | `index.html` | 0 ok; 2 invalid input |
 | `all` | manifest | all of the above | highest severity of the steps |
 
 Other options: `--run <dir>` (default
-`docs/routing-reviews/<date>-<agent>-<slug>`), `--config <file>`, `--json`
+`docs/routing-reviews/<date>-<agent>-<slug>`), `--config <file>`, `--root <dir>`
+(review root for `index`, default `docs/routing-reviews`), `--json`
 (machine-readable stdout), `--help`.
 
 Rules:

@@ -1,5 +1,5 @@
 {
-  "report_version": 5,
+  "report_version": 6,
   "meta": {
     "agent": "pi",
     "profile": ".agents/skills/evaluate-model-routing/references/agents/pi.md",
@@ -9,7 +9,7 @@
     "reference_time": "2026-09-12T06:13:45.076Z",
     "manifest_hash": "17463f13e5b4c52c",
     "config_hash": "3905af56bb3b1fca",
-    "pipeline_version": 5,
+    "pipeline_version": 6,
     "thresholds": {
       "rank_threshold_coverage": 0.5,
       "max_snapshot_age_days": 30,

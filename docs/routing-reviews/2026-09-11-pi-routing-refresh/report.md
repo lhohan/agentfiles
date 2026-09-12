@@ -6,7 +6,7 @@
 - Profile: .agents/skills/evaluate-model-routing/references/agents/pi.md (verified 2026-09-11)
 - Run: 2026-09-11-routing-refresh
 - Reference time: 2026-09-12T06:13:45.076Z
-- Pipeline version: 5; config hash: 3905af56bb3b1fca; manifest hash: 17463f13e5b4c52c
+- Pipeline version: 6; config hash: 3905af56bb3b1fca; manifest hash: 17463f13e5b4c52c
 - Coverage threshold: 0.5; maximum snapshot age: 30 days; contested tolerance: 0.05
 - Judge: opencode-go/hy4-preview (thinking high)
 

@@ -2,8 +2,9 @@
 // Every remote value is escaped before it reaches the HTML.
 
 import { stripInternal } from './util.mjs';
+import { coverageLegend, escapeHtml, htmlTable, renderPage, safeUrl, scoreTint, stateTint, stateTitle } from './html.mjs';
 
-export const PIPELINE_VERSION = 5;
+export const PIPELINE_VERSION = 6;
 export const REPORT_SECTIONS = [
   'Run metadata',
   'Executive summary',
@@ -303,28 +304,8 @@ export function renderMarkdown(report) {
   return `${out.join('\n')}\n`;
 }
 
-function escapeHtml(value) {
-  return String(value)
-    .replace(/&/g, '&amp;')
-    .replace(/</g, '&lt;')
-    .replace(/>/g, '&gt;')
-    .replace(/"/g, '&quot;')
-    .replace(/'/g, '&#39;');
-}
-
-function safeUrl(value) {
-  try {
-    const url = new URL(String(value));
-    return url.protocol === 'http:' || url.protocol === 'https:' ? url.href : '';
-  } catch {
-    return '';
-  }
-}
-
-function htmlTable(headers, rows) {
-  const head = headers.map((header) => `<th>${escapeHtml(header)}</th>`).join('');
-  const body = rows.map((row) => `<tr>${row.map((cell) => `<td>${cell}</td>`).join('')}</tr>`).join('');
-  return `<table><thead><tr>${head}</tr></thead><tbody>${body}</tbody></table>`;
+function reportTitle(report) {
+  return `Model-routing review: ${report.meta.agent} ${report.meta.run_date}`;
 }
 
 export function renderHtml(report) {
@@ -363,12 +344,14 @@ ${htmlTable(['Source', 'Status', 'Retrieved', 'SHA-256', 'URL'], sourceRows)}</s
     escapeHtml(row.route),
     ...matrix.capabilities.map((capability) => {
       const cell = row.cells[capability];
-      if (cell.state === 'scored') return escapeHtml(fmt(cell.score));
-      if (cell.state === 'evidence only') return 'evidence only';
-      return `<span class="gap">${escapeHtml(cell.state)}</span>`;
+      const label = cell.state === 'scored' ? fmt(cell.score) : cell.state;
+      const style = cell.state === 'scored' ? scoreTint(cell.score) : stateTint(cell.state);
+      const title = cell.state === 'scored' ? `${stateTitle('scored')} Mean percentile ${fmt(cell.score)} over ${cell.n} observation(s).` : stateTitle(cell.state);
+      const marked = cell.state === 'no source' || cell.state === 'not on board' ? `<span class="muted">${escapeHtml(label)}</span>` : escapeHtml(label);
+      return `<span title="${escapeHtml(title)}" style="display:block;padding:.15rem .3rem;border-radius:2px;${style}">${marked}</span>`;
     }),
   ]);
-  sections.push(`<section><h2>4. Capability coverage matrix</h2><p class="muted">Values are the mean percentile rank of the observations for that capability. Empty cells state why: <code>no source</code> (no tier A benchmark carries this capability), <code>excluded unit</code> (the board is too small or stale), <code>no alias</code> (add an alias record), <code>not on board</code> (the model has no published row).</p>${htmlTable(['Route', ...matrix.capabilities], matrixRows)}</section>`);
+  sections.push(`<section><h2>4. Capability coverage matrix</h2><p class="muted">Values are the mean percentile rank of the observations for that capability. Tint shows the same information as the number; the text always states the reason.</p>${coverageLegend()}${htmlTable(['Route', ...matrix.capabilities], matrixRows)}</section>`);
 
   const stageBlocks = Object.entries(report.scorecard.stages)
     .map(([stage, stageReport]) => {
@@ -446,29 +429,9 @@ ${htmlTable(['Source', 'Status', 'Retrieved', 'SHA-256', 'URL'], sourceRows)}</s
   ]);
   sections.push(`<section><h2>10. Evidence appendix</h2>${htmlTable(['Route', 'Benchmark', 'Board / metric / harness', 'Value', 'Percentile', 'Scope', 'Role', 'Date', 'Attempts', 'Uncertainty', 'Source'], evidenceRows)}${htmlTable(['Unit', 'Population', 'Status', 'Snapshot', 'SHA-256'], unitRows)}<p class="muted">Rejected and evidence-only frameworks are recorded in <code>references/benchmarks.md</code>.</p></section>`);
 
-  return `<!doctype html>
-<html lang="en">
-<head>
-<meta charset="utf-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>Model-routing review: ${escapeHtml(report.meta.agent)} ${escapeHtml(report.meta.run_date)}</title>
-<style>
-:root { color-scheme: light dark; }
-body { font-family: system-ui, -apple-system, "Segoe UI", sans-serif; line-height: 1.5; margin: 0 auto; max-width: 72rem; padding: 2rem 1rem; }
-h1 { font-size: 1.6rem; } h2 { font-size: 1.25rem; margin-top: 2rem; border-bottom: 1px solid currentColor; padding-bottom: .25rem; }
-h3 { font-size: 1.05rem; margin-top: 1.5rem; }
-table { border-collapse: collapse; width: 100%; margin: .75rem 0; font-size: .875rem; }
-th, td { border: 1px solid color-mix(in srgb, currentColor 25%, transparent); padding: .35rem .5rem; text-align: left; vertical-align: top; }
-th { background: color-mix(in srgb, currentColor 8%, transparent); }
-code { font-family: ui-monospace, monospace; font-size: .9em; }
-.muted { opacity: .75; } .gap { color: #b45309; } .warn { color: #b45309; font-weight: 600; }
-ul { padding-left: 1.25rem; }
-</style>
-</head>
-<body>
-<h1>Model-routing review: ${escapeHtml(report.meta.agent)} (${escapeHtml(report.meta.run_date)})</h1>
-${sections.join('\n')}
-</body>
-</html>
-`;
+  return renderPage({
+    title: reportTitle(report),
+    heading: `Model-routing review: ${report.meta.agent} (${report.meta.run_date})`,
+    body: sections.join('\n'),
+  });
 }

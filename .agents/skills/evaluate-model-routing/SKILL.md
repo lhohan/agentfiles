@@ -54,7 +54,8 @@ Profiles document current configuration; live tool configuration is authoritativ
    `judge-calibrate` to measure the judge against frozen scorecards with planted
    defects; the figure is recorded in section 6 and replaces the judge's
    self-reported confidence, which is not calibrated.
-6. **Render.** `node scripts/evaluate.mjs render --manifest <file>`.
+6. **Render.** `node scripts/evaluate.mjs render --manifest <file>`, then
+   `node scripts/evaluate.mjs index` to refresh the review index.
 7. **Recommend.** Read the scorecard, then add `recommendations` to the manifest
    (one per stage, with rationale) and re-render. The renderer never invents a
    recommendation.
