@@ -42,6 +42,13 @@ region = ""
 [providers.extra_headers]
 
 [[providers]]
+name = "omlx"
+api_base = "http://localhost:8000/v1"
+api_key_env_var = "OMLX_API_KEY"
+api_style = "openai"
+backend = "generic"
+
+[[providers]]
 name = "opencode-go"
 api_base = "https://opencode.ai/zen/go/v1"
 api_key_env_var = "OPENCODE_VIBE_API_KEY"
@@ -75,6 +82,14 @@ provider = "mistral"
 alias = "brainstorming"
 temperature = 0.9
 thinking = "low"
+
+[[models]]
+name = "medgemma-1.5-4b-it-4bit"
+provider = "omlx"
+alias = "medgemma"
+temperature = 0.3
+thinking = "off"
+supports_images = true
 
 [[models]]
 name = "kimi-k2.7-code"
@@ -295,6 +310,10 @@ denylist = []
 sensitive_patterns = [
     "**/.env",
     "**/.env.*",
+    "**/auth.json",
+    "**/.claude.json",
+    "**/.claude.json.*",
+    "**/.omlx/settings.json",
 ]
 max_output_bytes = 64000
 default_max_matches = 100
@@ -361,11 +380,16 @@ max_todos = 100
 permission = "always"
 allowlist = [
     "/Users/hans/.vibe/plans/*",
+    "/private/tmp/plan-review-8tj/*",
 ]
 denylist = []
 sensitive_patterns = [
     "**/.env",
     "**/.env.*",
+    "**/auth.json",
+    "**/.claude.json",
+    "**/.claude.json.*",
+    "**/.omlx/settings.json",
 ]
 max_write_bytes = 64000
 create_parent_dirs = true
@@ -377,6 +401,10 @@ denylist = []
 sensitive_patterns = [
     "**/.env",
     "**/.env.*",
+    "**/auth.json",
+    "**/.claude.json",
+    "**/.claude.json.*",
+    "**/.omlx/settings.json",
 ]
 fuzzy_threshold = 0.9
 
@@ -384,10 +412,15 @@ fuzzy_threshold = 0.9
 permission = "always"
 allowlist = [
     "/Users/hans/.vibe/plans/*",
+    "/Users/hans/dev/agentfiles/.agents/skills/agentfiles-commit-prefixes/*",
 ]
 denylist = []
 sensitive_patterns = [
     "**/.env",
     "**/.env.*",
+    "**/auth.json",
+    "**/.claude.json",
+    "**/.claude.json.*",
+    "**/.omlx/settings.json",
 ]
 max_read_bytes = 64000
