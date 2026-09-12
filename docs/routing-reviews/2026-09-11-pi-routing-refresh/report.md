@@ -6,7 +6,7 @@
 - Profile: .agents/skills/evaluate-model-routing/references/agents/pi.md (verified 2026-09-11)
 - Run: 2026-09-11-routing-refresh
 - Reference time: 2026-09-11T22:03:16.035Z
-- Pipeline version: 1; config hash: ff5336211b39add4; manifest hash: e1349ce00551b6b1
+- Pipeline version: 1; config hash: ff5336211b39add4; manifest hash: 4d1c2b4392303b84
 - Coverage threshold: 0.5; maximum snapshot age: 30 days; contested tolerance: 0.05
 - Judge: opencode-go/hy4-preview (thinking high)
 
@@ -26,9 +26,9 @@ Sources:
 - Capabilities with no observed evidence for these routes: adversarial_analysis, instruction_following, long_context, multimodal, reasoning, repository_understanding, review.
 - Routes with no observed evidence: openai-codex/gpt-5.6-luna, opencode-go/hy3.
 - All tier A sources responded.
-- No judge assessment: this report carries the missing-judge state.
+- A judge assessment is present.
 
-First run of the semi-deterministic pipeline. The judge step was not executed: the report carries the missing-judge state, and judge-prompt.md holds the exact command for the operator.
+First run of the semi-deterministic pipeline. Judge opencode-go/hy4-preview (thinking high, prompt version 1) answered with low confidence and agreed with the deterministic outcome: no routing change is supported. Its assessment also exposed three presentation gaps: no_evidence does not distinguish a missing source from an excluded or observation-less source; the judge prompt omits alias scope, so the proxy-family match for deepseek-v4.1-flash reads as a mapping defect; and the judge prompt omits rank, which leaves the threshold-edge row unexplained.
 
 ## 3. Baseline route table and re-evaluation
 
@@ -168,7 +168,42 @@ Evidence-only rows carry no rank, no composite, and no recommendation. Their obs
 
 ## 6. Fuzzy assessment (judge)
 
-State: `missing-judge`. No advisory assessment is present. The deterministic scorecard stands unchanged.
+Judge: opencode-go/hy4-preview (thinking high)
+
+Prompt version: 1; received: 2026-09-12T06:06:51.095Z
+
+Strengths:
+
+- The scorecard transparently withholds ranks where evidence is insufficient: for run_stage_plan, review_plan, review, run_stage_break, and general it reports signal "no_comparable_evidence" with the rationale "No route reaches the coverage threshold for this stage, so the stage carries no rank."
+- In the implement stage the scorecard does not fabricate a winner: it reports signal "baseline_evidence_only" and the rationale "The baseline route has no eligible evidence for this stage; eligible candidates are listed without a baseline comparison", with baseline_coverage 0 for opencode-go/deepseek-v4.1-flash.
+- Per-stage weights and missing_capabilities are published, so gaps are explicit; for example, the review stage weights capability "review" at 0.5 and every row lists it missing, consistent with the "no_comparable_evidence" rationale.
+- Benchmark units are labeled by status and small boards are excluded: the swebench-multimodal units are "small-board-excluded" (population_size 6 and 2) and are not used to produce ranks.
+- The candidate_routes and baseline mapping are fully enumerated, and the implement stage lists eligible_candidates (mistral/zai-glm-5-2, openai-codex/gpt-5.6-sol, opencode-go/glm-5.3, opencode-go/gpt-5.6-luna) rather than silently ranking them against an ineligible baseline.
+
+Risks:
+
+- Coverage is too low to decide for five of six stages: run_stage_plan, review_plan, review, run_stage_break, and general all carry "no_comparable_evidence" and the quoted "No route reaches the coverage threshold" rationale, so the scorecard supports no routing change or rank for those stages.
+- For implement, the baseline route opencode-go/deepseek-v4.1-flash is ineligible (score null, baseline_coverage 0) and the quoted rationale confirms eligible candidates are listed "without a baseline comparison"; therefore the scorecard does not support switching the implement route to any eligible candidate.
+- Key capabilities are missing across all routes in several stages (e.g., "review" in review, "adversarial_analysis" in run_stage_break, "multimodal" in general), so even the highest-coverage implement candidates remain partially uncovered and no stage except implement reaches the rank_threshold_coverage.
+- Route-to-benchmark mapping is imperfect: the deepswe population contains "deepseek-v4-flash", but candidate route opencode-go/deepseek-v4.1-flash still has coverage 0 and score null in implement, so a naming/version mismatch can zero out coverage for a route that appears in raw data.
+- The general stage assigns weight 0.2 to "multimodal", but the only multimodal units are "small-board-excluded", so no route can cover that weight and general coverage is 0 for every row.
+
+Disqualifiers:
+
+- No routing change is supported for any stage. Five stages are disqualified by "no_comparable_evidence" and coverage too low to decide; the implement stage is disqualified by "baseline_evidence_only" plus the rationale that the baseline has no eligible evidence and candidates are listed without a baseline comparison.
+- The current baselines must remain in place for the purpose of this review because the scorecard provides no comparable evidence to justify replacement: run_stage_plan opencode-go/glm-5.3, review_plan and review openai-codex/gpt-5.6-sol, implement opencode-go/deepseek-v4.1-flash, run_stage_break opencode-go/hy3, general openai-codex/gpt-5.6-luna.
+- Any recommendation to adopt an implement candidate (mistral/zai-glm-5-2, openai-codex/gpt-5.6-sol, opencode-go/glm-5.3, opencode-go/gpt-5.6-luna) is disqualified: those candidates are eligible but there is no baseline comparison, and rule 2 forbids recommending an unsupported change.
+
+Judge confidence: low
+
+Divergence from the scorecard:
+
+- Internal signal/rationale divergence in implement: the signal is "baseline_evidence_only", yet baseline_coverage is 0 and the rationale says "The baseline route has no eligible evidence for this stage; eligible candidates are listed without a baseline comparison"; the detailed rows show non-baseline candidates eligible while the baseline is ineligible, so the evidence is candidate-side, not baseline-side.
+- The general stage weights "multimodal" at 0.2, but all multimodal benchmark units are "small-board-excluded" (population_size 6 and 2, status "small-board-excluded"), so the weighted capability has no usable population; this diverges from the intent of weighting a capability that cannot be covered by any route.
+- Benchmark populations contain model names that resemble candidate routes (e.g., "GLM-5.3", "GPT-5.6 Sol", "GPT-5.6 Luna" in tbench-v2.1; "glm-5-3", "gpt-5-6-sol", "gpt-5-6-luna" in deepswe), yet the scorecard maps most of these to low or zero staged coverage; the mapped coverage figures, not raw benchmark presence, drive eligibility, which is a mapping divergence worth flagging.
+- The mistral/zai-glm-5-2 row in implement is eligible at exactly the rank_threshold_coverage while three other candidates exceed it; the scorecard does not publish a rank or margin, so I do not infer or restate any ordering beyond the explicit eligible_candidates list.
+
+The judge is advisory. It cannot change a deterministic score.
 
 ## 7. Divergences and contradictions
 

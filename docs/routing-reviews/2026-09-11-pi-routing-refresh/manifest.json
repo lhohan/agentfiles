@@ -85,5 +85,5 @@
       "rationale": "multimodal has a tier A source but no rows for these routes, and reasoning, instruction_following, and long_context have none. Coverage is 0%, so the session-start model stands."
     }
   ],
-  "notes": "First run of the semi-deterministic pipeline. The judge step was not executed: the report carries the missing-judge state, and judge-prompt.md holds the exact command for the operator."
+  "notes": "First run of the semi-deterministic pipeline. Judge opencode-go/hy4-preview (thinking high, prompt version 1) answered with low confidence and agreed with the deterministic outcome: no routing change is supported. Its assessment also exposed three presentation gaps: no_evidence does not distinguish a missing source from an excluded or observation-less source; the judge prompt omits alias scope, so the proxy-family match for deepseek-v4.1-flash reads as a mapping defect; and the judge prompt omits rank, which leaves the threshold-edge row unexplained."
 }
