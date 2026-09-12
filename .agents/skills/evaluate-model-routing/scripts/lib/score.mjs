@@ -61,6 +61,7 @@ export function disagreements(observations, tolerance) {
  */
 export function score({ config, registry, manifest, units, referenceTime }) {
   const threshold = config.rank_threshold_coverage;
+  const separation = config.min_stage_separation;
   const scoredUnits = [];
   const routeObservations = new Map();
 
@@ -163,7 +164,23 @@ export function score({ config, registry, manifest, units, referenceTime }) {
       observations: scored,
       unscored_observations: unscored,
       conflicts,
+      alias_benchmarks: [...new Set(config.model_aliases.filter((alias) => alias.route_id === route).map((alias) => alias.source))].sort(),
       capacities_present: [...new Set(scored.flatMap((observation) => Object.keys(observation.capabilities)))].sort(),
+    };
+  }
+
+  // Why a capability is uncovered: no source, excluded units, no alias record, or
+  // simply no row on the board. The report renders one state per cell.
+  const declaredCapabilities = [...new Set(Object.values(config.stage_weights).flatMap((weights) => Object.keys(weights)))].sort();
+  const diagnostics = {};
+  for (const capability of declaredCapabilities) {
+    const entries = registry.benchmarks.filter((entry) => entry.tier === 'A' && (entry.capabilities ?? {})[capability]);
+    const own = scoredUnits.filter((unit) => entries.some((entry) => entry.id === unit.benchmark));
+    diagnostics[capability] = {
+      tier_a_benchmarks: entries.map((entry) => entry.id),
+      scored_units: own.filter((unit) => unit.status === 'scored').map((unit) => unit.unit_key),
+      excluded_units: own.filter((unit) => unit.status !== 'scored').map((unit) => unit.unit_key),
+      excluded_reason: own.find((unit) => unit.status !== 'scored')?.status ?? null,
     };
   }
 
@@ -224,18 +241,27 @@ export function score({ config, registry, manifest, units, referenceTime }) {
       });
     }
     const eligible = rows.filter((row) => row.eligible).sort((a, b) => (b.score ?? 0) - (a.score ?? 0) || a.route_id.localeCompare(b.route_id));
-    // Equal scores must share a rank: a tie is not an ordering claim.
+    // A gap at or below min_stage_separation is not an ordering claim. Groups are
+    // anchored on the highest score in the group so differences cannot chain.
     let rank = 0;
-    let previous = null;
+    let anchor = null;
     for (const row of eligible) {
-      if (previous === null || Math.abs((row.score ?? 0) - previous) > 1e-12) {
+      const value = row.score ?? 0;
+      if (anchor === null || Math.abs(value - anchor) > separation + 1e-12) {
         rank += 1;
-        previous = row.score ?? 0;
+        anchor = value;
       }
       row.rank = rank;
     }
     for (const row of eligible) {
-      row.tied_with = eligible.filter((other) => other !== row && other.rank === row.rank).map((other) => other.route_id);
+      const group = eligible.filter((other) => other.rank === row.rank);
+      row.tied_with = group.filter((other) => other !== row).map((other) => other.route_id);
+      row.tie_kind =
+        group.length === 1
+          ? null
+          : group.every((other) => Math.abs((other.score ?? 0) - (row.score ?? 0)) <= 1e-12)
+            ? 'exact'
+            : 'within-tolerance';
     }
     stageReports[stage] = { weights, rank_threshold_coverage: threshold, rows };
   }
@@ -279,29 +305,42 @@ export function score({ config, registry, manifest, units, referenceTime }) {
       continue;
     }
     const ahead = rows
-      .filter((row) => row.eligible && row.route_id !== baselineRoute && (row.score ?? 0) > baselineRow.score)
+      .filter((row) => row.eligible && row.route_id !== baselineRoute && (row.score ?? 0) - baselineRow.score > separation + 1e-12)
       .sort((a, b) => (b.score ?? 0) - (a.score ?? 0))
       .map((row) => row.route_id);
+    const nearAhead = rows
+      .filter((row) => {
+        if (!row.eligible || row.route_id === baselineRoute) return false;
+        const gap = (row.score ?? 0) - baselineRow.score;
+        return gap > 0 && gap <= separation + 1e-12;
+      })
+      .map((row) => row.route_id);
     signals[stage] = {
-      signal: ahead.length > 0 ? 'candidate_ahead' : 'baseline_ahead',
+      signal: ahead.length > 0 ? 'candidate_ahead' : nearAhead.length > 0 ? 'candidate_ahead_within_tolerance' : 'baseline_ahead',
       baseline: baselineRoute,
       baseline_score: baselineRow.score,
       baseline_coverage: baselineRow.coverage,
       candidates_ahead: ahead,
+      candidates_ahead_within_tolerance: nearAhead,
+      min_stage_separation: separation,
       rationale:
         ahead.length > 0
-          ? 'At least one eligible candidate scores above the baseline on this stage weight vector.'
-          : 'No eligible candidate scores above the baseline on this stage weight vector.',
+          ? 'At least one eligible candidate scores above the baseline by more than min_stage_separation.'
+          : nearAhead.length > 0
+            ? 'Candidates score above the baseline only within min_stage_separation, so the difference is not an ordering claim.'
+            : 'No eligible candidate scores above the baseline on this stage weight vector.',
     };
   }
 
   return {
     reference_time: referenceTime,
     threshold_coverage: threshold,
+    min_stage_separation: separation,
     contested_tolerance: config.contested_tolerance,
     effort_rule: 'most recent date, then highest attempt count, then highest published reasoning effort',
     units: scoredUnits,
     routes: routeReports,
+    diagnostics,
     stages: rankedStageReports,
     baseline,
     signals,

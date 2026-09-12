@@ -27,6 +27,7 @@ const CONFIG = {
   rank_threshold_coverage: 0.5,
   max_snapshot_age_days: 30,
   contested_tolerance: 0.05,
+  min_stage_separation: 0.01,
   effort_rank: ['low', 'medium', 'high', 'max'],
   stage_weights: {
     implement: { software_engineering: 0.5, tool_use: 0.3, repository_understanding: 0.2 },
@@ -219,8 +220,30 @@ test('routes with equal evidence share a rank instead of splitting on the route 
   // bench and bench2 publish the same values, so p/a ties with p/c and p/b ties with p/d.
   assert.equal(byRoute.get('p/a').score, byRoute.get('p/c').score);
   assert.equal(byRoute.get('p/a').rank, byRoute.get('p/c').rank);
+  assert.equal(byRoute.get('p/a').tie_kind, 'exact');
   assert.deepEqual(byRoute.get('p/a').tied_with, ['p/c']);
   assert.notEqual(byRoute.get('p/a').rank, byRoute.get('p/b').rank);
+});
+
+test('a gap inside min_stage_separation shares a rank with the group anchor', () => {
+  // One rank step is 0.05 here. Groups are anchored on the highest score, so the
+  // top two routes share rank 1 and the third falls outside the tolerance.
+  const config = { ...CONFIG, min_stage_separation: 0.05, stage_weights: { implement: { software_engineering: 1 } } };
+  const result = run(rows(20), { candidates: ['p/a', 'p/b', 'p/c'], stages: [{ task: 'implement', routes: [{ rank: 1, model_id: 'p/a' }] }] }, config);
+  const byRoute = new Map(result.stages.implement.rows.map((row) => [row.route_id, row]));
+  assert.equal(byRoute.get('p/c').rank, 1);
+  assert.equal(byRoute.get('p/b').rank, 1, 'a 0.05 gap is inside the tolerance');
+  assert.equal(byRoute.get('p/b').tie_kind, 'within-tolerance');
+  assert.deepEqual(byRoute.get('p/b').tied_with, ['p/c']);
+  assert.equal(byRoute.get('p/a').rank, 2, 'the third route is 0.10 below the group anchor, so it does not chain in');
+});
+
+test('a candidate ahead only within the tolerance raises its own signal', () => {
+  const config = { ...CONFIG, min_stage_separation: 0.05, stage_weights: { implement: { software_engineering: 1 } } };
+  const result = run(rows(20), { candidates: ['p/a', 'p/b'], stages: [{ task: 'implement', routes: [{ rank: 1, model_id: 'p/a' }] }] }, config);
+  assert.equal(result.signals.implement.signal, 'candidate_ahead_within_tolerance');
+  assert.deepEqual(result.signals.implement.candidates_ahead, []);
+  assert.deepEqual(result.signals.implement.candidates_ahead_within_tolerance, ['p/b']);
 });
 
 test('an ineligible baseline yields the baseline_unrankable signal', () => {

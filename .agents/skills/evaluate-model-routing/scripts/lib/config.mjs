@@ -11,6 +11,7 @@ const TOP_LEVEL_KEYS = new Set([
   'rank_threshold_coverage',
   'max_snapshot_age_days',
   'contested_tolerance',
+  'min_stage_separation',
   'effort_rank',
   'stage_weights',
   'benchmark_overrides',
@@ -84,6 +85,10 @@ export function loadConfig(path) {
   if (typeof tolerance !== 'number' || tolerance <= 0) {
     throw fail('config.contested_tolerance must be a positive number');
   }
+  const separation = parsed.min_stage_separation;
+  if (typeof separation !== 'number' || separation <= 0 || separation > 1) {
+    throw fail('config.min_stage_separation must be a number in (0, 1]');
+  }
   if (!Array.isArray(parsed.effort_rank) || parsed.effort_rank.some((v) => typeof v !== 'string')) {
     throw fail('config.effort_rank must be an array of strings, lowest effort first');
   }
@@ -152,6 +157,7 @@ export function loadConfig(path) {
     rank_threshold_coverage: threshold,
     max_snapshot_age_days: maxAge,
     contested_tolerance: tolerance,
+    min_stage_separation: separation,
     effort_rank: parsed.effort_rank,
     stage_weights: stageWeights,
     benchmark_overrides: overrides,

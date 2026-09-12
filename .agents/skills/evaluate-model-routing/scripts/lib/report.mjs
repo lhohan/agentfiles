@@ -3,7 +3,7 @@
 
 import { stripInternal } from './util.mjs';
 
-export const PIPELINE_VERSION = 3;
+export const PIPELINE_VERSION = 4;
 export const REPORT_SECTIONS = [
   'Run metadata',
   'Executive summary',
@@ -69,7 +69,8 @@ function pct(value) {
 
 function rankLabel(row) {
   if (row.rank === null || row.rank === undefined) return '-';
-  return row.tied_with?.length > 0 ? `${row.rank} (tied with ${row.tied_with.join(', ')})` : `${row.rank}`;
+  if (!row.tied_with?.length) return `${row.rank}`;
+  return `${row.rank} (tied with ${row.tied_with.join(', ')}${row.tie_kind === 'within-tolerance' ? ', within tolerance' : ''})`;
 }
 
 function uniqueCapabilities(report) {
@@ -86,19 +87,34 @@ function capabilityMatrix(report) {
   for (const route of report.candidates) {
     const cells = {};
     for (const capability of capabilities) {
-      const scored = report.scorecard.routes[route]?.observations.filter((observation) => capability in observation.capabilities) ?? [];
-      const unscored = report.scorecard.routes[route]?.unscored_observations.filter((observation) => capability in observation.capabilities) ?? [];
-      if (scored.length > 0) {
-        cells[capability] = { state: 'scored', score: scored.reduce((sum, observation) => sum + observation.percentile, 0) / scored.length, n: scored.length };
-      } else if (unscored.length > 0) {
-        cells[capability] = { state: 'unscored-evidence-only', n: unscored.length };
-      } else {
-        cells[capability] = { state: 'no_evidence', n: 0 };
-      }
+      cells[capability] = capabilityCell(report, route, capability);
     }
     rows.push({ route, cells });
   }
   return { capabilities, rows };
+}
+
+/**
+ * Why a capability cell is empty, in check order: `no source` needs a new
+ * benchmark, `excluded unit` needs a larger or fresher board, `no alias` needs a
+ * config record, and `not on board` needs a different model choice.
+ */
+export function capabilityCell(report, route, capability) {
+  const routeReport = report.scorecard.routes[route];
+  const scored = routeReport?.observations.filter((observation) => capability in observation.capabilities) ?? [];
+  if (scored.length > 0) {
+    return { state: 'scored', score: scored.reduce((sum, observation) => sum + observation.percentile, 0) / scored.length, n: scored.length };
+  }
+  const unscored = routeReport?.unscored_observations.filter((observation) => capability in observation.capabilities) ?? [];
+  if (unscored.length > 0) return { state: 'evidence only', n: unscored.length };
+
+  const diagnostics = report.scorecard.diagnostics?.[capability] ?? { tier_a_benchmarks: [], scored_units: [], excluded_units: [] };
+  if (diagnostics.tier_a_benchmarks.length === 0) return { state: 'no source', n: 0 };
+  // An excluded unit is a board fact: no route can score it whatever the aliases say.
+  if (diagnostics.scored_units.length === 0) return { state: 'excluded unit', n: 0 };
+  const aliased = (routeReport?.alias_benchmarks ?? []).filter((benchmark) => diagnostics.tier_a_benchmarks.includes(benchmark));
+  if (aliased.length === 0) return { state: 'no alias', n: 0 };
+  return { state: 'not on board', n: 0 };
 }
 
 function executiveSummary(report) {
@@ -110,8 +126,8 @@ function executiveSummary(report) {
   const rankable = stageEntries.filter(([, stage]) => stage.rows.some((row) => row.eligible)).map(([stage]) => stage);
   const unrankable = stageEntries.filter(([, stage]) => !stage.rows.some((row) => row.eligible)).map(([stage]) => stage);
   const matrix = capabilityMatrix(report);
-  const sourceless = matrix.capabilities.filter((capability) => matrix.rows.every((row) => row.cells[capability].state === 'no_evidence'));
-  const noEvidenceRoutes = matrix.rows.filter((row) => matrix.capabilities.every((capability) => row.cells[capability].state === 'no_evidence')).map((row) => row.route);
+  const sourceless = matrix.capabilities.filter((capability) => matrix.rows.every((row) => row.cells[capability].state === 'no source'));
+  const noEvidenceRoutes = matrix.rows.filter((row) => matrix.capabilities.every((capability) => row.cells[capability].state !== 'scored')).map((row) => row.route);
   const lines = [
     `${units.length} comparable unit(s): ${scored} scored, ${smallBoard} excluded as a small board, ${stale} excluded as stale.`,
     rankable.length === 0 ? 'No stage has a route at or above the coverage threshold.' : `Stages that rank: ${rankable.join(', ')}.`,
@@ -170,14 +186,13 @@ export function renderMarkdown(report) {
   out.push('');
 
   out.push('## 4. Capability coverage matrix', '');
-  out.push('Values are the mean percentile rank of the observations for that capability. `evidence only` and `no_evidence` never render as a number.', '');
+  out.push('Values are the mean percentile rank of the observations for that capability. Empty cells state why: `no source` (no tier A benchmark carries this capability), `excluded unit` (the board is too small or stale), `no alias` (add an alias record), `not on board` (the model has no published row).', '');
   out.push(`| Route | ${matrix.capabilities.join(' | ')} |`, `|---|${matrix.capabilities.map(() => '---').join('|')}|`);
   for (const row of matrix.rows) {
     const cells = matrix.capabilities.map((capability) => {
       const cell = row.cells[capability];
       if (cell.state === 'scored') return fmt(cell.score);
-      if (cell.state === 'unscored-evidence-only') return 'evidence only';
-      return 'no_evidence';
+      return cell.state;
     });
     out.push(`| ${row.route} | ${cells.join(' | ')} |`);
   }
@@ -340,11 +355,11 @@ ${htmlTable(['Source', 'Status', 'Retrieved', 'SHA-256', 'URL'], sourceRows)}</s
     ...matrix.capabilities.map((capability) => {
       const cell = row.cells[capability];
       if (cell.state === 'scored') return escapeHtml(fmt(cell.score));
-      if (cell.state === 'unscored-evidence-only') return 'evidence only';
-      return '<span class="gap">no_evidence</span>';
+      if (cell.state === 'evidence only') return 'evidence only';
+      return `<span class="gap">${escapeHtml(cell.state)}</span>`;
     }),
   ]);
-  sections.push(`<section><h2>4. Capability coverage matrix</h2><p class="muted">Values are the mean percentile rank of the observations for that capability. Evidence-only and no-evidence cells never render as a number.</p>${htmlTable(['Route', ...matrix.capabilities], matrixRows)}</section>`);
+  sections.push(`<section><h2>4. Capability coverage matrix</h2><p class="muted">Values are the mean percentile rank of the observations for that capability. Empty cells state why: <code>no source</code> (no tier A benchmark carries this capability), <code>excluded unit</code> (the board is too small or stale), <code>no alias</code> (add an alias record), <code>not on board</code> (the model has no published row).</p>${htmlTable(['Route', ...matrix.capabilities], matrixRows)}</section>`);
 
   const stageBlocks = Object.entries(report.scorecard.stages)
     .map(([stage, stageReport]) => {

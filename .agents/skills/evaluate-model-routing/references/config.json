@@ -4,6 +4,7 @@
   "rank_threshold_coverage": 0.5,
   "max_snapshot_age_days": 30,
   "contested_tolerance": 0.05,
+  "min_stage_separation": 0.05,
   "effort_rank": ["low", "medium", "high", "xhigh", "max"],
   "stage_weights": {
     "run_stage_plan": {

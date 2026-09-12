@@ -20,6 +20,7 @@ const BASE = {
   rank_threshold_coverage: 0.5,
   max_snapshot_age_days: 30,
   contested_tolerance: 0.05,
+  min_stage_separation: 0.05,
   effort_rank: ['low', 'high'],
   stage_weights: { implement: { software_engineering: 1 } },
   benchmark_overrides: {},
@@ -37,6 +38,11 @@ test('a valid settings file loads and hashes', () => {
 test('stage weights must sum to one', () => {
   const path = write('weights.json', { ...BASE, stage_weights: { implement: { software_engineering: 0.5 } } });
   assert.throws(() => loadConfig(path), (error) => error.code === 'INVALID_INPUT' && /sum to 1/.test(error.message));
+});
+
+test('stage separation must be a number in (0, 1]', () => {
+  const path = write('separation.json', { ...BASE, min_stage_separation: 0 });
+  assert.throws(() => loadConfig(path), (error) => /min_stage_separation/.test(error.message));
 });
 
 test('unknown top-level keys are rejected', () => {

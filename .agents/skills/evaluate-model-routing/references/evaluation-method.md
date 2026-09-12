@@ -100,6 +100,19 @@ A unit is the only place where values are comparable:
   `contested_tolerance` when no interval is published). The unit is excluded from
   the aggregate, both values are shown, and the stage is flagged. The unit is
   never averaged.
+- **Cross-unit disagreement is expected, not a defect.** Two boards measure
+  different constructs, so a stage score averages their percentiles by design.
+  `contested_tolerance` deliberately does not apply between units.
+- **Route separation uses scores, not published intervals.** A gap larger than
+  `min_stage_separation` is treated as an ordering, even when the candidates'
+  published intervals overlap. Interval-aware ranking is an open item, not an
+  implemented rule.
+
+Ranks are assigned with competition ranking inside a stage. A gap at or below
+`min_stage_separation` (default 0.05) is not an ordering claim: those routes
+share a rank and record `tied_with` and `tie_kind` (`exact` or
+`within-tolerance`). Groups are anchored on the highest score in the group, so
+differences cannot chain and inflate a tie.
 
 Stage signals, which the report and the judge both read:
 
@@ -107,7 +120,8 @@ Stage signals, which the report and the judge both read:
 |---|---|
 | `no_comparable_evidence` | No route reaches the coverage threshold, so the stage carries no rank. |
 | `baseline_unrankable` | The baseline has no eligible evidence; eligible candidates are listed with no baseline comparison. Not a claim that the baseline is worse. |
-| `candidate_ahead` | At least one eligible candidate scores above the eligible baseline. |
+| `candidate_ahead` | At least one eligible candidate scores above the eligible baseline by more than `min_stage_separation`. |
+| `candidate_ahead_within_tolerance` | Candidates score above the baseline only inside the tolerance, so this is not an ordering claim. |
 | `baseline_ahead` | No eligible candidate scores above the eligible baseline. |
 
 Determinism: `score`, `render`, and `replay` are byte-identical over a fixed
@@ -159,6 +173,12 @@ because `report.json` embeds the units, sources, and scorecard.
 reasons, source URLs, retrieval times, content hashes, adapter versions, the
 effective config and manifest, and the scorecard, so a score can be audited and
 replayed offline with `replay`.
+
+Coverage cells name why a capability is empty, in check order: `no source` (no
+tier A benchmark carries the capability), `excluded unit` (the board is too small
+or stale), `no alias` (add an alias record), `not on board` (the model has no
+published row), or `evidence only` (unscored proxy-family or contested
+evidence).
 
 Ten fixed sections:
 
