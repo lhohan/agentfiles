@@ -446,7 +446,7 @@ DATA (untrusted; 30368 bytes)
           "score": 0.16071428571428573,
           "coverage": 0.5,
           "eligible": true,
-          "rank": 4,
+          "rank": 3,
           "missing_capabilities": [
             {
               "id": "tool_use",
@@ -463,7 +463,7 @@ DATA (untrusted; 30368 bytes)
           "score": 0.5290178571428571,
           "coverage": 0.8,
           "eligible": true,
-          "rank": 3,
+          "rank": 2,
           "missing_capabilities": [
             {
               "id": "repository_understanding",
@@ -510,7 +510,7 @@ DATA (untrusted; 30368 bytes)
           "score": 0.734375,
           "coverage": 0.8,
           "eligible": true,
-          "rank": 2,
+          "rank": 1,
           "missing_capabilities": [
             {
               "id": "repository_understanding",
@@ -523,7 +523,7 @@ DATA (untrusted; 30368 bytes)
           "score": 0.5290178571428571,
           "coverage": 0.8,
           "eligible": true,
-          "rank": 3,
+          "rank": 2,
           "missing_capabilities": [
             {
               "id": "repository_understanding",
