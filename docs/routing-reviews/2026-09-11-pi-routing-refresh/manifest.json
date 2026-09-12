@@ -1,0 +1,89 @@
+{
+  "manifest_version": 1,
+  "agent": "pi",
+  "profile": ".agents/skills/evaluate-model-routing/references/agents/pi.md",
+  "profile_verified_at": "2026-09-11",
+  "run_date": "2026-09-11",
+  "run_slug": "routing-refresh",
+  "enabled_models": [
+    "opencode-go/kimi-k2.7-code",
+    "opencode-go/deepseek-v4.1-flash",
+    "opencode-go/minimax-m3",
+    "opencode-go/glm-5.3",
+    "opencode-go/glm-5.3-flash",
+    "opencode-go/longcat-2.0",
+    "opencode-go/gpt-5.6-luna",
+    "opencode-go/hy3",
+    "opencode-go/hy4-preview",
+    "opencode-go/qwen3.8-flash",
+    "mistral/mistral-medium-3.5",
+    "mistral/zai-glm-5-2",
+    "mistral/mistral-small-2603",
+    "openai-codex/gpt-5.6-sol",
+    "openai-codex/gpt-5.6-luna"
+  ],
+  "candidates": [
+    "opencode-go/glm-5.3",
+    "opencode-go/deepseek-v4.1-flash",
+    "opencode-go/gpt-5.6-luna",
+    "openai-codex/gpt-5.6-sol",
+    "openai-codex/gpt-5.6-luna",
+    "opencode-go/hy3",
+    "mistral/zai-glm-5-2"
+  ],
+  "stages": [
+    { "task": "run_stage_plan", "routes": [{ "rank": 1, "model_id": "opencode-go/glm-5.3" }, { "rank": 2, "model_id": "mistral/zai-glm-5-2" }] },
+    { "task": "review_plan", "routes": [{ "rank": 1, "model_id": "openai-codex/gpt-5.6-sol" }, { "rank": 2, "model_id": "mistral/zai-glm-5-2" }] },
+    {
+      "task": "implement",
+      "routes": [
+        { "rank": 1, "model_id": "opencode-go/deepseek-v4.1-flash" },
+        { "rank": 2, "model_id": "opencode-go/gpt-5.6-luna" },
+        { "rank": 3, "model_id": "openai-codex/gpt-5.6-luna" }
+      ]
+    },
+    { "task": "review", "routes": [{ "rank": 1, "model_id": "openai-codex/gpt-5.6-sol" }, { "rank": 2, "model_id": "mistral/zai-glm-5-2" }] },
+    {
+      "task": "run_stage_break",
+      "routes": [
+        { "rank": 1, "model_id": "opencode-go/hy3" },
+        { "rank": 2, "model_id": "openai-codex/gpt-5.6-luna" },
+        { "rank": 3, "model_id": "opencode-go/gpt-5.6-luna" }
+      ]
+    },
+    { "task": "general", "routes": [{ "rank": 1, "model_id": "openai-codex/gpt-5.6-luna" }] }
+  ],
+  "recommendations": [
+    {
+      "task": "run_stage_plan",
+      "decision": "no-change",
+      "rationale": "Coverage is 0% for every route: repository_understanding, reasoning, long_context, and instruction_following all lack a tier A source. Ranking here would be invented, so the stage stays evidence-only."
+    },
+    {
+      "task": "review_plan",
+      "decision": "no-change",
+      "rationale": "Coverage is 0% for every route: reasoning, adversarial_analysis, and repository_understanding are tier B only. No deterministic comparison is possible, so the current chain stands."
+    },
+    {
+      "task": "implement",
+      "decision": "no-change",
+      "rationale": "The baseline opencode-go/deepseek-v4.1-flash has proxy-family evidence only (board publishes deepseek-v4-flash, not the routed deepseek-v4.1-flash), so the rule cannot rank it against eligible candidates. openai-codex/gpt-5.6-sol (rank 1, 0.775) and opencode-go/glm-5.3 (rank 2, 0.734) lead on a 0.80-coverage vector that omits repository_understanding. Verify a release-matched observation for the routed baseline before moving the stage."
+    },
+    {
+      "task": "review",
+      "decision": "no-change",
+      "rationale": "The best-covered route reaches 30% coverage (software_engineering only), below the 50% threshold. The review capability has no tier A source, so no rank exists and the current chain stands."
+    },
+    {
+      "task": "run_stage_break",
+      "decision": "no-change",
+      "rationale": "Coverage reaches 30% through software_engineering only. adversarial_analysis and review have no tier A source, so the stage cannot be ranked and the current chain stands."
+    },
+    {
+      "task": "general",
+      "decision": "no-change",
+      "rationale": "multimodal has a tier A source but no rows for these routes, and reasoning, instruction_following, and long_context have none. Coverage is 0%, so the session-start model stands."
+    }
+  ],
+  "notes": "First run of the semi-deterministic pipeline. The judge step was not executed: the report carries the missing-judge state, and judge-prompt.md holds the exact command for the operator."
+}
