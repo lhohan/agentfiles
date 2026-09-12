@@ -8,6 +8,7 @@ export const EXIT = {
   noComparableData: 4,
   judgeSchemaMismatch: 5,
   replayMismatch: 6,
+  calibrationMiss: 7,
 };
 
 export class CliError extends Error {

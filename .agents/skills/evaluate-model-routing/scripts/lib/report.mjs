@@ -3,7 +3,7 @@
 
 import { stripInternal } from './util.mjs';
 
-export const PIPELINE_VERSION = 4;
+export const PIPELINE_VERSION = 5;
 export const REPORT_SECTIONS = [
   'Run metadata',
   'Executive summary',
@@ -17,7 +17,7 @@ export const REPORT_SECTIONS = [
   'Evidence appendix',
 ];
 
-export function buildReport({ config, registry, manifest, sources, failures, units, scorecard, judge, referenceTime }) {
+export function buildReport({ config, registry, manifest, sources, failures, units, scorecard, judge, calibration = null, referenceTime }) {
   const routes = [...new Set([...manifest.candidates, ...manifest.stages.flatMap((stage) => stage.routes.map((route) => route.model_id))])].sort();
   const judgeModel = config.judges[0]?.model ?? null;
   return {
@@ -48,6 +48,7 @@ export function buildReport({ config, registry, manifest, sources, failures, uni
     chains: Object.fromEntries(manifest.stages.map((stage) => [stage.task, stage.routes.map((route) => route.model_id)])),
     scorecard,
     judge,
+    calibration,
     recommendations: manifest.recommendations,
     derived_signals: scorecard.signals,
     notes: manifest.notes,
@@ -71,6 +72,13 @@ function rankLabel(row) {
   if (row.rank === null || row.rank === undefined) return '-';
   if (!row.tied_with?.length) return `${row.rank}`;
   return `${row.rank} (tied with ${row.tied_with.join(', ')}${row.tie_kind === 'within-tolerance' ? ', within tolerance' : ''})`;
+}
+
+function calibrationLine(report) {
+  if (!report.calibration) return 'Judge calibration: not run for this review.';
+  const { detected, scored, total, status, prompt_version: promptVersion } = report.calibration;
+  if (status === 'awaiting-responses') return `Judge calibration: prompts written for ${total} frozen fixtures; no responses recorded yet.`;
+  return `Judge calibration: ${detected}/${scored} planted defects detected on frozen fixtures (prompt version ${promptVersion}, ${total} fixtures). Detection is keyword-based and is a proxy for attention, not for correctness.`;
 }
 
 function uniqueCapabilities(report) {
@@ -233,6 +241,7 @@ export function renderMarkdown(report) {
     for (const item of assessment.divergence) out.push(`- ${item}`);
     out.push('', 'The judge is advisory. It cannot change a deterministic score.', '');
   }
+  out.push(calibrationLine(report), '');
 
   out.push('## 7. Divergences and contradictions', '');
   const contested = report.candidates.flatMap((route) => report.scorecard.routes[route]?.conflicts.map((conflict) => ({ route, conflict })) ?? []);
@@ -389,7 +398,7 @@ ${htmlTable(['Source', 'Status', 'Retrieved', 'SHA-256', 'URL'], sourceRows)}</s
 <p><strong>Divergence</strong></p><ul>${report.judge.assessment.divergence.map((item) => `<li>${escapeHtml(item)}</li>`).join('') || '<li>none reported</li>'}</ul>
 <p class="muted">The judge is advisory. It cannot change a deterministic score.</p>`
     : '<p>State <code>missing-judge</code>. No advisory assessment is present. The deterministic scorecard stands unchanged.</p>';
-  sections.push(`<section><h2>6. Fuzzy assessment (judge)</h2>${judgeHtml}</section>`);
+  sections.push(`<section><h2>6. Fuzzy assessment (judge)</h2>${judgeHtml}<p class="muted">${escapeHtml(calibrationLine(report))}</p></section>`);
 
   const divergenceItems = [
     ...report.candidates.flatMap((route) => report.scorecard.routes[route]?.conflicts.map((conflict) => `Contested: ${route} in ${conflict.unit_key} — ${conflict.values.join(' vs ')} (${conflict.basis}).`) ?? []),

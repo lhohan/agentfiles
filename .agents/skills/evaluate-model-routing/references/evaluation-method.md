@@ -156,6 +156,16 @@ always shows the deterministic layer beside it.
   (`strengths`, `risks`, `disqualifiers`, `confidence`, `divergence`) and rejects
   extra or malformed output with exit code 5.
 - No judge result is a valid state: the report carries `missing-judge`.
+- **Calibration.** `judge-calibrate` writes one prompt per frozen fixture in
+  `scripts/lib/calibration.mjs`, each carrying a scorecard with one planted defect
+  that a stated rule forbids: a rank below the coverage threshold, a
+  `proxy-family` observation presented as scored, and two units averaged
+  together. It scores every response that exists and records `detected/scored`
+  in the report. Detection is keyword-based: it shows the judge addressed the
+  defect, not that its reasoning was correct. The measured figure replaces
+  self-reported confidence, which varied without meaning across runs.
+- **Self-reported confidence is uncalibrated.** The judge's `confidence` field is
+  a self-report. It is recorded but not treated as evidence about reliability.
 
 ## Report form
 
@@ -213,6 +223,7 @@ node .agents/skills/evaluate-model-routing/scripts/evaluate.mjs <command> [optio
 | `judge-prompt` | manifest, observations | `judge-prompt.md` | 0 ok; 2 invalid input |
 | `judge-import` | judge response | validated `judge-result.json` | 0 ok; 2 missing file; 5 schema mismatch |
 | `replay` | `report.json` | scorecard on stdout | 0 ok; 6 mismatch |
+| `judge-calibrate` | frozen fixtures | prompts, `calibration.json` | 0 ok; 7 calibration miss |
 | `all` | manifest | all of the above | highest severity of the steps |
 
 Other options: `--run <dir>` (default
@@ -225,6 +236,9 @@ Rules:
   and is never silent. `fetch` still writes what it got.
 - Logs and errors go to stderr in `ERROR` / `CAUSE` / `NEXT` form; requested
   machine-readable output goes to stdout.
+- Exit code 7 means the judge answered a calibration fixture without addressing
+  its planted defect. It fails the calibration, not the review: a report can be
+  produced with a failing calibration, and section 6 records the figure.
 - Partial failure never promotes an unverified number into a score.
 
 ## Tests
@@ -236,7 +250,8 @@ node --test ".agents/skills/evaluate-model-routing/scripts/tests/*.test.mjs"
 The suite runs offline from committed fixtures and covers adapter parsing and
 schema failure, alias resolution and collision rejection, ties, duplicates,
 small boards, stale exclusion, lower-is-better metrics, contested units, the
-coverage threshold, offline replay, renderer escaping, and the CLI exit codes.
+coverage threshold, route separation tolerance, offline replay, renderer
+escaping, the calibration detector, and the CLI exit codes.
 
 ## Where a routing change happens
 

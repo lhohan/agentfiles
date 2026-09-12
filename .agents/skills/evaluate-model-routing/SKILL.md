@@ -50,7 +50,10 @@ Profiles document current configuration; live tool configuration is authoritativ
    computed inside a unit, capabilities and stages are weighted means over
    present observations only, and coverage decides eligibility.
 5. **Judge (advisory).** `judge-prompt`, then run the printed isolated headless
-   command, then `judge-import`. A missing judge is a valid state.
+   command, then `judge-import`. A missing judge is a valid state. Optionally run
+   `judge-calibrate` to measure the judge against frozen scorecards with planted
+   defects; the figure is recorded in section 6 and replaces the judge's
+   self-reported confidence, which is not calibrated.
 6. **Render.** `node scripts/evaluate.mjs render --manifest <file>`.
 7. **Recommend.** Read the scorecard, then add `recommendations` to the manifest
    (one per stage, with rationale) and re-render. The renderer never invents a

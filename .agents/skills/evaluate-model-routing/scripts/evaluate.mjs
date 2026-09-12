@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 // Deterministic model-routing evaluation pipeline.
 //
-//   node evaluate.mjs <fetch|score|render|judge-prompt|judge-import|replay|all> [options]
+//   node evaluate.mjs <fetch|score|render|judge-prompt|judge-import|judge-calibrate|replay|all> [options]
 //
 // See references/evaluation-method.md for the data model and exit codes.
 
@@ -16,6 +16,7 @@ import { runFetch } from './lib/fetch.mjs';
 import { score } from './lib/score.mjs';
 import { buildReport, renderHtml, renderMarkdown } from './lib/report.mjs';
 import { buildJudgePrompt, judgePromptFilename, validateJudgeResult } from './lib/judge.mjs';
+import { calibrate } from './lib/calibration.mjs';
 import { readJson, stableStringify, writeJson } from './lib/util.mjs';
 
 const REQUIRED_NODE_MAJOR = 20;
@@ -30,6 +31,7 @@ Commands:
   judge-prompt  Write judge-prompt.md from the scorecard
   judge-import  Validate a judge response and store it
   replay        Re-score report.json and compare with the embedded scorecard
+  judge-calibrate  Check the judge against frozen scorecards with planted defects
   all           fetch, score, judge-prompt, render (recommendations may follow)
 
 Options:
@@ -43,7 +45,7 @@ Options:
 
 Exit codes:
   0 success  2 invalid input  3 source failure  4 no comparable data
-  5 judge schema mismatch  6 replay mismatch`;
+  5 judge schema mismatch  6 replay mismatch  7 calibration miss`;
 
 function majorVersion() {
   return Number.parseInt(process.versions.node.split('.')[0], 10);
@@ -132,7 +134,7 @@ function readJudge(runDir, config) {
   };
 }
 
-function buildReportFor({ runDir, config, registry, manifest, judge }) {
+function buildReportFor({ runDir, config, registry, manifest, judge, calibration = null }) {
   const observations = readObservations(runDir);
   const report = buildReport({
     config,
@@ -143,6 +145,7 @@ function buildReportFor({ runDir, config, registry, manifest, judge }) {
     units: observations.units,
     scorecard: score({ config, registry, manifest, units: observations.units, referenceTime: observations.reference_time }),
     judge,
+    calibration,
     referenceTime: observations.reference_time,
   });
   return { report, observations };
@@ -190,7 +193,9 @@ function commandScore({ options, manifest, config, registry, runDir }) {
 
 function commandRender({ options, config, registry, manifest, runDir }) {
   const judge = readJudge(runDir, config);
-  const { report } = buildReportFor({ runDir, config, registry, manifest, judge });
+  const calibrationPath = join(runDir, 'calibration', 'calibration.json');
+  const calibration = existsSync(calibrationPath) ? readJson(calibrationPath) : null;
+  const { report } = buildReportFor({ runDir, config, registry, manifest, judge, calibration });
   const reportPath = join(runDir, 'report.json');
   writeFileSync(join(runDir, 'report.md'), renderMarkdown(report));
   writeFileSync(join(runDir, 'report.html'), renderHtml(report));
@@ -230,6 +235,31 @@ function commandJudgeImport({ options, config, runDir }) {
   const validated = validateJudgeResult(readFileSync(path, 'utf8'), { model: spec.model, thinking: spec.thinking });
   writeJson(join(runDir, 'judge-result.json'), validated);
   emit(options, { command: 'judge-import', judge: validated }, [`Judge result validated and stored in ${join(runDir, 'judge-result.json')}`]);
+  return EXIT.ok;
+}
+
+function commandJudgeCalibrate({ options, config, runDir }) {
+  const result = calibrate({ config, runDir });
+  const lines = [
+    `Calibration: ${result.status} — ${result.detected}/${result.scored} planted defects detected (${result.total} fixtures)`,
+  ];
+  if (result.status !== 'complete') {
+    lines.push('Run each fixture through the judge, then re-run this command:');
+    for (const fixture of result.fixtures.filter((entry) => entry.found === null)) {
+      lines.push(`  ${fixture.judge_command}`);
+    }
+  }
+  for (const fixture of result.fixtures) {
+    if (fixture.found !== null) lines.push(`  ${fixture.found ? 'detected' : 'MISSED  '} ${fixture.id}: ${fixture.planted_defect}`);
+  }
+  lines.push(`  ${result.detection_note}`);
+  emit(options, { command: 'judge-calibrate', ...result }, lines);
+  if (result.status !== 'awaiting-responses' && result.detected < result.scored) {
+    process.stderr.write(
+      'ERROR: The judge missed a planted defect\nCAUSE: keyword detection found no reference to the planted defect in the response\nNEXT:\n  - Read the missed prompt and response in <run>/calibration/\n  - Improve the prompt or change the judge model, then re-run judge-calibrate\n',
+    );
+    return EXIT.calibrationMiss;
+  }
   return EXIT.ok;
 }
 
@@ -292,6 +322,8 @@ async function main() {
       return commandJudgePrompt(context);
     case 'judge-import':
       return commandJudgeImport(context);
+    case 'judge-calibrate':
+      return commandJudgeCalibrate(context);
     case 'replay':
       return commandReplay(context);
     case 'all':
