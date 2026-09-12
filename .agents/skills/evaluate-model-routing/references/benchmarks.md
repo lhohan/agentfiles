@@ -84,7 +84,7 @@ Values are normalised to 0..1 by the adapter.
 
 | Id | Framework | Capabilities | Why it is not fetched |
 |---|---|---|---|
-| `contextbench` | [ContextBench](https://github.com/EuniAI/ContextBench) | `repository_understanding` (primary), `long_context` (primary) | Results ship as JavaScript module literals in a Turbopack chunk: no JSON export, no documented API. The repository publishes task data but no result file. |
+| `contextbench` | [ContextBench](https://github.com/EuniAI/ContextBench) | `repository_understanding` (primary), `long_context` (primary) | Results ship as JavaScript module literals in a Turbopack chunk: no JSON export, no documented API. The repository publishes task data but no result file. Enabling this source without changing the property model would count one retrieval measurement twice in the `run_stage_plan` vector. |
 | `swe-atlas` | [SWE Atlas](https://labs.scale.com/leaderboard/sweatlas-qna) | `repository_understanding` (primary), `software_engineering` (secondary) | Rows load client-side; no JSON endpoint found. The board is graded by an LLM judge, so the headline number mixes judge behaviour with model behaviour. |
 | `c-crab` | [c-CRAB](https://arxiv.org/abs/2603.23448) | `review` (primary), `adversarial_analysis` (primary) | No public result export. |
 | `cr-bench` | [CR-Bench](https://arxiv.org/abs/2603.11078) | `review` (secondary), `adversarial_analysis` (secondary) | No public result export. |

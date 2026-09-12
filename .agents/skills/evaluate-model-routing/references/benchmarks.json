@@ -152,6 +152,7 @@
       "caveats": [
         "Agent-model-system evidence: it measures context selection inside one trajectory, not general repository understanding.",
         "The page separates bare-model rows from mini-SWE-agent rows, which maps well to the model versus agent-model-system distinction, but the pipeline cannot read it yet.",
+        "One benchmark currently covers both repository_understanding and long_context. Enabling this source without changing the property model would count one retrieval measurement twice in the run_stage_plan vector (0.3 and 0.2). Decide the property model before promoting it.",
         "Promotion path: a dedicated adapter that parses the chunk literal and asserts every entry has model and performance.file.f1. It needs a fixture test and loud failure on shape change."
       ]
     },
