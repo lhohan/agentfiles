@@ -1,5 +1,5 @@
 {
-  "report_version": 6,
+  "report_version": 7,
   "meta": {
     "agent": "pi",
     "profile": ".agents/skills/evaluate-model-routing/references/agents/pi.md",
@@ -9,7 +9,7 @@
     "reference_time": "2026-09-12T06:13:45.076Z",
     "manifest_hash": "17463f13e5b4c52c",
     "config_hash": "3905af56bb3b1fca",
-    "pipeline_version": 6,
+    "pipeline_version": 7,
     "thresholds": {
       "rank_threshold_coverage": 0.5,
       "max_snapshot_age_days": 30,
@@ -2027,6 +2027,131 @@
   "scorecard": {
     "reference_time": "2026-09-12T06:13:45.076Z",
     "threshold_coverage": 0.5,
+    "operational_data": {
+      "source": "~/.pi/agent/models-store.json",
+      "read_at": "2026-09-12T10:51:55.064Z",
+      "routes": {
+        "mistral/zai-glm-5-2": {
+          "input_price": {
+            "value": 1.4,
+            "source": "~/.pi/agent/models-store.json",
+            "read_at": "2026-09-12T08:02:41.294Z"
+          },
+          "output_price": {
+            "value": 4.4,
+            "source": "~/.pi/agent/models-store.json",
+            "read_at": "2026-09-12T08:02:41.294Z"
+          },
+          "context_limit": {
+            "value": 1000000,
+            "source": "~/.pi/agent/models-store.json",
+            "read_at": "2026-09-12T08:02:41.294Z"
+          }
+        },
+        "openai-codex/gpt-5.6-luna": {
+          "input_price": {
+            "value": 0.2,
+            "source": "~/.pi/agent/models-store.json",
+            "read_at": "2026-09-12T08:02:42.338Z"
+          },
+          "output_price": {
+            "value": 1.2,
+            "source": "~/.pi/agent/models-store.json",
+            "read_at": "2026-09-12T08:02:42.338Z"
+          },
+          "context_limit": {
+            "value": 272000,
+            "source": "~/.pi/agent/models-store.json",
+            "read_at": "2026-09-12T08:02:42.338Z"
+          }
+        },
+        "openai-codex/gpt-5.6-sol": {
+          "input_price": {
+            "value": 5,
+            "source": "~/.pi/agent/models-store.json",
+            "read_at": "2026-09-12T08:02:42.338Z"
+          },
+          "output_price": {
+            "value": 30,
+            "source": "~/.pi/agent/models-store.json",
+            "read_at": "2026-09-12T08:02:42.338Z"
+          },
+          "context_limit": {
+            "value": 272000,
+            "source": "~/.pi/agent/models-store.json",
+            "read_at": "2026-09-12T08:02:42.338Z"
+          }
+        },
+        "opencode-go/deepseek-v4.1-flash": {
+          "input_price": {
+            "value": 0.15,
+            "source": "~/.pi/agent/models-store.json",
+            "read_at": "2026-09-12T08:02:41.294Z"
+          },
+          "output_price": {
+            "value": 0.6,
+            "source": "~/.pi/agent/models-store.json",
+            "read_at": "2026-09-12T08:02:41.294Z"
+          },
+          "context_limit": {
+            "value": 1000000,
+            "source": "~/.pi/agent/models-store.json",
+            "read_at": "2026-09-12T08:02:41.294Z"
+          }
+        },
+        "opencode-go/glm-5.3": {
+          "input_price": {
+            "value": 1.4,
+            "source": "~/.pi/agent/models-store.json",
+            "read_at": "2026-09-12T08:02:41.294Z"
+          },
+          "output_price": {
+            "value": 4.4,
+            "source": "~/.pi/agent/models-store.json",
+            "read_at": "2026-09-12T08:02:41.294Z"
+          },
+          "context_limit": {
+            "value": 1000000,
+            "source": "~/.pi/agent/models-store.json",
+            "read_at": "2026-09-12T08:02:41.294Z"
+          }
+        },
+        "opencode-go/gpt-5.6-luna": {
+          "input_price": {
+            "value": 0.2,
+            "source": "~/.pi/agent/models-store.json",
+            "read_at": "2026-09-12T08:02:41.294Z"
+          },
+          "output_price": {
+            "value": 1.2,
+            "source": "~/.pi/agent/models-store.json",
+            "read_at": "2026-09-12T08:02:41.294Z"
+          },
+          "context_limit": {
+            "value": 1050000,
+            "source": "~/.pi/agent/models-store.json",
+            "read_at": "2026-09-12T08:02:41.294Z"
+          }
+        },
+        "opencode-go/hy3": {
+          "input_price": {
+            "value": 0.14,
+            "source": "~/.pi/agent/models-store.json",
+            "read_at": "2026-09-12T08:02:41.294Z"
+          },
+          "output_price": {
+            "value": 0.58,
+            "source": "~/.pi/agent/models-store.json",
+            "read_at": "2026-09-12T08:02:41.294Z"
+          },
+          "context_limit": {
+            "value": 256000,
+            "source": "~/.pi/agent/models-store.json",
+            "read_at": "2026-09-12T08:02:41.294Z"
+          }
+        }
+      }
+    },
     "min_stage_separation": 0.05,
     "contested_tolerance": 0.05,
     "effort_rule": "most recent date, then highest attempt count, then highest published reasoning effort",
@@ -3786,6 +3911,23 @@
     ],
     "routes": {
       "mistral/zai-glm-5-2": {
+        "operational": {
+          "input_price": {
+            "value": 1.4,
+            "source": "~/.pi/agent/models-store.json",
+            "read_at": "2026-09-12T08:02:41.294Z"
+          },
+          "output_price": {
+            "value": 4.4,
+            "source": "~/.pi/agent/models-store.json",
+            "read_at": "2026-09-12T08:02:41.294Z"
+          },
+          "context_limit": {
+            "value": 1000000,
+            "source": "~/.pi/agent/models-store.json",
+            "read_at": "2026-09-12T08:02:41.294Z"
+          }
+        },
         "observations": [
           {
             "route_id": "mistral/zai-glm-5-2",
@@ -3835,6 +3977,23 @@
         ]
       },
       "openai-codex/gpt-5.6-luna": {
+        "operational": {
+          "input_price": {
+            "value": 0.2,
+            "source": "~/.pi/agent/models-store.json",
+            "read_at": "2026-09-12T08:02:42.338Z"
+          },
+          "output_price": {
+            "value": 1.2,
+            "source": "~/.pi/agent/models-store.json",
+            "read_at": "2026-09-12T08:02:42.338Z"
+          },
+          "context_limit": {
+            "value": 272000,
+            "source": "~/.pi/agent/models-store.json",
+            "read_at": "2026-09-12T08:02:42.338Z"
+          }
+        },
         "observations": [
           {
             "route_id": "openai-codex/gpt-5.6-luna",
@@ -3923,6 +4082,23 @@
         ]
       },
       "openai-codex/gpt-5.6-sol": {
+        "operational": {
+          "input_price": {
+            "value": 5,
+            "source": "~/.pi/agent/models-store.json",
+            "read_at": "2026-09-12T08:02:42.338Z"
+          },
+          "output_price": {
+            "value": 30,
+            "source": "~/.pi/agent/models-store.json",
+            "read_at": "2026-09-12T08:02:42.338Z"
+          },
+          "context_limit": {
+            "value": 272000,
+            "source": "~/.pi/agent/models-store.json",
+            "read_at": "2026-09-12T08:02:42.338Z"
+          }
+        },
         "observations": [
           {
             "route_id": "openai-codex/gpt-5.6-sol",
@@ -4011,6 +4187,23 @@
         ]
       },
       "opencode-go/deepseek-v4.1-flash": {
+        "operational": {
+          "input_price": {
+            "value": 0.15,
+            "source": "~/.pi/agent/models-store.json",
+            "read_at": "2026-09-12T08:02:41.294Z"
+          },
+          "output_price": {
+            "value": 0.6,
+            "source": "~/.pi/agent/models-store.json",
+            "read_at": "2026-09-12T08:02:41.294Z"
+          },
+          "context_limit": {
+            "value": 1000000,
+            "source": "~/.pi/agent/models-store.json",
+            "read_at": "2026-09-12T08:02:41.294Z"
+          }
+        },
         "observations": [],
         "unscored_observations": [
           {
@@ -4058,6 +4251,23 @@
         "capacities_present": []
       },
       "opencode-go/glm-5.3": {
+        "operational": {
+          "input_price": {
+            "value": 1.4,
+            "source": "~/.pi/agent/models-store.json",
+            "read_at": "2026-09-12T08:02:41.294Z"
+          },
+          "output_price": {
+            "value": 4.4,
+            "source": "~/.pi/agent/models-store.json",
+            "read_at": "2026-09-12T08:02:41.294Z"
+          },
+          "context_limit": {
+            "value": 1000000,
+            "source": "~/.pi/agent/models-store.json",
+            "read_at": "2026-09-12T08:02:41.294Z"
+          }
+        },
         "observations": [
           {
             "route_id": "opencode-go/glm-5.3",
@@ -4146,6 +4356,23 @@
         ]
       },
       "opencode-go/gpt-5.6-luna": {
+        "operational": {
+          "input_price": {
+            "value": 0.2,
+            "source": "~/.pi/agent/models-store.json",
+            "read_at": "2026-09-12T08:02:41.294Z"
+          },
+          "output_price": {
+            "value": 1.2,
+            "source": "~/.pi/agent/models-store.json",
+            "read_at": "2026-09-12T08:02:41.294Z"
+          },
+          "context_limit": {
+            "value": 1050000,
+            "source": "~/.pi/agent/models-store.json",
+            "read_at": "2026-09-12T08:02:41.294Z"
+          }
+        },
         "observations": [
           {
             "route_id": "opencode-go/gpt-5.6-luna",
@@ -4234,6 +4461,23 @@
         ]
       },
       "opencode-go/hy3": {
+        "operational": {
+          "input_price": {
+            "value": 0.14,
+            "source": "~/.pi/agent/models-store.json",
+            "read_at": "2026-09-12T08:02:41.294Z"
+          },
+          "output_price": {
+            "value": 0.58,
+            "source": "~/.pi/agent/models-store.json",
+            "read_at": "2026-09-12T08:02:41.294Z"
+          },
+          "context_limit": {
+            "value": 256000,
+            "source": "~/.pi/agent/models-store.json",
+            "read_at": "2026-09-12T08:02:41.294Z"
+          }
+        },
         "observations": [],
         "unscored_observations": [],
         "conflicts": [],
@@ -4350,7 +4594,24 @@
             ],
             "capabilities": {},
             "contested_units": [],
-            "proxy_family_observations": 0
+            "proxy_family_observations": 0,
+            "operational": {
+              "input_price": {
+                "value": 1.4,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:41.294Z"
+              },
+              "output_price": {
+                "value": 4.4,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:41.294Z"
+              },
+              "context_limit": {
+                "value": 1000000,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:41.294Z"
+              }
+            }
           },
           {
             "route_id": "openai-codex/gpt-5.6-luna",
@@ -4379,7 +4640,24 @@
             ],
             "capabilities": {},
             "contested_units": [],
-            "proxy_family_observations": 0
+            "proxy_family_observations": 0,
+            "operational": {
+              "input_price": {
+                "value": 0.2,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:42.338Z"
+              },
+              "output_price": {
+                "value": 1.2,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:42.338Z"
+              },
+              "context_limit": {
+                "value": 272000,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:42.338Z"
+              }
+            }
           },
           {
             "route_id": "openai-codex/gpt-5.6-sol",
@@ -4408,7 +4686,24 @@
             ],
             "capabilities": {},
             "contested_units": [],
-            "proxy_family_observations": 0
+            "proxy_family_observations": 0,
+            "operational": {
+              "input_price": {
+                "value": 5,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:42.338Z"
+              },
+              "output_price": {
+                "value": 30,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:42.338Z"
+              },
+              "context_limit": {
+                "value": 272000,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:42.338Z"
+              }
+            }
           },
           {
             "route_id": "opencode-go/deepseek-v4.1-flash",
@@ -4437,7 +4732,24 @@
             ],
             "capabilities": {},
             "contested_units": [],
-            "proxy_family_observations": 1
+            "proxy_family_observations": 1,
+            "operational": {
+              "input_price": {
+                "value": 0.15,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:41.294Z"
+              },
+              "output_price": {
+                "value": 0.6,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:41.294Z"
+              },
+              "context_limit": {
+                "value": 1000000,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:41.294Z"
+              }
+            }
           },
           {
             "route_id": "opencode-go/glm-5.3",
@@ -4466,7 +4778,24 @@
             ],
             "capabilities": {},
             "contested_units": [],
-            "proxy_family_observations": 0
+            "proxy_family_observations": 0,
+            "operational": {
+              "input_price": {
+                "value": 1.4,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:41.294Z"
+              },
+              "output_price": {
+                "value": 4.4,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:41.294Z"
+              },
+              "context_limit": {
+                "value": 1000000,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:41.294Z"
+              }
+            }
           },
           {
             "route_id": "opencode-go/gpt-5.6-luna",
@@ -4495,7 +4824,24 @@
             ],
             "capabilities": {},
             "contested_units": [],
-            "proxy_family_observations": 0
+            "proxy_family_observations": 0,
+            "operational": {
+              "input_price": {
+                "value": 0.2,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:41.294Z"
+              },
+              "output_price": {
+                "value": 1.2,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:41.294Z"
+              },
+              "context_limit": {
+                "value": 1050000,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:41.294Z"
+              }
+            }
           },
           {
             "route_id": "opencode-go/hy3",
@@ -4524,9 +4870,27 @@
             ],
             "capabilities": {},
             "contested_units": [],
-            "proxy_family_observations": 0
+            "proxy_family_observations": 0,
+            "operational": {
+              "input_price": {
+                "value": 0.14,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:41.294Z"
+              },
+              "output_price": {
+                "value": 0.58,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:41.294Z"
+              },
+              "context_limit": {
+                "value": 256000,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:41.294Z"
+              }
+            }
           }
         ],
+        "tie_groups": [],
         "scores": [],
         "evidence_only": [
           "mistral/zai-glm-5-2",
@@ -4569,7 +4933,24 @@
             ],
             "capabilities": {},
             "contested_units": [],
-            "proxy_family_observations": 0
+            "proxy_family_observations": 0,
+            "operational": {
+              "input_price": {
+                "value": 1.4,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:41.294Z"
+              },
+              "output_price": {
+                "value": 4.4,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:41.294Z"
+              },
+              "context_limit": {
+                "value": 1000000,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:41.294Z"
+              }
+            }
           },
           {
             "route_id": "openai-codex/gpt-5.6-luna",
@@ -4594,7 +4975,24 @@
             ],
             "capabilities": {},
             "contested_units": [],
-            "proxy_family_observations": 0
+            "proxy_family_observations": 0,
+            "operational": {
+              "input_price": {
+                "value": 0.2,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:42.338Z"
+              },
+              "output_price": {
+                "value": 1.2,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:42.338Z"
+              },
+              "context_limit": {
+                "value": 272000,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:42.338Z"
+              }
+            }
           },
           {
             "route_id": "openai-codex/gpt-5.6-sol",
@@ -4619,7 +5017,24 @@
             ],
             "capabilities": {},
             "contested_units": [],
-            "proxy_family_observations": 0
+            "proxy_family_observations": 0,
+            "operational": {
+              "input_price": {
+                "value": 5,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:42.338Z"
+              },
+              "output_price": {
+                "value": 30,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:42.338Z"
+              },
+              "context_limit": {
+                "value": 272000,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:42.338Z"
+              }
+            }
           },
           {
             "route_id": "opencode-go/deepseek-v4.1-flash",
@@ -4644,7 +5059,24 @@
             ],
             "capabilities": {},
             "contested_units": [],
-            "proxy_family_observations": 1
+            "proxy_family_observations": 1,
+            "operational": {
+              "input_price": {
+                "value": 0.15,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:41.294Z"
+              },
+              "output_price": {
+                "value": 0.6,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:41.294Z"
+              },
+              "context_limit": {
+                "value": 1000000,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:41.294Z"
+              }
+            }
           },
           {
             "route_id": "opencode-go/glm-5.3",
@@ -4669,7 +5101,24 @@
             ],
             "capabilities": {},
             "contested_units": [],
-            "proxy_family_observations": 0
+            "proxy_family_observations": 0,
+            "operational": {
+              "input_price": {
+                "value": 1.4,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:41.294Z"
+              },
+              "output_price": {
+                "value": 4.4,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:41.294Z"
+              },
+              "context_limit": {
+                "value": 1000000,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:41.294Z"
+              }
+            }
           },
           {
             "route_id": "opencode-go/gpt-5.6-luna",
@@ -4694,7 +5143,24 @@
             ],
             "capabilities": {},
             "contested_units": [],
-            "proxy_family_observations": 0
+            "proxy_family_observations": 0,
+            "operational": {
+              "input_price": {
+                "value": 0.2,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:41.294Z"
+              },
+              "output_price": {
+                "value": 1.2,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:41.294Z"
+              },
+              "context_limit": {
+                "value": 1050000,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:41.294Z"
+              }
+            }
           },
           {
             "route_id": "opencode-go/hy3",
@@ -4719,9 +5185,27 @@
             ],
             "capabilities": {},
             "contested_units": [],
-            "proxy_family_observations": 0
+            "proxy_family_observations": 0,
+            "operational": {
+              "input_price": {
+                "value": 0.14,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:41.294Z"
+              },
+              "output_price": {
+                "value": 0.58,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:41.294Z"
+              },
+              "context_limit": {
+                "value": 256000,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:41.294Z"
+              }
+            }
           }
         ],
+        "tie_groups": [],
         "scores": [],
         "evidence_only": [
           "mistral/zai-glm-5-2",
@@ -4774,6 +5258,23 @@
             },
             "contested_units": [],
             "proxy_family_observations": 0,
+            "operational": {
+              "input_price": {
+                "value": 1.4,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:41.294Z"
+              },
+              "output_price": {
+                "value": 4.4,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:41.294Z"
+              },
+              "context_limit": {
+                "value": 1000000,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:41.294Z"
+              }
+            },
             "rank": 3,
             "tied_with": [],
             "tie_kind": null
@@ -4819,6 +5320,23 @@
             },
             "contested_units": [],
             "proxy_family_observations": 0,
+            "operational": {
+              "input_price": {
+                "value": 0.2,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:42.338Z"
+              },
+              "output_price": {
+                "value": 1.2,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:42.338Z"
+              },
+              "context_limit": {
+                "value": 272000,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:42.338Z"
+              }
+            },
             "rank": 2,
             "tied_with": [
               "opencode-go/gpt-5.6-luna"
@@ -4866,6 +5384,23 @@
             },
             "contested_units": [],
             "proxy_family_observations": 0,
+            "operational": {
+              "input_price": {
+                "value": 5,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:42.338Z"
+              },
+              "output_price": {
+                "value": 30,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:42.338Z"
+              },
+              "context_limit": {
+                "value": 272000,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:42.338Z"
+              }
+            },
             "rank": 1,
             "tied_with": [
               "opencode-go/glm-5.3"
@@ -4895,7 +5430,24 @@
             ],
             "capabilities": {},
             "contested_units": [],
-            "proxy_family_observations": 1
+            "proxy_family_observations": 1,
+            "operational": {
+              "input_price": {
+                "value": 0.15,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:41.294Z"
+              },
+              "output_price": {
+                "value": 0.6,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:41.294Z"
+              },
+              "context_limit": {
+                "value": 1000000,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:41.294Z"
+              }
+            }
           },
           {
             "route_id": "opencode-go/glm-5.3",
@@ -4938,6 +5490,23 @@
             },
             "contested_units": [],
             "proxy_family_observations": 0,
+            "operational": {
+              "input_price": {
+                "value": 1.4,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:41.294Z"
+              },
+              "output_price": {
+                "value": 4.4,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:41.294Z"
+              },
+              "context_limit": {
+                "value": 1000000,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:41.294Z"
+              }
+            },
             "rank": 1,
             "tied_with": [
               "openai-codex/gpt-5.6-sol"
@@ -4985,6 +5554,23 @@
             },
             "contested_units": [],
             "proxy_family_observations": 0,
+            "operational": {
+              "input_price": {
+                "value": 0.2,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:41.294Z"
+              },
+              "output_price": {
+                "value": 1.2,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:41.294Z"
+              },
+              "context_limit": {
+                "value": 1050000,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:41.294Z"
+              }
+            },
             "rank": 2,
             "tied_with": [
               "openai-codex/gpt-5.6-luna"
@@ -5014,7 +5600,58 @@
             ],
             "capabilities": {},
             "contested_units": [],
-            "proxy_family_observations": 0
+            "proxy_family_observations": 0,
+            "operational": {
+              "input_price": {
+                "value": 0.14,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:41.294Z"
+              },
+              "output_price": {
+                "value": 0.58,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:41.294Z"
+              },
+              "context_limit": {
+                "value": 256000,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:41.294Z"
+              }
+            }
+          }
+        ],
+        "tie_groups": [
+          {
+            "rank": 1,
+            "routes": [
+              "openai-codex/gpt-5.6-sol",
+              "opencode-go/glm-5.3"
+            ],
+            "operational_tiebreak": {
+              "status": "cost-broke-tie",
+              "cheapest": [
+                "opencode-go/glm-5.3"
+              ],
+              "largest_context": [
+                "opencode-go/glm-5.3"
+              ],
+              "rationale": "Cost broke the tie inside an otherwise tied group: opencode-go/glm-5.3 is cheapest and has the largest context (opencode-go/glm-5.3). Capability ranks remain tied."
+            }
+          },
+          {
+            "rank": 2,
+            "routes": [
+              "openai-codex/gpt-5.6-luna",
+              "opencode-go/gpt-5.6-luna"
+            ],
+            "operational_tiebreak": {
+              "status": "context-broke-tie",
+              "cheapest": [],
+              "largest_context": [
+                "opencode-go/gpt-5.6-luna"
+              ],
+              "rationale": "The largest context member is opencode-go/gpt-5.6-luna inside an otherwise tied group; cost did not identify one winner. Capability ranks remain tied."
+            }
           }
         ],
         "scores": [
@@ -5059,6 +5696,23 @@
             },
             "contested_units": [],
             "proxy_family_observations": 0,
+            "operational": {
+              "input_price": {
+                "value": 5,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:42.338Z"
+              },
+              "output_price": {
+                "value": 30,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:42.338Z"
+              },
+              "context_limit": {
+                "value": 272000,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:42.338Z"
+              }
+            },
             "rank": 1,
             "tied_with": [
               "opencode-go/glm-5.3"
@@ -5106,6 +5760,23 @@
             },
             "contested_units": [],
             "proxy_family_observations": 0,
+            "operational": {
+              "input_price": {
+                "value": 1.4,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:41.294Z"
+              },
+              "output_price": {
+                "value": 4.4,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:41.294Z"
+              },
+              "context_limit": {
+                "value": 1000000,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:41.294Z"
+              }
+            },
             "rank": 1,
             "tied_with": [
               "openai-codex/gpt-5.6-sol"
@@ -5153,6 +5824,23 @@
             },
             "contested_units": [],
             "proxy_family_observations": 0,
+            "operational": {
+              "input_price": {
+                "value": 0.2,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:42.338Z"
+              },
+              "output_price": {
+                "value": 1.2,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:42.338Z"
+              },
+              "context_limit": {
+                "value": 272000,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:42.338Z"
+              }
+            },
             "rank": 2,
             "tied_with": [
               "opencode-go/gpt-5.6-luna"
@@ -5200,6 +5888,23 @@
             },
             "contested_units": [],
             "proxy_family_observations": 0,
+            "operational": {
+              "input_price": {
+                "value": 0.2,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:41.294Z"
+              },
+              "output_price": {
+                "value": 1.2,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:41.294Z"
+              },
+              "context_limit": {
+                "value": 1050000,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:41.294Z"
+              }
+            },
             "rank": 2,
             "tied_with": [
               "openai-codex/gpt-5.6-luna"
@@ -5239,6 +5944,23 @@
             },
             "contested_units": [],
             "proxy_family_observations": 0,
+            "operational": {
+              "input_price": {
+                "value": 1.4,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:41.294Z"
+              },
+              "output_price": {
+                "value": 4.4,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:41.294Z"
+              },
+              "context_limit": {
+                "value": 1000000,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:41.294Z"
+              }
+            },
             "rank": 3,
             "tied_with": [],
             "tie_kind": null
@@ -5289,7 +6011,24 @@
               }
             },
             "contested_units": [],
-            "proxy_family_observations": 0
+            "proxy_family_observations": 0,
+            "operational": {
+              "input_price": {
+                "value": 1.4,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:41.294Z"
+              },
+              "output_price": {
+                "value": 4.4,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:41.294Z"
+              },
+              "context_limit": {
+                "value": 1000000,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:41.294Z"
+              }
+            }
           },
           {
             "route_id": "openai-codex/gpt-5.6-luna",
@@ -5323,7 +6062,24 @@
               }
             },
             "contested_units": [],
-            "proxy_family_observations": 0
+            "proxy_family_observations": 0,
+            "operational": {
+              "input_price": {
+                "value": 0.2,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:42.338Z"
+              },
+              "output_price": {
+                "value": 1.2,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:42.338Z"
+              },
+              "context_limit": {
+                "value": 272000,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:42.338Z"
+              }
+            }
           },
           {
             "route_id": "openai-codex/gpt-5.6-sol",
@@ -5357,7 +6113,24 @@
               }
             },
             "contested_units": [],
-            "proxy_family_observations": 0
+            "proxy_family_observations": 0,
+            "operational": {
+              "input_price": {
+                "value": 5,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:42.338Z"
+              },
+              "output_price": {
+                "value": 30,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:42.338Z"
+              },
+              "context_limit": {
+                "value": 272000,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:42.338Z"
+              }
+            }
           },
           {
             "route_id": "opencode-go/deepseek-v4.1-flash",
@@ -5382,7 +6155,24 @@
             ],
             "capabilities": {},
             "contested_units": [],
-            "proxy_family_observations": 1
+            "proxy_family_observations": 1,
+            "operational": {
+              "input_price": {
+                "value": 0.15,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:41.294Z"
+              },
+              "output_price": {
+                "value": 0.6,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:41.294Z"
+              },
+              "context_limit": {
+                "value": 1000000,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:41.294Z"
+              }
+            }
           },
           {
             "route_id": "opencode-go/glm-5.3",
@@ -5416,7 +6206,24 @@
               }
             },
             "contested_units": [],
-            "proxy_family_observations": 0
+            "proxy_family_observations": 0,
+            "operational": {
+              "input_price": {
+                "value": 1.4,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:41.294Z"
+              },
+              "output_price": {
+                "value": 4.4,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:41.294Z"
+              },
+              "context_limit": {
+                "value": 1000000,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:41.294Z"
+              }
+            }
           },
           {
             "route_id": "opencode-go/gpt-5.6-luna",
@@ -5450,7 +6257,24 @@
               }
             },
             "contested_units": [],
-            "proxy_family_observations": 0
+            "proxy_family_observations": 0,
+            "operational": {
+              "input_price": {
+                "value": 0.2,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:41.294Z"
+              },
+              "output_price": {
+                "value": 1.2,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:41.294Z"
+              },
+              "context_limit": {
+                "value": 1050000,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:41.294Z"
+              }
+            }
           },
           {
             "route_id": "opencode-go/hy3",
@@ -5475,9 +6299,27 @@
             ],
             "capabilities": {},
             "contested_units": [],
-            "proxy_family_observations": 0
+            "proxy_family_observations": 0,
+            "operational": {
+              "input_price": {
+                "value": 0.14,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:41.294Z"
+              },
+              "output_price": {
+                "value": 0.58,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:41.294Z"
+              },
+              "context_limit": {
+                "value": 256000,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:41.294Z"
+              }
+            }
           }
         ],
+        "tie_groups": [],
         "scores": [],
         "evidence_only": [
           "mistral/zai-glm-5-2",
@@ -5529,7 +6371,24 @@
               }
             },
             "contested_units": [],
-            "proxy_family_observations": 0
+            "proxy_family_observations": 0,
+            "operational": {
+              "input_price": {
+                "value": 1.4,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:41.294Z"
+              },
+              "output_price": {
+                "value": 4.4,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:41.294Z"
+              },
+              "context_limit": {
+                "value": 1000000,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:41.294Z"
+              }
+            }
           },
           {
             "route_id": "openai-codex/gpt-5.6-luna",
@@ -5563,7 +6422,24 @@
               }
             },
             "contested_units": [],
-            "proxy_family_observations": 0
+            "proxy_family_observations": 0,
+            "operational": {
+              "input_price": {
+                "value": 0.2,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:42.338Z"
+              },
+              "output_price": {
+                "value": 1.2,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:42.338Z"
+              },
+              "context_limit": {
+                "value": 272000,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:42.338Z"
+              }
+            }
           },
           {
             "route_id": "openai-codex/gpt-5.6-sol",
@@ -5597,7 +6473,24 @@
               }
             },
             "contested_units": [],
-            "proxy_family_observations": 0
+            "proxy_family_observations": 0,
+            "operational": {
+              "input_price": {
+                "value": 5,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:42.338Z"
+              },
+              "output_price": {
+                "value": 30,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:42.338Z"
+              },
+              "context_limit": {
+                "value": 272000,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:42.338Z"
+              }
+            }
           },
           {
             "route_id": "opencode-go/deepseek-v4.1-flash",
@@ -5622,7 +6515,24 @@
             ],
             "capabilities": {},
             "contested_units": [],
-            "proxy_family_observations": 1
+            "proxy_family_observations": 1,
+            "operational": {
+              "input_price": {
+                "value": 0.15,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:41.294Z"
+              },
+              "output_price": {
+                "value": 0.6,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:41.294Z"
+              },
+              "context_limit": {
+                "value": 1000000,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:41.294Z"
+              }
+            }
           },
           {
             "route_id": "opencode-go/glm-5.3",
@@ -5656,7 +6566,24 @@
               }
             },
             "contested_units": [],
-            "proxy_family_observations": 0
+            "proxy_family_observations": 0,
+            "operational": {
+              "input_price": {
+                "value": 1.4,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:41.294Z"
+              },
+              "output_price": {
+                "value": 4.4,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:41.294Z"
+              },
+              "context_limit": {
+                "value": 1000000,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:41.294Z"
+              }
+            }
           },
           {
             "route_id": "opencode-go/gpt-5.6-luna",
@@ -5690,7 +6617,24 @@
               }
             },
             "contested_units": [],
-            "proxy_family_observations": 0
+            "proxy_family_observations": 0,
+            "operational": {
+              "input_price": {
+                "value": 0.2,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:41.294Z"
+              },
+              "output_price": {
+                "value": 1.2,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:41.294Z"
+              },
+              "context_limit": {
+                "value": 1050000,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:41.294Z"
+              }
+            }
           },
           {
             "route_id": "opencode-go/hy3",
@@ -5715,9 +6659,27 @@
             ],
             "capabilities": {},
             "contested_units": [],
-            "proxy_family_observations": 0
+            "proxy_family_observations": 0,
+            "operational": {
+              "input_price": {
+                "value": 0.14,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:41.294Z"
+              },
+              "output_price": {
+                "value": 0.58,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:41.294Z"
+              },
+              "context_limit": {
+                "value": 256000,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:41.294Z"
+              }
+            }
           }
         ],
+        "tie_groups": [],
         "scores": [],
         "evidence_only": [
           "mistral/zai-glm-5-2",
@@ -5765,7 +6727,24 @@
             ],
             "capabilities": {},
             "contested_units": [],
-            "proxy_family_observations": 0
+            "proxy_family_observations": 0,
+            "operational": {
+              "input_price": {
+                "value": 1.4,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:41.294Z"
+              },
+              "output_price": {
+                "value": 4.4,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:41.294Z"
+              },
+              "context_limit": {
+                "value": 1000000,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:41.294Z"
+              }
+            }
           },
           {
             "route_id": "openai-codex/gpt-5.6-luna",
@@ -5794,7 +6773,24 @@
             ],
             "capabilities": {},
             "contested_units": [],
-            "proxy_family_observations": 0
+            "proxy_family_observations": 0,
+            "operational": {
+              "input_price": {
+                "value": 0.2,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:42.338Z"
+              },
+              "output_price": {
+                "value": 1.2,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:42.338Z"
+              },
+              "context_limit": {
+                "value": 272000,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:42.338Z"
+              }
+            }
           },
           {
             "route_id": "openai-codex/gpt-5.6-sol",
@@ -5823,7 +6819,24 @@
             ],
             "capabilities": {},
             "contested_units": [],
-            "proxy_family_observations": 0
+            "proxy_family_observations": 0,
+            "operational": {
+              "input_price": {
+                "value": 5,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:42.338Z"
+              },
+              "output_price": {
+                "value": 30,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:42.338Z"
+              },
+              "context_limit": {
+                "value": 272000,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:42.338Z"
+              }
+            }
           },
           {
             "route_id": "opencode-go/deepseek-v4.1-flash",
@@ -5852,7 +6865,24 @@
             ],
             "capabilities": {},
             "contested_units": [],
-            "proxy_family_observations": 1
+            "proxy_family_observations": 1,
+            "operational": {
+              "input_price": {
+                "value": 0.15,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:41.294Z"
+              },
+              "output_price": {
+                "value": 0.6,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:41.294Z"
+              },
+              "context_limit": {
+                "value": 1000000,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:41.294Z"
+              }
+            }
           },
           {
             "route_id": "opencode-go/glm-5.3",
@@ -5881,7 +6911,24 @@
             ],
             "capabilities": {},
             "contested_units": [],
-            "proxy_family_observations": 0
+            "proxy_family_observations": 0,
+            "operational": {
+              "input_price": {
+                "value": 1.4,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:41.294Z"
+              },
+              "output_price": {
+                "value": 4.4,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:41.294Z"
+              },
+              "context_limit": {
+                "value": 1000000,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:41.294Z"
+              }
+            }
           },
           {
             "route_id": "opencode-go/gpt-5.6-luna",
@@ -5910,7 +6957,24 @@
             ],
             "capabilities": {},
             "contested_units": [],
-            "proxy_family_observations": 0
+            "proxy_family_observations": 0,
+            "operational": {
+              "input_price": {
+                "value": 0.2,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:41.294Z"
+              },
+              "output_price": {
+                "value": 1.2,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:41.294Z"
+              },
+              "context_limit": {
+                "value": 1050000,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:41.294Z"
+              }
+            }
           },
           {
             "route_id": "opencode-go/hy3",
@@ -5939,9 +7003,27 @@
             ],
             "capabilities": {},
             "contested_units": [],
-            "proxy_family_observations": 0
+            "proxy_family_observations": 0,
+            "operational": {
+              "input_price": {
+                "value": 0.14,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:41.294Z"
+              },
+              "output_price": {
+                "value": 0.58,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:41.294Z"
+              },
+              "context_limit": {
+                "value": 256000,
+                "source": "~/.pi/agent/models-store.json",
+                "read_at": "2026-09-12T08:02:41.294Z"
+              }
+            }
           }
         ],
+        "tie_groups": [],
         "scores": [],
         "evidence_only": [
           "mistral/zai-glm-5-2",
@@ -6890,6 +7972,131 @@
         }
       ],
       "byId": {}
+    },
+    "operational_data": {
+      "source": "~/.pi/agent/models-store.json",
+      "read_at": "2026-09-12T10:51:55.064Z",
+      "routes": {
+        "mistral/zai-glm-5-2": {
+          "input_price": {
+            "value": 1.4,
+            "source": "~/.pi/agent/models-store.json",
+            "read_at": "2026-09-12T08:02:41.294Z"
+          },
+          "output_price": {
+            "value": 4.4,
+            "source": "~/.pi/agent/models-store.json",
+            "read_at": "2026-09-12T08:02:41.294Z"
+          },
+          "context_limit": {
+            "value": 1000000,
+            "source": "~/.pi/agent/models-store.json",
+            "read_at": "2026-09-12T08:02:41.294Z"
+          }
+        },
+        "openai-codex/gpt-5.6-luna": {
+          "input_price": {
+            "value": 0.2,
+            "source": "~/.pi/agent/models-store.json",
+            "read_at": "2026-09-12T08:02:42.338Z"
+          },
+          "output_price": {
+            "value": 1.2,
+            "source": "~/.pi/agent/models-store.json",
+            "read_at": "2026-09-12T08:02:42.338Z"
+          },
+          "context_limit": {
+            "value": 272000,
+            "source": "~/.pi/agent/models-store.json",
+            "read_at": "2026-09-12T08:02:42.338Z"
+          }
+        },
+        "openai-codex/gpt-5.6-sol": {
+          "input_price": {
+            "value": 5,
+            "source": "~/.pi/agent/models-store.json",
+            "read_at": "2026-09-12T08:02:42.338Z"
+          },
+          "output_price": {
+            "value": 30,
+            "source": "~/.pi/agent/models-store.json",
+            "read_at": "2026-09-12T08:02:42.338Z"
+          },
+          "context_limit": {
+            "value": 272000,
+            "source": "~/.pi/agent/models-store.json",
+            "read_at": "2026-09-12T08:02:42.338Z"
+          }
+        },
+        "opencode-go/deepseek-v4.1-flash": {
+          "input_price": {
+            "value": 0.15,
+            "source": "~/.pi/agent/models-store.json",
+            "read_at": "2026-09-12T08:02:41.294Z"
+          },
+          "output_price": {
+            "value": 0.6,
+            "source": "~/.pi/agent/models-store.json",
+            "read_at": "2026-09-12T08:02:41.294Z"
+          },
+          "context_limit": {
+            "value": 1000000,
+            "source": "~/.pi/agent/models-store.json",
+            "read_at": "2026-09-12T08:02:41.294Z"
+          }
+        },
+        "opencode-go/glm-5.3": {
+          "input_price": {
+            "value": 1.4,
+            "source": "~/.pi/agent/models-store.json",
+            "read_at": "2026-09-12T08:02:41.294Z"
+          },
+          "output_price": {
+            "value": 4.4,
+            "source": "~/.pi/agent/models-store.json",
+            "read_at": "2026-09-12T08:02:41.294Z"
+          },
+          "context_limit": {
+            "value": 1000000,
+            "source": "~/.pi/agent/models-store.json",
+            "read_at": "2026-09-12T08:02:41.294Z"
+          }
+        },
+        "opencode-go/gpt-5.6-luna": {
+          "input_price": {
+            "value": 0.2,
+            "source": "~/.pi/agent/models-store.json",
+            "read_at": "2026-09-12T08:02:41.294Z"
+          },
+          "output_price": {
+            "value": 1.2,
+            "source": "~/.pi/agent/models-store.json",
+            "read_at": "2026-09-12T08:02:41.294Z"
+          },
+          "context_limit": {
+            "value": 1050000,
+            "source": "~/.pi/agent/models-store.json",
+            "read_at": "2026-09-12T08:02:41.294Z"
+          }
+        },
+        "opencode-go/hy3": {
+          "input_price": {
+            "value": 0.14,
+            "source": "~/.pi/agent/models-store.json",
+            "read_at": "2026-09-12T08:02:41.294Z"
+          },
+          "output_price": {
+            "value": 0.58,
+            "source": "~/.pi/agent/models-store.json",
+            "read_at": "2026-09-12T08:02:41.294Z"
+          },
+          "context_limit": {
+            "value": 256000,
+            "source": "~/.pi/agent/models-store.json",
+            "read_at": "2026-09-12T08:02:41.294Z"
+          }
+        }
+      }
     }
   }
 }

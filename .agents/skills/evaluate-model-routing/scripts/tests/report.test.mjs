@@ -109,6 +109,14 @@ test('a missing judge renders the missing-judge state and a self-candidate judge
   assert.equal(markdown.includes('missing-judge'), false);
 });
 
+test('operational columns show values, provenance, and missing markers', () => {
+  const markdown = renderMarkdown(makeReport());
+  assert.match(markdown, /Input price \(USD\/M tokens; source; read\)/);
+  assert.match(markdown, /not-in-store \[source: not loaded; read: not recorded\]/);
+  const html = renderHtml(makeReport());
+  assert.match(html, /Context limit \(source; read\)/);
+});
+
 test('a report without skill-authored recommendations is marked and shows signals', () => {
   const markdown = renderMarkdown(makeReport());
   assert.ok(markdown.includes('missing-recommendations'));

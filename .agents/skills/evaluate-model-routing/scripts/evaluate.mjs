@@ -18,6 +18,7 @@ import { buildReport, renderHtml, renderMarkdown } from './lib/report.mjs';
 import { buildJudgePrompt, judgePromptFilename, validateJudgeResult } from './lib/judge.mjs';
 import { calibrate } from './lib/calibration.mjs';
 import { writeIndex } from './lib/index-page.mjs';
+import { DEFAULT_MODEL_STORE, loadOperationalData } from './lib/operational.mjs';
 import { readJson, stableStringify, writeJson } from './lib/util.mjs';
 
 const REQUIRED_NODE_MAJOR = 20;
@@ -42,6 +43,7 @@ Options:
   --run <dir>            Run directory (default: docs/routing-reviews/<date>-<agent>-<slug>)
   --sources <a,b>        Restrict fetch to these adapters
   --judge-result <file>  Judge response (default: <run>/judge-result.json)
+  --model-store <file>   Optional local model catalog (default: ${DEFAULT_MODEL_STORE})
   --root <dir>           Review root for the index (default: docs/routing-reviews)
   --json                 Print machine-readable output on stdout
   --help                 Print this help
@@ -74,6 +76,7 @@ function parseArgs(argv) {
     else if (arg === '--run') options.run = takeValue();
     else if (arg === '--sources') options.sources = takeValue().split(',').map((value) => value.trim()).filter(Boolean);
     else if (arg === '--judge-result') options.judgeResult = takeValue();
+    else if (arg === '--model-store') options.modelStore = takeValue();
     else if (arg === '--root') options.root = takeValue();
     else if (arg.startsWith('--')) {
       throw invalidInput(`Unknown option ${arg}`, 'Option is not part of the CLI contract', ['Run: node evaluate.mjs --help']);
@@ -138,7 +141,7 @@ function readJudge(runDir, config) {
   };
 }
 
-function buildReportFor({ runDir, config, registry, manifest, judge, calibration = null }) {
+function buildReportFor({ runDir, config, registry, manifest, judge, calibration = null, operationalData }) {
   const observations = readObservations(runDir);
   const report = buildReport({
     config,
@@ -147,7 +150,7 @@ function buildReportFor({ runDir, config, registry, manifest, judge, calibration
     sources: observations.sources,
     failures: observations.failures,
     units: observations.units,
-    scorecard: score({ config, registry, manifest, units: observations.units, referenceTime: observations.reference_time }),
+    scorecard: score({ config, registry, manifest, units: observations.units, referenceTime: observations.reference_time, operationalData }),
     judge,
     calibration,
     referenceTime: observations.reference_time,
@@ -180,9 +183,15 @@ function commandFetch({ options, manifest, config, registry, runDir }) {
   });
 }
 
+function operationalForManifest(manifest, options) {
+  const routes = [...new Set([...manifest.candidates, ...manifest.stages.flatMap((stage) => stage.routes.map((route) => route.model_id))])].sort();
+  return loadOperationalData({ path: options.modelStore ?? DEFAULT_MODEL_STORE, routes });
+}
+
 function commandScore({ options, manifest, config, registry, runDir }) {
   const observations = readObservations(runDir);
-  const scorecard = score({ config, registry, manifest, units: observations.units, referenceTime: observations.reference_time });
+  const operationalData = operationalForManifest(manifest, options);
+  const scorecard = score({ config, registry, manifest, units: observations.units, referenceTime: observations.reference_time, operationalData });
   writeJson(join(runDir, 'scorecard.json'), scorecard);
   const scored = scorecard.units.filter((unit) => unit.status === 'scored').length;
   emit(options, { command: 'score', run_dir: runDir, scored_units: scored, signals: scorecard.signals }, [
@@ -199,7 +208,8 @@ function commandRender({ options, config, registry, manifest, runDir }) {
   const judge = readJudge(runDir, config);
   const calibrationPath = join(runDir, 'calibration', 'calibration.json');
   const calibration = existsSync(calibrationPath) ? readJson(calibrationPath) : null;
-  const { report } = buildReportFor({ runDir, config, registry, manifest, judge, calibration });
+  const operationalData = operationalForManifest(manifest, options);
+  const { report } = buildReportFor({ runDir, config, registry, manifest, judge, calibration, operationalData });
   const reportPath = join(runDir, 'report.json');
   writeFileSync(join(runDir, 'report.md'), renderMarkdown(report));
   writeFileSync(join(runDir, 'report.html'), renderHtml(report));
@@ -212,7 +222,8 @@ function commandRender({ options, config, registry, manifest, runDir }) {
 
 function commandJudgePrompt({ options, config, registry, manifest, runDir }) {
   const judge = readJudge(runDir, config);
-  const { report } = buildReportFor({ runDir, config, registry, manifest, judge });
+  const operationalData = operationalForManifest(manifest, options);
+  const { report } = buildReportFor({ runDir, config, registry, manifest, judge, operationalData });
   const prompt = buildJudgePrompt({ config, report });
   const path = join(runDir, judgePromptFilename());
   writeFileSync(path, prompt);
@@ -283,7 +294,14 @@ function commandReplay({ options, runDir }) {
   const config = { ...report.inputs.config, _resolved: null, hash: report.meta.config_hash };
   const registry = { ...report.inputs.registry, byId: new Map(report.inputs.registry.benchmarks.map((entry) => [entry.id, entry])) };
   const manifest = { ...report.inputs.manifest, _resolved: null, hash: report.meta.manifest_hash };
-  const recomputed = score({ config, registry, manifest, units: report.units, referenceTime: report.meta.reference_time });
+  const recomputed = score({
+    config,
+    registry,
+    manifest,
+    units: report.units,
+    referenceTime: report.meta.reference_time,
+    operationalData: report.inputs.operational_data ?? report.scorecard.operational_data,
+  });
   const matches = stableStringify(recomputed) === stableStringify(report.scorecard);
   emit(options, { command: 'replay', matches }, [matches ? 'Replay reproduced the embedded scorecard byte-identically.' : 'Replay mismatch.']);
   if (!matches) {

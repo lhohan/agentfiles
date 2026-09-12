@@ -26,6 +26,77 @@ function mean(values) {
   return values.reduce((sum, value) => sum + value, 0) / values.length;
 }
 
+const OPERATIONAL_FIELDS = ['input_price', 'output_price', 'context_limit'];
+
+function operationalMarker(source = 'not loaded', readAt = 'not recorded') {
+  return Object.fromEntries(OPERATIONAL_FIELDS.map((name) => [name, { value: 'not-in-store', source, read_at: readAt }]));
+}
+
+function operationalForRoute(operationalData, route) {
+  const source = operationalData?.source ?? 'not loaded';
+  const readAt = operationalData?.read_at ?? 'not recorded';
+  const supplied = operationalData?.routes?.[route];
+  if (!supplied) return operationalMarker(source, readAt);
+  return Object.fromEntries(OPERATIONAL_FIELDS.map((name) => {
+    const entry = supplied[name];
+    return [name, {
+      value: typeof entry?.value === 'number' ? entry.value : 'not-in-store',
+      source: entry?.source ?? source,
+      read_at: entry?.read_at ?? readAt,
+    }];
+  }));
+}
+
+function operationalValue(row, field) {
+  const value = row.operational?.[field]?.value;
+  return typeof value === 'number' ? value : null;
+}
+
+function operationalTiebreak(group) {
+  const sameData = group.every((row, index) => index === 0 || OPERATIONAL_FIELDS.every((field) => {
+    const first = row.operational[field]?.value;
+    const current = group[0].operational[field]?.value;
+    return first === current;
+  }));
+  const priced = group.filter((row) => operationalValue(row, 'input_price') !== null && operationalValue(row, 'output_price') !== null);
+  const cheapest = priced.filter((row) => priced.every((other) => {
+    if (other === row) return true;
+    const input = operationalValue(row, 'input_price');
+    const output = operationalValue(row, 'output_price');
+    const otherInput = operationalValue(other, 'input_price');
+    const otherOutput = operationalValue(other, 'output_price');
+    return (input < otherInput || output < otherOutput) && input <= otherInput && output <= otherOutput;
+  })).map((row) => row.route_id);
+  const contexts = group.map((row) => operationalValue(row, 'context_limit')).filter((value) => value !== null);
+  const largestContext = contexts.length === group.length
+    ? group.filter((row) => operationalValue(row, 'context_limit') === Math.max(...contexts)).map((row) => row.route_id)
+    : [];
+  if (sameData || (cheapest.length === 0 && largestContext.length === 0)) {
+    return {
+      status: 'unresolved',
+      cheapest: [],
+      largest_context: largestContext,
+      rationale: sameData
+        ? 'Operational data is identical inside an otherwise tied group, so this is an unresolved tie; no winner is invented.'
+        : 'Operational data is incomplete or does not identify one preferred member, so this is an unresolved tie; no winner is invented.',
+    };
+  }
+  if (cheapest.length === 1) {
+    return {
+      status: 'cost-broke-tie',
+      cheapest,
+      largest_context: largestContext,
+      rationale: `Cost broke the tie inside an otherwise tied group: ${cheapest[0]} is cheapest${largestContext.length === 1 ? ` and has the largest context (${largestContext[0]})` : ''}. Capability ranks remain tied.`,
+    };
+  }
+  return {
+    status: 'context-broke-tie',
+    cheapest,
+    largest_context: largestContext,
+    rationale: `The largest context member is ${largestContext.join(', ')} inside an otherwise tied group; cost did not identify one winner. Capability ranks remain tied.`,
+  };
+}
+
 /** Two observations of one route in one unit disagree beyond their uncertainty. */
 export function disagreements(observations, tolerance) {
   const conflicts = [];
@@ -59,7 +130,7 @@ export function disagreements(observations, tolerance) {
  * @param {any[]} spec.units
  * @param {string} spec.referenceTime ISO timestamp used for the staleness check
  */
-export function score({ config, registry, manifest, units, referenceTime }) {
+export function score({ config, registry, manifest, units, referenceTime, operationalData = null }) {
   const threshold = config.rank_threshold_coverage;
   const separation = config.min_stage_separation;
   const scoredUnits = [];
@@ -161,6 +232,7 @@ export function score({ config, registry, manifest, units, referenceTime }) {
     const scored = all.filter((observation) => observation.source_scope !== 'proxy-family' && !contestedUnits.has(observation.unit_key));
     const unscored = all.filter((observation) => observation.source_scope === 'proxy-family' || contestedUnits.has(observation.unit_key));
     routeReports[route] = {
+      operational: operationalForRoute(operationalData, route),
       observations: scored,
       unscored_observations: unscored,
       conflicts,
@@ -238,6 +310,7 @@ export function score({ config, registry, manifest, units, referenceTime }) {
         capabilities,
         contested_units: [...new Set(routeReports[route].conflicts.map((conflict) => conflict.unit_key))],
         proxy_family_observations: routeReports[route].unscored_observations.filter((observation) => observation.source_scope === 'proxy-family').length,
+        operational: routeReports[route].operational,
       });
     }
     const eligible = rows.filter((row) => row.eligible).sort((a, b) => (b.score ?? 0) - (a.score ?? 0) || a.route_id.localeCompare(b.route_id));
@@ -263,7 +336,15 @@ export function score({ config, registry, manifest, units, referenceTime }) {
             ? 'exact'
             : 'within-tolerance';
     }
-    stageReports[stage] = { weights, rank_threshold_coverage: threshold, rows };
+    const tieGroups = [...new Set(eligible.map((row) => row.rank))]
+      .map((rank) => eligible.filter((row) => row.rank === rank))
+      .filter((group) => group.length > 1)
+      .map((group) => ({
+        rank: group[0].rank,
+        routes: group.map((row) => row.route_id),
+        operational_tiebreak: operationalTiebreak(group),
+      }));
+    stageReports[stage] = { weights, rank_threshold_coverage: threshold, rows, tie_groups: tieGroups };
   }
 
   const rankedStageReports = {};
@@ -332,9 +413,16 @@ export function score({ config, registry, manifest, units, referenceTime }) {
     };
   }
 
+  const embeddedOperationalData = {
+    source: operationalData?.source ?? 'not loaded',
+    read_at: operationalData?.read_at ?? 'not recorded',
+    routes: Object.fromEntries(routes.map((route) => [route, routeReports[route].operational])),
+  };
+
   return {
     reference_time: referenceTime,
     threshold_coverage: threshold,
+    operational_data: embeddedOperationalData,
     min_stage_separation: separation,
     contested_tolerance: config.contested_tolerance,
     effort_rule: 'most recent date, then highest attempt count, then highest published reasoning effort',

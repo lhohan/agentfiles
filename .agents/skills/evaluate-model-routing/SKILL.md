@@ -14,6 +14,7 @@ Recommendation-only: this skill never changes routing.
 - Agent name, with a profile at `references/agents/<agent>.md`.
 - Optional focus: a stage, a capability, or candidate models to add.
 - Optional existing run directory to re-render.
+- Optional local model catalog at `~/.pi/agent/models-store.json` for operational tie-break data. The reader opens only this catalog; it does not read credentials or contact providers.
 
 No profile means no evaluation: report that and stop.
 
@@ -106,7 +107,7 @@ source path needing attention.
 - Record published uncertainty; never combine it statistically. Report
   contradictions and contested units instead of averaging them.
 - "No change" is a first-class result.
-- Cost is a tiebreaker between quality-comparable options, never the driver.
+- Cost is a tiebreaker between quality-comparable options, never the driver. The report shows input price, output price, and context limit with the catalog source and read date. Operational data can annotate an existing rank group, but cannot change a rank outside the capability tie tolerance; equal or incomplete operational data remains an unresolved tie.
 
 ## Evidence policy
 
@@ -139,4 +140,5 @@ node --test ".agents/skills/evaluate-model-routing/scripts/tests/*.test.mjs"
 ```
 
 Run these after changing an adapter, the scorer, the renderer, or the settings
-file. They run offline from committed fixtures.
+file. They run offline from committed fixtures. Tests also cover optional model-store
+input, operational tie annotations, and the no-override rule.

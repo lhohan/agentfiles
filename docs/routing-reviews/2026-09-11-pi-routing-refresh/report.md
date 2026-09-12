@@ -6,7 +6,7 @@
 - Profile: .agents/skills/evaluate-model-routing/references/agents/pi.md (verified 2026-09-11)
 - Run: 2026-09-11-routing-refresh
 - Reference time: 2026-09-12T06:13:45.076Z
-- Pipeline version: 6; config hash: 3905af56bb3b1fca; manifest hash: 17463f13e5b4c52c
+- Pipeline version: 7; config hash: 3905af56bb3b1fca; manifest hash: 17463f13e5b4c52c
 - Coverage threshold: 0.5; maximum snapshot age: 30 days; contested tolerance: 0.05
 - Judge: opencode-go/hy4-preview (thinking high)
 
@@ -32,16 +32,16 @@ Pipeline version 5, judge prompt version 3. Judge opencode-go/hy4-preview answer
 
 ## 3. Baseline route table and re-evaluation
 
-Configured baseline routes (rank 1) with their re-evaluation:
+Configured baseline routes (rank 1) with their re-evaluation. Operational values are catalog data, not capability scores:
 
-| Stage | Baseline (rank 1) | Status | Score | Coverage |
-|---|---|---|---|---|
-| run_stage_plan | opencode-go/glm-5.3 | evidence only | n/a | 0.0% |
-| review_plan | openai-codex/gpt-5.6-sol | evidence only | n/a | 0.0% |
-| implement | opencode-go/deepseek-v4.1-flash | evidence only | n/a | 0.0% |
-| review | openai-codex/gpt-5.6-sol | evidence only | n/a | 30.0% |
-| run_stage_break | opencode-go/hy3 | evidence only | n/a | 0.0% |
-| general | openai-codex/gpt-5.6-luna | evidence only | n/a | 0.0% |
+| Stage | Baseline (rank 1) | Status | Score | Coverage | Input price (USD/M tokens; source; read) | Output price (USD/M tokens; source; read) | Context limit (source; read) |
+|---|---|---|---|---|---|---|---|
+| run_stage_plan | opencode-go/glm-5.3 | evidence only | n/a | 0.0% | 1.400 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] | 4.400 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] | 1,000,000 tokens [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] |
+| review_plan | openai-codex/gpt-5.6-sol | evidence only | n/a | 0.0% | 5.000 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:42.338Z] | 30.000 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:42.338Z] | 272,000 tokens [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:42.338Z] |
+| implement | opencode-go/deepseek-v4.1-flash | evidence only | n/a | 0.0% | 0.150 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] | 0.600 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] | 1,000,000 tokens [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] |
+| review | openai-codex/gpt-5.6-sol | evidence only | n/a | 30.0% | 5.000 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:42.338Z] | 30.000 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:42.338Z] | 272,000 tokens [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:42.338Z] |
+| run_stage_break | opencode-go/hy3 | evidence only | n/a | 0.0% | 0.140 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] | 0.580 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] | 256,000 tokens [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] |
+| general | openai-codex/gpt-5.6-luna | evidence only | n/a | 0.0% | 0.200 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:42.338Z] | 1.200 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:42.338Z] | 272,000 tokens [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:42.338Z] |
 
 Full configured chains:
 
@@ -53,6 +53,24 @@ Full configured chains:
 | review | openai-codex/gpt-5.6-sol > mistral/zai-glm-5-2 |
 | run_stage_break | opencode-go/hy3 > openai-codex/gpt-5.6-luna > opencode-go/gpt-5.6-luna |
 | general | openai-codex/gpt-5.6-luna |
+
+Operational data for every configured route:
+
+| Stage | Route | Configured rank | Input price (USD/M tokens; source; read) | Output price (USD/M tokens; source; read) | Context limit (source; read) |
+|---|---|---|---|---|---|
+| run_stage_plan | opencode-go/glm-5.3 | 1 | 1.400 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] | 4.400 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] | 1,000,000 tokens [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] |
+| run_stage_plan | mistral/zai-glm-5-2 | 2 | 1.400 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] | 4.400 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] | 1,000,000 tokens [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] |
+| review_plan | openai-codex/gpt-5.6-sol | 1 | 5.000 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:42.338Z] | 30.000 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:42.338Z] | 272,000 tokens [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:42.338Z] |
+| review_plan | mistral/zai-glm-5-2 | 2 | 1.400 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] | 4.400 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] | 1,000,000 tokens [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] |
+| implement | opencode-go/deepseek-v4.1-flash | 1 | 0.150 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] | 0.600 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] | 1,000,000 tokens [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] |
+| implement | opencode-go/gpt-5.6-luna | 2 | 0.200 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] | 1.200 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] | 1,050,000 tokens [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] |
+| implement | openai-codex/gpt-5.6-luna | 3 | 0.200 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:42.338Z] | 1.200 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:42.338Z] | 272,000 tokens [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:42.338Z] |
+| review | openai-codex/gpt-5.6-sol | 1 | 5.000 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:42.338Z] | 30.000 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:42.338Z] | 272,000 tokens [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:42.338Z] |
+| review | mistral/zai-glm-5-2 | 2 | 1.400 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] | 4.400 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] | 1,000,000 tokens [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] |
+| run_stage_break | opencode-go/hy3 | 1 | 0.140 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] | 0.580 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] | 256,000 tokens [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] |
+| run_stage_break | openai-codex/gpt-5.6-luna | 2 | 0.200 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:42.338Z] | 1.200 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:42.338Z] | 272,000 tokens [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:42.338Z] |
+| run_stage_break | opencode-go/gpt-5.6-luna | 3 | 0.200 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] | 1.200 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] | 1,050,000 tokens [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] |
+| general | openai-codex/gpt-5.6-luna | 1 | 0.200 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:42.338Z] | 1.200 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:42.338Z] | 272,000 tokens [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:42.338Z] |
 
 ## 4. Capability coverage matrix
 
@@ -74,15 +92,15 @@ Values are the mean percentile rank of the observations for that capability. Emp
 
 Weights: repository_understanding 0.3, reasoning 0.3, long_context 0.2, instruction_following 0.2
 
-| Rank | Route | Score | Coverage | Scored weight | Status | Missing capabilities |
-|---|---|---|---|---|---|---|
-| - | mistral/zai-glm-5-2 | n/a | 0.0% | 0.00 | evidence only | repository_understanding (0.3), reasoning (0.3), long_context (0.2), instruction_following (0.2) |
-| - | openai-codex/gpt-5.6-luna | n/a | 0.0% | 0.00 | evidence only | repository_understanding (0.3), reasoning (0.3), long_context (0.2), instruction_following (0.2) |
-| - | openai-codex/gpt-5.6-sol | n/a | 0.0% | 0.00 | evidence only | repository_understanding (0.3), reasoning (0.3), long_context (0.2), instruction_following (0.2) |
-| - | opencode-go/deepseek-v4.1-flash | n/a | 0.0% | 0.00 | evidence only | repository_understanding (0.3), reasoning (0.3), long_context (0.2), instruction_following (0.2) |
-| - | opencode-go/glm-5.3 | n/a | 0.0% | 0.00 | evidence only | repository_understanding (0.3), reasoning (0.3), long_context (0.2), instruction_following (0.2) |
-| - | opencode-go/gpt-5.6-luna | n/a | 0.0% | 0.00 | evidence only | repository_understanding (0.3), reasoning (0.3), long_context (0.2), instruction_following (0.2) |
-| - | opencode-go/hy3 | n/a | 0.0% | 0.00 | evidence only | repository_understanding (0.3), reasoning (0.3), long_context (0.2), instruction_following (0.2) |
+| Rank | Route | Score | Coverage | Scored weight | Status | Missing capabilities | Input price (USD/M tokens; source; read) | Output price (USD/M tokens; source; read) | Context limit (source; read) |
+|---|---|---|---|---|---|---|---|---|---|
+| - | mistral/zai-glm-5-2 | n/a | 0.0% | 0.00 | evidence only | repository_understanding (0.3), reasoning (0.3), long_context (0.2), instruction_following (0.2) | 1.400 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] | 4.400 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] | 1,000,000 tokens [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] |
+| - | openai-codex/gpt-5.6-luna | n/a | 0.0% | 0.00 | evidence only | repository_understanding (0.3), reasoning (0.3), long_context (0.2), instruction_following (0.2) | 0.200 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:42.338Z] | 1.200 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:42.338Z] | 272,000 tokens [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:42.338Z] |
+| - | openai-codex/gpt-5.6-sol | n/a | 0.0% | 0.00 | evidence only | repository_understanding (0.3), reasoning (0.3), long_context (0.2), instruction_following (0.2) | 5.000 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:42.338Z] | 30.000 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:42.338Z] | 272,000 tokens [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:42.338Z] |
+| - | opencode-go/deepseek-v4.1-flash | n/a | 0.0% | 0.00 | evidence only | repository_understanding (0.3), reasoning (0.3), long_context (0.2), instruction_following (0.2) | 0.150 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] | 0.600 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] | 1,000,000 tokens [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] |
+| - | opencode-go/glm-5.3 | n/a | 0.0% | 0.00 | evidence only | repository_understanding (0.3), reasoning (0.3), long_context (0.2), instruction_following (0.2) | 1.400 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] | 4.400 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] | 1,000,000 tokens [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] |
+| - | opencode-go/gpt-5.6-luna | n/a | 0.0% | 0.00 | evidence only | repository_understanding (0.3), reasoning (0.3), long_context (0.2), instruction_following (0.2) | 0.200 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] | 1.200 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] | 1,050,000 tokens [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] |
+| - | opencode-go/hy3 | n/a | 0.0% | 0.00 | evidence only | repository_understanding (0.3), reasoning (0.3), long_context (0.2), instruction_following (0.2) | 0.140 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] | 0.580 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] | 256,000 tokens [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] |
 
 Evidence-only rows carry no rank, no composite, and no recommendation. Their observations are in the evidence appendix.
 
@@ -90,15 +108,15 @@ Evidence-only rows carry no rank, no composite, and no recommendation. Their obs
 
 Weights: reasoning 0.4, adversarial_analysis 0.3, repository_understanding 0.3
 
-| Rank | Route | Score | Coverage | Scored weight | Status | Missing capabilities |
-|---|---|---|---|---|---|---|
-| - | mistral/zai-glm-5-2 | n/a | 0.0% | 0.00 | evidence only | reasoning (0.4), adversarial_analysis (0.3), repository_understanding (0.3) |
-| - | openai-codex/gpt-5.6-luna | n/a | 0.0% | 0.00 | evidence only | reasoning (0.4), adversarial_analysis (0.3), repository_understanding (0.3) |
-| - | openai-codex/gpt-5.6-sol | n/a | 0.0% | 0.00 | evidence only | reasoning (0.4), adversarial_analysis (0.3), repository_understanding (0.3) |
-| - | opencode-go/deepseek-v4.1-flash | n/a | 0.0% | 0.00 | evidence only | reasoning (0.4), adversarial_analysis (0.3), repository_understanding (0.3) |
-| - | opencode-go/glm-5.3 | n/a | 0.0% | 0.00 | evidence only | reasoning (0.4), adversarial_analysis (0.3), repository_understanding (0.3) |
-| - | opencode-go/gpt-5.6-luna | n/a | 0.0% | 0.00 | evidence only | reasoning (0.4), adversarial_analysis (0.3), repository_understanding (0.3) |
-| - | opencode-go/hy3 | n/a | 0.0% | 0.00 | evidence only | reasoning (0.4), adversarial_analysis (0.3), repository_understanding (0.3) |
+| Rank | Route | Score | Coverage | Scored weight | Status | Missing capabilities | Input price (USD/M tokens; source; read) | Output price (USD/M tokens; source; read) | Context limit (source; read) |
+|---|---|---|---|---|---|---|---|---|---|
+| - | mistral/zai-glm-5-2 | n/a | 0.0% | 0.00 | evidence only | reasoning (0.4), adversarial_analysis (0.3), repository_understanding (0.3) | 1.400 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] | 4.400 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] | 1,000,000 tokens [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] |
+| - | openai-codex/gpt-5.6-luna | n/a | 0.0% | 0.00 | evidence only | reasoning (0.4), adversarial_analysis (0.3), repository_understanding (0.3) | 0.200 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:42.338Z] | 1.200 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:42.338Z] | 272,000 tokens [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:42.338Z] |
+| - | openai-codex/gpt-5.6-sol | n/a | 0.0% | 0.00 | evidence only | reasoning (0.4), adversarial_analysis (0.3), repository_understanding (0.3) | 5.000 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:42.338Z] | 30.000 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:42.338Z] | 272,000 tokens [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:42.338Z] |
+| - | opencode-go/deepseek-v4.1-flash | n/a | 0.0% | 0.00 | evidence only | reasoning (0.4), adversarial_analysis (0.3), repository_understanding (0.3) | 0.150 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] | 0.600 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] | 1,000,000 tokens [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] |
+| - | opencode-go/glm-5.3 | n/a | 0.0% | 0.00 | evidence only | reasoning (0.4), adversarial_analysis (0.3), repository_understanding (0.3) | 1.400 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] | 4.400 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] | 1,000,000 tokens [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] |
+| - | opencode-go/gpt-5.6-luna | n/a | 0.0% | 0.00 | evidence only | reasoning (0.4), adversarial_analysis (0.3), repository_understanding (0.3) | 0.200 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] | 1.200 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] | 1,050,000 tokens [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] |
+| - | opencode-go/hy3 | n/a | 0.0% | 0.00 | evidence only | reasoning (0.4), adversarial_analysis (0.3), repository_understanding (0.3) | 0.140 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] | 0.580 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] | 256,000 tokens [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] |
 
 Evidence-only rows carry no rank, no composite, and no recommendation. Their observations are in the evidence appendix.
 
@@ -106,15 +124,15 @@ Evidence-only rows carry no rank, no composite, and no recommendation. Their obs
 
 Weights: software_engineering 0.5, tool_use 0.3, repository_understanding 0.2
 
-| Rank | Route | Score | Coverage | Scored weight | Status | Missing capabilities |
-|---|---|---|---|---|---|---|
-| 1 (tied with opencode-go/glm-5.3, within tolerance) | openai-codex/gpt-5.6-sol | 0.775 | 80.0% | 0.80 | ranked | repository_understanding (0.2) |
-| 1 (tied with openai-codex/gpt-5.6-sol, within tolerance) | opencode-go/glm-5.3 | 0.734 | 80.0% | 0.80 | ranked | repository_understanding (0.2) |
-| 2 (tied with opencode-go/gpt-5.6-luna) | openai-codex/gpt-5.6-luna | 0.529 | 80.0% | 0.80 | ranked | repository_understanding (0.2) |
-| 2 (tied with openai-codex/gpt-5.6-luna) | opencode-go/gpt-5.6-luna | 0.529 | 80.0% | 0.80 | ranked | repository_understanding (0.2) |
-| 3 | mistral/zai-glm-5-2 | 0.161 | 50.0% | 0.50 | ranked | tool_use (0.3), repository_understanding (0.2) |
-| - | opencode-go/deepseek-v4.1-flash | n/a | 0.0% | 0.00 | evidence only | software_engineering (0.5), tool_use (0.3), repository_understanding (0.2) |
-| - | opencode-go/hy3 | n/a | 0.0% | 0.00 | evidence only | software_engineering (0.5), tool_use (0.3), repository_understanding (0.2) |
+| Rank | Route | Score | Coverage | Scored weight | Status | Missing capabilities | Input price (USD/M tokens; source; read) | Output price (USD/M tokens; source; read) | Context limit (source; read) |
+|---|---|---|---|---|---|---|---|---|---|
+| 1 (tied with opencode-go/glm-5.3, within tolerance) | openai-codex/gpt-5.6-sol | 0.775 | 80.0% | 0.80 | ranked | repository_understanding (0.2) | 5.000 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:42.338Z] | 30.000 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:42.338Z] | 272,000 tokens [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:42.338Z] |
+| 1 (tied with openai-codex/gpt-5.6-sol, within tolerance) | opencode-go/glm-5.3 | 0.734 | 80.0% | 0.80 | ranked | repository_understanding (0.2) | 1.400 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] | 4.400 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] | 1,000,000 tokens [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] |
+| 2 (tied with opencode-go/gpt-5.6-luna) | openai-codex/gpt-5.6-luna | 0.529 | 80.0% | 0.80 | ranked | repository_understanding (0.2) | 0.200 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:42.338Z] | 1.200 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:42.338Z] | 272,000 tokens [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:42.338Z] |
+| 2 (tied with openai-codex/gpt-5.6-luna) | opencode-go/gpt-5.6-luna | 0.529 | 80.0% | 0.80 | ranked | repository_understanding (0.2) | 0.200 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] | 1.200 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] | 1,050,000 tokens [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] |
+| 3 | mistral/zai-glm-5-2 | 0.161 | 50.0% | 0.50 | ranked | tool_use (0.3), repository_understanding (0.2) | 1.400 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] | 4.400 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] | 1,000,000 tokens [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] |
+| - | opencode-go/deepseek-v4.1-flash | n/a | 0.0% | 0.00 | evidence only | software_engineering (0.5), tool_use (0.3), repository_understanding (0.2) | 0.150 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] | 0.600 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] | 1,000,000 tokens [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] |
+| - | opencode-go/hy3 | n/a | 0.0% | 0.00 | evidence only | software_engineering (0.5), tool_use (0.3), repository_understanding (0.2) | 0.140 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] | 0.580 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] | 256,000 tokens [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] |
 
 Evidence-only rows carry no rank, no composite, and no recommendation. Their observations are in the evidence appendix.
 
@@ -122,15 +140,15 @@ Evidence-only rows carry no rank, no composite, and no recommendation. Their obs
 
 Weights: review 0.5, software_engineering 0.3, reasoning 0.2
 
-| Rank | Route | Score | Coverage | Scored weight | Status | Missing capabilities |
-|---|---|---|---|---|---|---|
-| - | mistral/zai-glm-5-2 | n/a | 30.0% | 0.30 | evidence only | review (0.5), reasoning (0.2) |
-| - | openai-codex/gpt-5.6-luna | n/a | 30.0% | 0.30 | evidence only | review (0.5), reasoning (0.2) |
-| - | openai-codex/gpt-5.6-sol | n/a | 30.0% | 0.30 | evidence only | review (0.5), reasoning (0.2) |
-| - | opencode-go/deepseek-v4.1-flash | n/a | 0.0% | 0.00 | evidence only | review (0.5), software_engineering (0.3), reasoning (0.2) |
-| - | opencode-go/glm-5.3 | n/a | 30.0% | 0.30 | evidence only | review (0.5), reasoning (0.2) |
-| - | opencode-go/gpt-5.6-luna | n/a | 30.0% | 0.30 | evidence only | review (0.5), reasoning (0.2) |
-| - | opencode-go/hy3 | n/a | 0.0% | 0.00 | evidence only | review (0.5), software_engineering (0.3), reasoning (0.2) |
+| Rank | Route | Score | Coverage | Scored weight | Status | Missing capabilities | Input price (USD/M tokens; source; read) | Output price (USD/M tokens; source; read) | Context limit (source; read) |
+|---|---|---|---|---|---|---|---|---|---|
+| - | mistral/zai-glm-5-2 | n/a | 30.0% | 0.30 | evidence only | review (0.5), reasoning (0.2) | 1.400 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] | 4.400 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] | 1,000,000 tokens [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] |
+| - | openai-codex/gpt-5.6-luna | n/a | 30.0% | 0.30 | evidence only | review (0.5), reasoning (0.2) | 0.200 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:42.338Z] | 1.200 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:42.338Z] | 272,000 tokens [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:42.338Z] |
+| - | openai-codex/gpt-5.6-sol | n/a | 30.0% | 0.30 | evidence only | review (0.5), reasoning (0.2) | 5.000 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:42.338Z] | 30.000 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:42.338Z] | 272,000 tokens [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:42.338Z] |
+| - | opencode-go/deepseek-v4.1-flash | n/a | 0.0% | 0.00 | evidence only | review (0.5), software_engineering (0.3), reasoning (0.2) | 0.150 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] | 0.600 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] | 1,000,000 tokens [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] |
+| - | opencode-go/glm-5.3 | n/a | 30.0% | 0.30 | evidence only | review (0.5), reasoning (0.2) | 1.400 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] | 4.400 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] | 1,000,000 tokens [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] |
+| - | opencode-go/gpt-5.6-luna | n/a | 30.0% | 0.30 | evidence only | review (0.5), reasoning (0.2) | 0.200 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] | 1.200 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] | 1,050,000 tokens [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] |
+| - | opencode-go/hy3 | n/a | 0.0% | 0.00 | evidence only | review (0.5), software_engineering (0.3), reasoning (0.2) | 0.140 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] | 0.580 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] | 256,000 tokens [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] |
 
 Evidence-only rows carry no rank, no composite, and no recommendation. Their observations are in the evidence appendix.
 
@@ -138,15 +156,15 @@ Evidence-only rows carry no rank, no composite, and no recommendation. Their obs
 
 Weights: adversarial_analysis 0.4, review 0.3, software_engineering 0.3
 
-| Rank | Route | Score | Coverage | Scored weight | Status | Missing capabilities |
-|---|---|---|---|---|---|---|
-| - | mistral/zai-glm-5-2 | n/a | 30.0% | 0.30 | evidence only | adversarial_analysis (0.4), review (0.3) |
-| - | openai-codex/gpt-5.6-luna | n/a | 30.0% | 0.30 | evidence only | adversarial_analysis (0.4), review (0.3) |
-| - | openai-codex/gpt-5.6-sol | n/a | 30.0% | 0.30 | evidence only | adversarial_analysis (0.4), review (0.3) |
-| - | opencode-go/deepseek-v4.1-flash | n/a | 0.0% | 0.00 | evidence only | adversarial_analysis (0.4), review (0.3), software_engineering (0.3) |
-| - | opencode-go/glm-5.3 | n/a | 30.0% | 0.30 | evidence only | adversarial_analysis (0.4), review (0.3) |
-| - | opencode-go/gpt-5.6-luna | n/a | 30.0% | 0.30 | evidence only | adversarial_analysis (0.4), review (0.3) |
-| - | opencode-go/hy3 | n/a | 0.0% | 0.00 | evidence only | adversarial_analysis (0.4), review (0.3), software_engineering (0.3) |
+| Rank | Route | Score | Coverage | Scored weight | Status | Missing capabilities | Input price (USD/M tokens; source; read) | Output price (USD/M tokens; source; read) | Context limit (source; read) |
+|---|---|---|---|---|---|---|---|---|---|
+| - | mistral/zai-glm-5-2 | n/a | 30.0% | 0.30 | evidence only | adversarial_analysis (0.4), review (0.3) | 1.400 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] | 4.400 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] | 1,000,000 tokens [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] |
+| - | openai-codex/gpt-5.6-luna | n/a | 30.0% | 0.30 | evidence only | adversarial_analysis (0.4), review (0.3) | 0.200 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:42.338Z] | 1.200 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:42.338Z] | 272,000 tokens [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:42.338Z] |
+| - | openai-codex/gpt-5.6-sol | n/a | 30.0% | 0.30 | evidence only | adversarial_analysis (0.4), review (0.3) | 5.000 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:42.338Z] | 30.000 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:42.338Z] | 272,000 tokens [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:42.338Z] |
+| - | opencode-go/deepseek-v4.1-flash | n/a | 0.0% | 0.00 | evidence only | adversarial_analysis (0.4), review (0.3), software_engineering (0.3) | 0.150 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] | 0.600 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] | 1,000,000 tokens [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] |
+| - | opencode-go/glm-5.3 | n/a | 30.0% | 0.30 | evidence only | adversarial_analysis (0.4), review (0.3) | 1.400 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] | 4.400 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] | 1,000,000 tokens [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] |
+| - | opencode-go/gpt-5.6-luna | n/a | 30.0% | 0.30 | evidence only | adversarial_analysis (0.4), review (0.3) | 0.200 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] | 1.200 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] | 1,050,000 tokens [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] |
+| - | opencode-go/hy3 | n/a | 0.0% | 0.00 | evidence only | adversarial_analysis (0.4), review (0.3), software_engineering (0.3) | 0.140 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] | 0.580 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] | 256,000 tokens [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] |
 
 Evidence-only rows carry no rank, no composite, and no recommendation. Their observations are in the evidence appendix.
 
@@ -154,15 +172,15 @@ Evidence-only rows carry no rank, no composite, and no recommendation. Their obs
 
 Weights: instruction_following 0.3, reasoning 0.3, long_context 0.2, multimodal 0.2
 
-| Rank | Route | Score | Coverage | Scored weight | Status | Missing capabilities |
-|---|---|---|---|---|---|---|
-| - | mistral/zai-glm-5-2 | n/a | 0.0% | 0.00 | evidence only | instruction_following (0.3), reasoning (0.3), long_context (0.2), multimodal (0.2) |
-| - | openai-codex/gpt-5.6-luna | n/a | 0.0% | 0.00 | evidence only | instruction_following (0.3), reasoning (0.3), long_context (0.2), multimodal (0.2) |
-| - | openai-codex/gpt-5.6-sol | n/a | 0.0% | 0.00 | evidence only | instruction_following (0.3), reasoning (0.3), long_context (0.2), multimodal (0.2) |
-| - | opencode-go/deepseek-v4.1-flash | n/a | 0.0% | 0.00 | evidence only | instruction_following (0.3), reasoning (0.3), long_context (0.2), multimodal (0.2) |
-| - | opencode-go/glm-5.3 | n/a | 0.0% | 0.00 | evidence only | instruction_following (0.3), reasoning (0.3), long_context (0.2), multimodal (0.2) |
-| - | opencode-go/gpt-5.6-luna | n/a | 0.0% | 0.00 | evidence only | instruction_following (0.3), reasoning (0.3), long_context (0.2), multimodal (0.2) |
-| - | opencode-go/hy3 | n/a | 0.0% | 0.00 | evidence only | instruction_following (0.3), reasoning (0.3), long_context (0.2), multimodal (0.2) |
+| Rank | Route | Score | Coverage | Scored weight | Status | Missing capabilities | Input price (USD/M tokens; source; read) | Output price (USD/M tokens; source; read) | Context limit (source; read) |
+|---|---|---|---|---|---|---|---|---|---|
+| - | mistral/zai-glm-5-2 | n/a | 0.0% | 0.00 | evidence only | instruction_following (0.3), reasoning (0.3), long_context (0.2), multimodal (0.2) | 1.400 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] | 4.400 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] | 1,000,000 tokens [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] |
+| - | openai-codex/gpt-5.6-luna | n/a | 0.0% | 0.00 | evidence only | instruction_following (0.3), reasoning (0.3), long_context (0.2), multimodal (0.2) | 0.200 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:42.338Z] | 1.200 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:42.338Z] | 272,000 tokens [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:42.338Z] |
+| - | openai-codex/gpt-5.6-sol | n/a | 0.0% | 0.00 | evidence only | instruction_following (0.3), reasoning (0.3), long_context (0.2), multimodal (0.2) | 5.000 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:42.338Z] | 30.000 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:42.338Z] | 272,000 tokens [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:42.338Z] |
+| - | opencode-go/deepseek-v4.1-flash | n/a | 0.0% | 0.00 | evidence only | instruction_following (0.3), reasoning (0.3), long_context (0.2), multimodal (0.2) | 0.150 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] | 0.600 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] | 1,000,000 tokens [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] |
+| - | opencode-go/glm-5.3 | n/a | 0.0% | 0.00 | evidence only | instruction_following (0.3), reasoning (0.3), long_context (0.2), multimodal (0.2) | 1.400 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] | 4.400 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] | 1,000,000 tokens [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] |
+| - | opencode-go/gpt-5.6-luna | n/a | 0.0% | 0.00 | evidence only | instruction_following (0.3), reasoning (0.3), long_context (0.2), multimodal (0.2) | 0.200 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] | 1.200 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] | 1,050,000 tokens [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] |
+| - | opencode-go/hy3 | n/a | 0.0% | 0.00 | evidence only | instruction_following (0.3), reasoning (0.3), long_context (0.2), multimodal (0.2) | 0.140 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] | 0.580 [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] | 256,000 tokens [source: ~/.pi/agent/models-store.json; read: 2026-09-12T08:02:41.294Z] |
 
 Evidence-only rows carry no rank, no composite, and no recommendation. Their observations are in the evidence appendix.
 
@@ -227,6 +245,12 @@ Judge calibration: 3/3 planted defects detected on frozen fixtures (prompt versi
 | general | no-change | multimodal has a tier A source but no rows for these routes, and reasoning, instruction_following, and long_context have none. Coverage is 0%, so the session-start model stands. |
 
 Applying any change requires explicit user approval. Routing files are not modified by this pipeline.
+
+
+Operational tiebreak rationale:
+
+- implement, rank 1: Cost broke the tie inside an otherwise tied group: opencode-go/glm-5.3 is cheapest and has the largest context (opencode-go/glm-5.3). Capability ranks remain tied.
+- implement, rank 2: The largest context member is opencode-go/gpt-5.6-luna inside an otherwise tied group; cost did not identify one winner. Capability ranks remain tied.
 
 ## 9. Validation and rollback criteria
 

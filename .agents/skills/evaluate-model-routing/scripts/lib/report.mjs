@@ -4,7 +4,7 @@
 import { stripInternal } from './util.mjs';
 import { coverageLegend, escapeHtml, htmlTable, renderPage, safeUrl, scoreTint, stateTint, stateTitle } from './html.mjs';
 
-export const PIPELINE_VERSION = 6;
+export const PIPELINE_VERSION = 7;
 export const REPORT_SECTIONS = [
   'Run metadata',
   'Executive summary',
@@ -57,6 +57,7 @@ export function buildReport({ config, registry, manifest, sources, failures, uni
       config: stripInternal(config),
       manifest: stripInternal(manifest),
       registry: stripInternal(registry),
+      operational_data: scorecard.operational_data,
     },
   };
 }
@@ -67,6 +68,18 @@ function fmt(value, digits = 3) {
 
 function pct(value) {
   return typeof value === 'number' ? `${(value * 100).toFixed(1)}%` : 'n/a';
+}
+
+function operationalLabel(field, digits = 3) {
+  if (!field) return 'not-in-store [source: not loaded; read: not recorded]';
+  const value = typeof field.value === 'number' ? field.value.toFixed(digits) : 'not-in-store';
+  return `${value} [source: ${field.source}; read: ${field.read_at}]`;
+}
+
+function contextLabel(field) {
+  if (!field) return 'not-in-store [source: not loaded; read: not recorded]';
+  const value = typeof field.value === 'number' ? `${field.value.toLocaleString('en-US')} tokens` : 'not-in-store';
+  return `${value} [source: ${field.source}; read: ${field.read_at}]`;
 }
 
 function rankLabel(row) {
@@ -178,19 +191,30 @@ export function renderMarkdown(report) {
   out.push('');
 
   out.push('## 3. Baseline route table and re-evaluation', '');
-  out.push('Configured baseline routes (rank 1) with their re-evaluation:', '');
-  out.push('| Stage | Baseline (rank 1) | Status | Score | Coverage |', '|---|---|---|---|---|');
+  out.push('Configured baseline routes (rank 1) with their re-evaluation. Operational values are catalog data, not capability scores:', '');
+  out.push('| Stage | Baseline (rank 1) | Status | Score | Coverage | Input price (USD/M tokens; source; read) | Output price (USD/M tokens; source; read) | Context limit (source; read) |', '|---|---|---|---|---|---|---|---|');
   for (const [stage, stageReport] of Object.entries(report.scorecard.stages)) {
     const baselineRoute = report.baseline[stage];
     const row = stageReport.rows.find((entry) => entry.route_id === baselineRoute);
     if (!row) continue;
-    out.push(`| ${stage} | ${baselineRoute ?? 'none'} | ${row.eligible ? `rank ${row.rank}` : 'evidence only'} | ${row.score === null ? 'n/a' : fmt(row.score)} | ${pct(row.coverage)} |`);
+    out.push(`| ${stage} | ${baselineRoute ?? 'none'} | ${row.eligible ? `rank ${row.rank}` : 'evidence only'} | ${row.score === null ? 'n/a' : fmt(row.score)} | ${pct(row.coverage)} | ${operationalLabel(row.operational.input_price)} | ${operationalLabel(row.operational.output_price)} | ${contextLabel(row.operational.context_limit)} |`);
   }
   out.push('');
   out.push('Full configured chains:', '');
   out.push('| Stage | Chain (rank order) |', '|---|---|');
   for (const [stage, chain] of Object.entries(report.chains)) {
     out.push(`| ${stage} | ${chain.join(' > ')} |`);
+  }
+  out.push('');
+  out.push('Operational data for every configured route:', '');
+  out.push('| Stage | Route | Configured rank | Input price (USD/M tokens; source; read) | Output price (USD/M tokens; source; read) | Context limit (source; read) |', '|---|---|---|---|---|---|');
+  for (const [stage, chain] of Object.entries(report.chains)) {
+    const stageReport = report.scorecard.stages[stage];
+    for (const [index, route] of chain.entries()) {
+      const row = stageReport.rows.find((entry) => entry.route_id === route);
+      if (!row) continue;
+      out.push(`| ${stage} | ${route} | ${index + 1} | ${operationalLabel(row.operational.input_price)} | ${operationalLabel(row.operational.output_price)} | ${contextLabel(row.operational.context_limit)} |`);
+    }
   }
   out.push('');
 
@@ -211,11 +235,11 @@ export function renderMarkdown(report) {
   for (const [stage, stageReport] of Object.entries(report.scorecard.stages)) {
     out.push(`### ${stage}`, '');
     out.push(`Weights: ${Object.entries(stageReport.weights).map(([id, weight]) => `${id} ${weight}`).join(', ')}`, '');
-    out.push('| Rank | Route | Score | Coverage | Scored weight | Status | Missing capabilities |', '|---|---|---|---|---|---|---|');
+    out.push('| Rank | Route | Score | Coverage | Scored weight | Status | Missing capabilities | Input price (USD/M tokens; source; read) | Output price (USD/M tokens; source; read) | Context limit (source; read) |', '|---|---|---|---|---|---|---|---|---|---|');
     const ranked = [...stageReport.rows].sort((a, b) => (a.rank ?? Number.MAX_SAFE_INTEGER) - (b.rank ?? Number.MAX_SAFE_INTEGER) || a.route_id.localeCompare(b.route_id));
     for (const row of ranked) {
       out.push(
-        `| ${rankLabel(row)} | ${row.route_id} | ${row.score === null ? 'n/a' : fmt(row.score)} | ${pct(row.coverage)} | ${fmt(row.scored_weight, 2)} | ${row.eligible ? 'ranked' : 'evidence only'} | ${row.missing_capabilities.map((entry) => `${entry.id} (${entry.weight})`).join(', ') || 'none'} |`,
+        `| ${rankLabel(row)} | ${row.route_id} | ${row.score === null ? 'n/a' : fmt(row.score)} | ${pct(row.coverage)} | ${fmt(row.scored_weight, 2)} | ${row.eligible ? 'ranked' : 'evidence only'} | ${row.missing_capabilities.map((entry) => `${entry.id} (${entry.weight})`).join(', ') || 'none'} | ${operationalLabel(row.operational.input_price)} | ${operationalLabel(row.operational.output_price)} | ${contextLabel(row.operational.context_limit)} |`,
       );
     }
     out.push('');
@@ -272,6 +296,10 @@ export function renderMarkdown(report) {
     }
     out.push('', 'Applying any change requires explicit user approval. Routing files are not modified by this pipeline.', '');
   }
+  const operationalTies = Object.entries(report.scorecard.stages).flatMap(([stage, stageReport]) =>
+    (stageReport.tie_groups ?? []).map((group) => `- ${stage}, rank ${group.rank}: ${group.operational_tiebreak.rationale}`),
+  );
+  if (operationalTies.length > 0) out.push('', 'Operational tiebreak rationale:', '', ...operationalTies, '');
 
   out.push('## 9. Validation and rollback criteria', '');
   out.push('- Measure before and after each applied change on the affected stage, with the same prompt and candidate models.');
@@ -334,11 +362,20 @@ ${htmlTable(['Source', 'Status', 'Retrieved', 'SHA-256', 'URL'], sourceRows)}</s
   const baselineRows = Object.entries(report.scorecard.stages).flatMap(([stage, stageReport]) => {
     const row = stageReport.rows.find((entry) => entry.route_id === report.baseline[stage]);
     return row
-      ? [[escapeHtml(stage), escapeHtml(report.baseline[stage] ?? 'none'), row.eligible ? `rank ${row.rank}` : '<span class="warn">evidence only</span>', escapeHtml(row.score === null ? 'n/a' : fmt(row.score)), escapeHtml(pct(row.coverage))]]
+      ? [[escapeHtml(stage), escapeHtml(report.baseline[stage] ?? 'none'), row.eligible ? `rank ${row.rank}` : '<span class="warn">evidence only</span>', escapeHtml(row.score === null ? 'n/a' : fmt(row.score)), escapeHtml(pct(row.coverage)), escapeHtml(operationalLabel(row.operational.input_price)), escapeHtml(operationalLabel(row.operational.output_price)), escapeHtml(contextLabel(row.operational.context_limit))]]
       : [];
   });
   const chainRows = Object.entries(report.chains).map(([stage, chain]) => [escapeHtml(stage), escapeHtml(chain.join(' > '))]);
-  sections.push(`<section><h2>3. Baseline route table and re-evaluation</h2>${htmlTable(['Stage', 'Baseline (rank 1)', 'Eligible', 'Score', 'Coverage'], baselineRows)}${htmlTable(['Stage', 'Configured chain (rank 1)'], chainRows)}</section>`);
+  const configuredOperationalRows = Object.entries(report.chains).flatMap(([stage, chain]) => {
+    const stageReport = report.scorecard.stages[stage];
+    return chain.map((route, index) => {
+      const row = stageReport.rows.find((entry) => entry.route_id === route);
+      return row
+        ? [escapeHtml(stage), escapeHtml(route), escapeHtml(index + 1), escapeHtml(operationalLabel(row.operational.input_price)), escapeHtml(operationalLabel(row.operational.output_price)), escapeHtml(contextLabel(row.operational.context_limit))]
+        : [];
+    });
+  });
+  sections.push(`<section><h2>3. Baseline route table and re-evaluation</h2>${htmlTable(['Stage', 'Baseline (rank 1)', 'Eligible', 'Score', 'Coverage', 'Input price (USD/M tokens; source; read)', 'Output price (USD/M tokens; source; read)', 'Context limit (source; read)'], baselineRows)}${htmlTable(['Stage', 'Configured chain (rank 1)'], chainRows)}${htmlTable(['Stage', 'Route', 'Configured rank', 'Input price (USD/M tokens; source; read)', 'Output price (USD/M tokens; source; read)', 'Context limit (source; read)'], configuredOperationalRows)}</section>`);
 
   const matrixRows = matrix.rows.map((row) => [
     escapeHtml(row.route),
@@ -365,9 +402,12 @@ ${htmlTable(['Source', 'Status', 'Retrieved', 'SHA-256', 'URL'], sourceRows)}</s
           escapeHtml(fmt(row.scored_weight, 2)),
           row.eligible ? 'ranked' : '<span class="warn">evidence only</span>',
           escapeHtml(row.missing_capabilities.map((entry) => `${entry.id} (${entry.weight})`).join(', ') || 'none'),
+          escapeHtml(operationalLabel(row.operational.input_price)),
+          escapeHtml(operationalLabel(row.operational.output_price)),
+          escapeHtml(contextLabel(row.operational.context_limit)),
         ]);
       const weights = Object.entries(stageReport.weights).map(([id, weight]) => `${id} ${weight}`).join(', ');
-      return `<h3>${escapeHtml(stage)}</h3><p class="muted">Weights: ${escapeHtml(weights)}</p>${htmlTable(['Rank', 'Route', 'Score', 'Coverage', 'Scored weight', 'Status', 'Missing capabilities'], rows)}`;
+      return `<h3>${escapeHtml(stage)}</h3><p class="muted">Weights: ${escapeHtml(weights)}</p>${htmlTable(['Rank', 'Route', 'Score', 'Coverage', 'Scored weight', 'Status', 'Missing capabilities', 'Input price (USD/M tokens; source; read)', 'Output price (USD/M tokens; source; read)', 'Context limit (source; read)'], rows)}`;
     })
     .join('');
   sections.push(`<section><h2>5. Deterministic scorecard per stage</h2>${stageBlocks}</section>`);
@@ -397,7 +437,10 @@ ${htmlTable(['Source', 'Status', 'Retrieved', 'SHA-256', 'URL'], sourceRows)}</s
           .map(([stage, signal]) => `<li>${escapeHtml(stage)}: ${escapeHtml(signal.signal)} — ${escapeHtml(signal.rationale)}</li>`)
           .join('')}</ul>`
       : `${htmlTable(['Stage', 'Decision', 'Rationale'], report.recommendations.map((recommendation) => [escapeHtml(recommendation.task), escapeHtml(recommendation.decision), escapeHtml(recommendation.rationale)]))}<p class="muted">Applying any change requires explicit user approval. Routing files are not modified by this pipeline.</p>`;
-  sections.push(`<section><h2>8. Recommendation per stage</h2>${recommendationHtml}</section>`);
+  const operationalTieHtml = Object.entries(report.scorecard.stages).flatMap(([stage, stageReport]) =>
+    (stageReport.tie_groups ?? []).map((group) => `<li>${escapeHtml(stage)}, rank ${escapeHtml(group.rank)}: ${escapeHtml(group.operational_tiebreak.rationale)}</li>`),
+  ).join('');
+  sections.push(`<section><h2>8. Recommendation per stage</h2>${recommendationHtml}${operationalTieHtml ? `<p><strong>Operational tiebreak rationale</strong></p><ul>${operationalTieHtml}</ul>` : ''}</section>`);
 
   sections.push(`<section><h2>9. Validation and rollback criteria</h2><ul>
 <li>Measure before and after each applied change on the affected stage, with the same prompt and candidate models.</li>

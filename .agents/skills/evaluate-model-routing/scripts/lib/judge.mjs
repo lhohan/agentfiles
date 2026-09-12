@@ -4,7 +4,7 @@
 
 import { CliError, EXIT, invalidInput } from './errors.mjs';
 
-export const PROMPT_VERSION = 3;
+export const PROMPT_VERSION = 4;
 
 const ASSESSMENT_KEYS = ['strengths', 'risks', 'disqualifiers', 'confidence', 'divergence'];
 
@@ -26,6 +26,7 @@ export function buildJudgePrompt({ config, report }) {
         stage,
         {
           weights: stageReport.weights,
+          tie_groups: stageReport.tie_groups ?? [],
           rows: stageReport.rows.map((row) => ({
             route_id: row.route_id,
             score: row.score,
@@ -33,6 +34,7 @@ export function buildJudgePrompt({ config, report }) {
             eligible: row.eligible,
             rank: row.rank ?? null,
             missing_capabilities: row.missing_capabilities,
+            operational: row.operational,
           })),
         },
       ]),
@@ -84,6 +86,7 @@ export function buildJudgePrompt({ config, report }) {
       'percentile': 'Computed inside one unit as (models below + 0.5 x models tied) / population, inverted for lower-is-better metrics. Tied models share one percentile, so exact rank differences inside a unit are not meaningful.',
       'contested_tolerance': 'The gap that counts as a disagreement between two observations of one route in one unit. It is not yet applied to the gap between two routes in a stage.',
       'route_evidence entry': 'unit_key names the comparable unit; publisher_name is the name the board publishes; alias_rule records why a published name maps to this route; source_scope records whether the evidence is the routed release (model) or family-level (proxy-family, never scored).',
+      'operational data': 'Input price, output price, and context limit come from the local model store. Every field carries its source and read date; not-in-store is not evidence of a price or limit.',
     },
   };
   return `# Model-routing judge prompt (version ${PROMPT_VERSION})

@@ -8,7 +8,7 @@ import { tmpdir } from 'node:os';
 import { join, resolve } from 'node:path';
 import test from 'node:test';
 import { calibrate, detectionFor, SCENARIOS } from '../lib/calibration.mjs';
-import { buildJudgePrompt } from '../lib/judge.mjs';
+import { buildJudgePrompt, PROMPT_VERSION } from '../lib/judge.mjs';
 
 const skillDir = resolve(import.meta.dirname, '..', '..');
 const cli = join(skillDir, 'scripts', 'evaluate.mjs');
@@ -26,7 +26,7 @@ function run(args) {
 test('every scenario builds a prompt the judge can consume', () => {
   for (const scenario of SCENARIOS) {
     const prompt = buildJudgePrompt({ config: CONFIG, report: scenario.build() });
-    assert.ok(prompt.includes('version 3'), `${scenario.id} prompt carries the prompt version`);
+    assert.ok(prompt.includes(`version ${PROMPT_VERSION}`), `${scenario.id} prompt carries the prompt version`);
     assert.ok(prompt.includes('<<<BEGIN-DATA'), `${scenario.id} prompt carries the data block`);
   }
 });

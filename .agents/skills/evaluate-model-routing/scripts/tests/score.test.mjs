@@ -59,9 +59,9 @@ function rows(count, overrides = {}) {
   }));
 }
 
-function run(unitRows, manifest = { candidates: ['p/a', 'p/b', 'p/c', 'p/proxy'], stages: [{ task: 'implement', routes: [{ rank: 1, model_id: 'p/a' }] }] }, config = CONFIG, referenceTime = '2026-09-11T00:00:00.000Z') {
+function run(unitRows, manifest = { candidates: ['p/a', 'p/b', 'p/c', 'p/proxy'], stages: [{ task: 'implement', routes: [{ rank: 1, model_id: 'p/a' }] }] }, config = CONFIG, referenceTime = '2026-09-11T00:00:00.000Z', operationalData = null) {
   const units = buildUnits({ entries: [ENTRY], rows: unitRows, snapshot: SNAPSHOT, effortOrder: config.effort_rank });
-  return score({ config, registry: REGISTRY, manifest, units, referenceTime });
+  return score({ config, registry: REGISTRY, manifest, units, referenceTime, operationalData });
 }
 
 test('percentile rank uses midrank tie handling and supports lower-is-better', () => {
@@ -263,4 +263,53 @@ test('manifest candidates are independent of the stages list', () => {
   const result = run(rows(20), { candidates: ['p/c'], stages: [] });
   assert.deepEqual(Object.keys(result.routes), ['p/c']);
   assert.deepEqual(Object.keys(result.stages), ['implement'], 'stage weights come from config, not the manifest');
+});
+
+test('operational data annotates a quality tie without changing its rank', () => {
+  const config = { ...CONFIG, min_stage_separation: 0.05, stage_weights: { implement: { software_engineering: 1 } } };
+  const result = run(rows(20), { candidates: ['p/a', 'p/b'], stages: [{ task: 'implement', routes: [{ rank: 1, model_id: 'p/a' }] }] }, config, '2026-09-11T00:00:00.000Z', {
+    source: '~/.pi/agent/models-store.json',
+    read_at: '2026-09-12T00:00:00.000Z',
+    routes: {
+      'p/a': { input_price: { value: 0.2 }, output_price: { value: 1.2 }, context_limit: { value: 272000 } },
+      'p/b': { input_price: { value: 0.4 }, output_price: { value: 1.8 }, context_limit: { value: 128000 } },
+    },
+  });
+  const stage = result.stages.implement;
+  const byRoute = new Map(stage.rows.map((row) => [row.route_id, row]));
+  assert.equal(byRoute.get('p/a').rank, byRoute.get('p/b').rank, 'operational data does not create a quality rank');
+  assert.equal(byRoute.get('p/a').operational.input_price.value, 0.2);
+  assert.equal(stage.tie_groups[0].operational_tiebreak.status, 'cost-broke-tie');
+  assert.deepEqual(stage.tie_groups[0].operational_tiebreak.cheapest, ['p/a']);
+  assert.deepEqual(stage.tie_groups[0].operational_tiebreak.largest_context, ['p/a']);
+});
+
+test('a cheaper route with a lower capability score stays below the better route', () => {
+  const config = { ...CONFIG, min_stage_separation: 0.01, stage_weights: { implement: { software_engineering: 1 } } };
+  const result = run(rows(20), { candidates: ['p/a', 'p/b'], stages: [{ task: 'implement', routes: [{ rank: 1, model_id: 'p/a' }] }] }, config, '2026-09-11T00:00:00.000Z', {
+    source: '~/.pi/agent/models-store.json',
+    read_at: '2026-09-12T00:00:00.000Z',
+    routes: {
+      'p/a': { input_price: { value: 0.01 }, output_price: { value: 0.01 }, context_limit: { value: 128000 } },
+      'p/b': { input_price: { value: 9 }, output_price: { value: 9 }, context_limit: { value: 128000 } },
+    },
+  });
+  const byRoute = new Map(result.stages.implement.rows.map((row) => [row.route_id, row]));
+  assert.ok(byRoute.get('p/b').score > byRoute.get('p/a').score);
+  assert.ok(byRoute.get('p/b').rank < byRoute.get('p/a').rank, 'cost must not override a score outside tie tolerance');
+});
+
+test('equal operational data leaves a quality tie unresolved', () => {
+  const config = { ...CONFIG, min_stage_separation: 0.2, stage_weights: { implement: { software_engineering: 1 } } };
+  const result = run(rows(20), { candidates: ['p/a', 'p/c'], stages: [{ task: 'implement', routes: [{ rank: 1, model_id: 'p/a' }] }] }, config, '2026-09-11T00:00:00.000Z', {
+    source: '~/.pi/agent/models-store.json',
+    read_at: '2026-09-12T00:00:00.000Z',
+    routes: {
+      'p/a': { input_price: { value: 0.2 }, output_price: { value: 1.2 }, context_limit: { value: 272000 } },
+      'p/c': { input_price: { value: 0.2 }, output_price: { value: 1.2 }, context_limit: { value: 272000 } },
+    },
+  });
+  const tie = result.stages.implement.tie_groups[0].operational_tiebreak;
+  assert.equal(tie.status, 'unresolved');
+  assert.match(tie.rationale, /unresolved tie/i);
 });

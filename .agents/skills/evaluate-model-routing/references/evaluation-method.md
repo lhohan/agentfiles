@@ -76,6 +76,25 @@ A unit is the only place where values are comparable:
 - A snapshot older than `max_snapshot_age_days` (per-benchmark override allowed)
   is `stale-excluded` and not scored.
 
+## Operational data
+
+The optional local model catalog (`~/.pi/agent/models-store.json`) is read for
+exact evaluated route ids only. A route is split into its provider prefix and
+model id, then matched to the provider's `models[].id`. The pipeline records
+three independent fields per route: `input_price` and `output_price` (USD per
+million tokens), and `context_limit` (tokens). Each field records `source` and
+`read_at`; a missing file, provider, model, or field is represented as
+`value: "not-in-store"` and never treated as a number. The provider entry's
+`checkedAt` is the read date when present; otherwise the local read time is
+recorded. The catalog is optional and is never a credential source.
+
+Operational data is advisory only. After capability ranking creates a rank
+group, the report identifies a cheapest member only when one route dominates on
+both input and output price, and identifies all members tied for the largest
+known context. It does not combine prices into a weighted score. A complete
+operational tie, incomplete data, or no single cheapest member remains an
+unresolved tie. These annotations do not alter capability ranks.
+
 ## Scoring
 
 - **Alias resolution:** a published name maps to a route only through an explicit
@@ -107,6 +126,9 @@ A unit is the only place where values are comparable:
   `min_stage_separation` is treated as an ordering, even when the candidates'
   published intervals overlap. Interval-aware ranking is an open item, not an
   implemented rule.
+- Operational data is applied only after this capability ranking. It annotates
+  an existing tied rank group and never moves a route above a route whose
+  capability score is outside `min_stage_separation`.
 
 Ranks are assigned with competition ranking inside a stage. A gap at or below
 `min_stage_separation` (default 0.05) is not an ordering claim: those routes
