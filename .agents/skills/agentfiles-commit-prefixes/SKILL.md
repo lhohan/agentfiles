@@ -19,6 +19,9 @@ This is **not** traditional Conventional Commits.
 - `shared:` — changes under `agents/agents-shared/`
 - `vibe:` — changes under `agents/vibe/`
 - `zerostack:` — changes under `agents/zerostack/`
+- `skill(evaluate-model-routing):` — the model-routing evaluation skill at
+  `.agents/skills/evaluate-model-routing/`, including its review output under
+  `docs/routing-reviews/`
 - `docs:` — documentation changes (only)
 - `build:` — task management or build related changes
 - `chore:` — repository-wide or cross-cutting changes, including root files, task scripts
@@ -38,6 +41,7 @@ Examples:
 - `build: update stow task documentation`
 - `shared: review and update canonical AGENTS.md content`
 - `docs: document the commit prefix convention`
+- `skill(evaluate-model-routing): record a pi routing review`
 
 Keep the subject short, direct, and in present tense. Add a body only when the rationale needs explanation.
 
@@ -46,5 +50,7 @@ Keep the subject short, direct, and in present tense. Add a body only when the r
 Update this skill whenever the repository evolves:
 
 - add a new prefix for each new direct `agents/<name>/` package
+- add a `skill(<name>):` prefix for each skill that owns durable artefacts, and
+  copy the skill directory name exactly
 - revise the `chore:` definition when repo-wide files or workflow change
 - keep examples in sync with real commit history
