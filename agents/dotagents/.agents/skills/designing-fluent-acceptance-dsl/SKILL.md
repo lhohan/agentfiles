@@ -218,6 +218,25 @@ Examples of external behaviour include:
 
 Do not rely only on broad end-to-end tests for these checks; keep contract assertions explicit and focused.
 
+### Contract-First Assertion Discipline
+
+Treat the CLI as a contract, not an implementation. Assert exit code, output shape, and `ok` semantics before domain fields.
+
+Define a **scenario** as one end-to-end invocation (one `when_run()`), followed by multiple assertions that together specify the behaviour for that scenario.
+
+Use composite assertions to keep behaviour readable:
+
+- `expect_ok()` — transport and contract success: exit 0, output parseable, `ok: true`.
+- `expect_err(code)` — transport and contract failure: non-zero exit, output parseable, `ok: false`, `error.code == code`.
+
+Add only the minimum domain assertions per scenario (one to three) that express the behavioural intent. Grow the DSL from the assertions you actually use, and prefer stable behavioural checks over unstable ones.
+
+Make error behaviour first-class: negative tests are part of the contract.
+
+Keep inputs minimal and controlled early: start with a single fixture written by the DSL (for example, `with_markdown(...)`) to validate the whole flow before scaling the corpus.
+
+Keep UX clarity in the contract because the DSL is also documentation of intended usage.
+
 ## Single-Responsibility Fixture Style
 
 Prefer DSL wrapper methods (e.g., `.with_source_skills()`, `.with_multi_source_skills()`) over manual fixture management in scenario test bodies. The DSL should handle resource lifetimes automatically, with no explicit cleanup in the test.
