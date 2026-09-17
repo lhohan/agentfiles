@@ -32,7 +32,10 @@
     "mistral/zai-glm-5-2",
     "mistral/mistral-small-2603",
     "openai-codex/gpt-5.6-sol",
-    "openai-codex/gpt-5.6-luna"
+    "openai-codex/gpt-5.6-luna",
+    "omlx/medgemma-1.5-4b-it-4bit",
+    "omlx/GLM-OCR-4bit",
+    "omlx/Qwen3.5-9B-MLX-4bit"
   ],
   "enableSkillCommands": true,
   "showHardwareCursor": true,
@@ -46,12 +49,8 @@
   "answer": {
     "extractionModels": [
       {
-        "provider": "mistral",
-        "id": "mistral-medium-3.5"
-      },
-      {
-        "provider": "opencode-go",
-        "id": "deepseek-v4-flash"
+        "provider": "omlx",
+        "id": "Qwen3.5-9B-MLX-4bit"
       },
       {
         "provider": "mistral",

@@ -17,7 +17,9 @@
             "xhigh": null,
             "max": null
           },
-          "input": ["text"],
+          "input": [
+            "text"
+          ],
           "contextWindow": 1048576,
           "maxTokens": 131072,
           "cost": {
@@ -36,6 +38,65 @@
           }
         }
       }
+    },
+    "omlx": {
+      "baseUrl": "http://127.0.0.1:8000/v1",
+      "api": "openai-completions",
+      "apiKey": "navier-stokes",
+      "authHeader": true,
+      "models": [
+        {
+          "id": "medgemma-1.5-4b-it-4bit",
+          "name": "medgemma-1.5-4b-it-4bit",
+          "reasoning": false,
+          "input": [
+            "text",
+            "image"
+          ],
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          },
+          "contextWindow": 131072,
+          "maxTokens": 32768
+        },
+        {
+          "id": "GLM-OCR-4bit",
+          "name": "GLM-OCR 4-bit",
+          "reasoning": false,
+          "input": [
+            "text",
+            "image"
+          ],
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          },
+          "contextWindow": 131072,
+          "maxTokens": 32768
+        },
+        {
+          "id": "Qwen3.5-9B-MLX-4bit",
+          "name": "Qwen3.5 9B MLX 4-bit",
+          "reasoning": true,
+          "input": [
+            "text",
+            "image"
+          ],
+          "cost": {
+            "input": 0,
+            "output": 0,
+            "cacheRead": 0,
+            "cacheWrite": 0
+          },
+          "contextWindow": 262144,
+          "maxTokens": 32768
+        }
+      ]
     }
   }
 }
