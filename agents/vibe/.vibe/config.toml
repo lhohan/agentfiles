@@ -380,7 +380,6 @@ max_todos = 100
 permission = "always"
 allowlist = [
     "/Users/hans/.vibe/plans/*",
-    "/private/tmp/plan-review-8tj/*",
 ]
 denylist = []
 sensitive_patterns = [

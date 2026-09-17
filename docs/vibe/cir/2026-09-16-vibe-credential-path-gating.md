@@ -62,7 +62,9 @@ THEN the path is a symlink to `agents/vibe/.vibe/config.toml`
   globs would prompt on ordinary application configuration.
 - **Merged the drifted live configuration into the repository copy** before
   re-stowing. The live file held an `omlx` provider, a `medgemma` model alias,
-  and two allowlist entries that the repository copy lacked. The live file
+  and two allowlist entries that the repository copy lacked. The
+  `/private/tmp/plan-review-8tj/*` write_file entry was dropped afterwards: it
+  is a one-off path that does not belong in managed configuration. The live file
   replaced the symlink, so the repository copy was stale.
 - **Deleted the stale `config.toml` backups in `~/.vibe/`.** Their only unique
   content was two obsolete Obsidian vault allowlist paths, removed during the
