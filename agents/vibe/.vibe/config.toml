@@ -7,7 +7,7 @@ include_project_context = true
 include_prompt_detail = true
 include_model_info = true
 enable_commit_signature = false
-active_model = "zai-glm-5-2"
+active_model = "zai-glm-5-3"
 instructions = "Use the skill 'karpathy-guidelines' for coding tasks."
 vim_keybindings = false
 disable_welcome_banner_animation = false
@@ -137,9 +137,9 @@ input_price = 1.4
 output_price = 4.4
 
 [[models]]
-name = "zai-glm-5-2"
+name = "zai-glm-5-3"
 provider = "mistral"
-alias = "zai-glm-5-2"
+alias = "zai-glm-5-3"
 temperature = 0.3
 thinking = "high"
 input_price = 1.4
