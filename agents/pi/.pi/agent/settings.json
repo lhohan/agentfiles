@@ -7,6 +7,9 @@
   "terminal": {
     "showImages": true
   },
+  "images": {
+    "autoResize": false
+  },
   "editorPaddingX": 2,
   "compaction": {
     "enabled": true
