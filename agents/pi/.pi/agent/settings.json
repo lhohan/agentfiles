@@ -28,6 +28,7 @@
     "opencode-go/hy3",
     "opencode-go/hy4-preview",
     "opencode-go/qwen3.8-flash",
+    "opencode-go/union-alpha",
     "mistral/mistral-medium-3.5",
     "mistral/zai-glm-5-2",
     "mistral/mistral-small-2603",
