@@ -1,0 +1,64 @@
+{
+  "$schema": "https://schema.org/Dataset",
+  "name": "CodeReviewBench leaderboard",
+  "description": "How well AI models find real bugs in code review, measured on merged pull requests from production open-source projects.",
+  "url": "https://codereviewbench.com",
+  "license": "https://github.com/kodustech/codereviewbench",
+  "measuredOn": {
+    "pullRequests": 30,
+    "confirmedBugs": 95,
+    "repositories": ["cal.com", "discourse", "grafana", "keycloak", "sentry"],
+    "languages": ["go", "java", "python", "ruby", "typescript"]
+  },
+  "generatedAt": "2026-09-11T18:23:08.195Z",
+  "metricDefinitions": {
+    "recall": "Share of human-reported bugs the model found, micro-averaged across all pull requests.",
+    "precision": "Share of the model findings that matched a human-reported bug.",
+    "f1": "Harmonic mean of recall and precision.",
+    "costPerPR": "Measured API cost divided by number of pull requests reviewed. Null when the model ran on a subscription rather than metered API."
+  },
+  "models": [
+    {
+      "id": "deepseek-v4-pro",
+      "name": "DeepSeek V4 Pro",
+      "provider": "DeepSeek",
+      "recall": 44.2,
+      "precision": 43.6,
+      "f1": 43.9,
+      "bugsFound": 42,
+      "bugsTotal": 95,
+      "pullRequests": 30,
+      "costPerPR": 0.3,
+      "accessPath": "api",
+      "url": "https://codereviewbench.com/model/deepseek-v4-pro"
+    },
+    {
+      "id": "glm-5.3-flash",
+      "name": "GLM-5.3 Flash",
+      "provider": "Zhipu",
+      "recall": 39,
+      "precision": 41,
+      "f1": 40,
+      "bugsFound": 37,
+      "bugsTotal": 95,
+      "pullRequests": 30,
+      "costPerPR": null,
+      "accessPath": "api",
+      "url": "https://codereviewbench.com/model/glm-5.3-flash"
+    },
+    {
+      "id": "minimax-m3@fireworks",
+      "name": "MiniMax M3",
+      "provider": "MiniMax",
+      "recall": 25.3,
+      "precision": 35.6,
+      "f1": 29.6,
+      "bugsFound": 24,
+      "bugsTotal": 95,
+      "pullRequests": 30,
+      "costPerPR": null,
+      "accessPath": "api",
+      "url": "https://codereviewbench.com/model/minimax-m3--fireworks"
+    }
+  ]
+}

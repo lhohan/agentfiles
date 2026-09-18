@@ -4,6 +4,7 @@ import { readFileSync } from 'node:fs';
 import { join } from 'node:path';
 import assert from 'node:assert/strict';
 import test from 'node:test';
+import * as codereviewbench from '../lib/sources/codereviewbench.mjs';
 import * as deepswe from '../lib/sources/deepswe.mjs';
 import * as swebench from '../lib/sources/swebench.mjs';
 import * as tbench from '../lib/sources/tbench.mjs';
@@ -58,6 +59,34 @@ test('tbench reads rows out of the RSC flight payload', () => {
   assert.equal(rows[0].benchmark, 'tbench-v2.1');
   assert.equal(rows[0].uncertainty.kind, 'ci95');
   assert.ok(rows[0].value > 0 && rows[0].value < 1);
+});
+
+test('codereviewbench parses ranked models and normalises F1 to 0..1', () => {
+  const { rows, meta } = codereviewbench.parse(read('codereviewbench.sample.json'), [{ id: 'codereviewbench' }]);
+  assert.equal(rows.length, 3);
+  const pro = rows.find((row) => row.modelKey === 'deepseek-v4-pro');
+  assert.equal(pro.benchmark, 'codereviewbench');
+  assert.equal(pro.harnessLabel, 'kodus');
+  assert.equal(pro.value, 0.439, 'the payload publishes F1 as a percentage');
+  assert.equal(pro.attempts, 1, 'the publisher runs one review pass per model');
+  assert.equal(pro.uncertainty, null, 'the payload publishes no confidence interval');
+  assert.equal(pro.date, '2026-09-11');
+  assert.equal(meta.publisher_rows, 3);
+  assert.equal(meta.measured_on.confirmedBugs, 95);
+});
+
+test('codereviewbench rejects a payload without models', () => {
+  assert.throws(
+    () => codereviewbench.parse(JSON.stringify({ generatedAt: '2026-09-11T00:00:00.000Z' }), [{ id: 'codereviewbench' }]),
+    (error) => error.code === 'SOURCE_SCHEMA' && error.exit === 3,
+  );
+});
+
+test('codereviewbench rejects a row with a missing field', () => {
+  assert.throws(
+    () => codereviewbench.parse(JSON.stringify({ models: [{ id: 'x', name: 'X' }] }), [{ id: 'codereviewbench' }]),
+    (error) => error.code === 'SOURCE_SCHEMA',
+  );
 });
 
 test('tbench fails loudly when the payload shape changes', () => {

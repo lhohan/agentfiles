@@ -80,6 +80,33 @@ Values are normalised to 0..1 by the adapter.
   route in the current candidate set appears on this board. Several rows belong
   to the 2025 model generation, so scores are agent-model-system evidence.
 
+### `codereviewbench`
+
+- **Name:** CodeReviewBench. **Capability:** `review` (primary).
+- **Source:** <https://codereviewbench.com/> — fetch
+  `https://www.codereviewbench.com/api/leaderboard.json`. The bare host answers
+  307, so the fetch URL pins `www`.
+- **Unit:** board `light-v1`, split `default`, metric `f1`, harness class
+  `agent-cli` (the only published harness is the publisher's own review agent,
+  `kodus`).
+- **Probe (2026-09-18):** HTTP 200, schema.org Dataset JSON, key `models` with 13
+  ranked models measured on 30 pull requests and 95 confirmed bugs,
+  `generatedAt` 2026-09-11.
+- **Caveats:** every row is one vendor harness and an agent-model-system result,
+  not a model result. The publisher is an AI code-review vendor scoring its own
+  harness, and the ranked set is a curation: `gpt-5.6-luna` and `gpt-5.6-terra`
+  have 30-case scorecards in the repository but no leaderboard row, so absence
+  from this board is not evidence of poor review ability. Findings are matched to
+  human review comments by one LLM judge (`claude-haiku-4-5`); rescoring one
+  unchanged submission moved F1 from 0.4311 to 0.4108, about 2 points, which
+  exceeds the gap between adjacent ranks. No confidence interval is published, so
+  `uncertainty` is null. One pass per model at vendor defaults means the board
+  carries a `small-board` flag and cannot separate reasoning effort. The payload
+  does not state the benchmark version and the publisher also runs a heavy
+  variant, so the registry records `light-v1` as verified from the per-model
+  scorecards. The metric is micro-averaged F1: the payload value is the scorecard
+  `f1Micro` rounded to one decimal.
+
 ## Tier B (evidence only)
 
 | Id | Framework | Capabilities | Why it is not fetched |
@@ -112,17 +139,21 @@ Values are normalised to 0..1 by the adapter.
 | `software_engineering` | `deepswe` (primary), `swebench-multilingual` (secondary) | Scored |
 | `tool_use` | `tbench-v2.1` (primary) | Scored, small-board flag |
 | `multimodal` | `swebench-multimodal` (primary) | No observation for the current candidate set |
+| `review` | `codereviewbench` (primary) | Scored, small-board flag |
 | `repository_understanding` | none | No source (ContextBench and SWE Atlas are tier B) |
 | `long_context` | none | No source (ContextBench is tier B) |
 | `reasoning` | none | No source |
 | `instruction_following` | none | No source (IFBench and MultiChallenge are tier B) |
-| `review` | none | No source (c-CRAB and CR-Bench are tier B) |
 | `adversarial_analysis` | none | No source (c-CRAB and CR-Bench are tier B) |
 
-Only `implement` reaches the coverage threshold with the current candidate set.
-Every other stage is evidence-only: the report shows its observations and missing
-weight, with no rank and no recommendation. That is a coverage finding, not a
-low score.
+`implement`, `review`, and `run_stage_break` can reach the coverage threshold;
+`run_stage_plan` and `review_plan` cannot, because `reasoning`,
+`repository_understanding`, `long_context`, and `instruction_following` have no
+source. Coverage is computed per route, so a stage reaches the threshold only when
+that route has observations for enough of the stage's weighted capabilities. A
+stage that does not reach it is evidence-only: the report shows its observations
+and missing weight, with no rank and no recommendation. That is a coverage
+finding, not a low score.
 
 Methods, thresholds, and the report form are in
 [`evaluation-method.md`](evaluation-method.md). Settings, weights, and alias

@@ -137,6 +137,38 @@
       ]
     },
     {
+      "id": "codereviewbench",
+      "name": "CodeReviewBench",
+      "tier": "A",
+      "adapter": "codereviewbench",
+      "board": "light-v1",
+      "version": "light-v1",
+      "split": "default",
+      "metric": "f1",
+      "metric_label": "micro-averaged F1",
+      "direction": "higher",
+      "evidence_scope": "agent-model-system",
+      "capabilities": { "review": "primary" },
+      "source_url": "https://codereviewbench.com/",
+      "fetch_url": "https://www.codereviewbench.com/api/leaderboard.json",
+      "harness_classes": { "kodus": "agent-cli" },
+      "licence": "not stated as a licence name; the payload's licence field points at the code repository https://github.com/kodustech/codereviewbench",
+      "probe": {
+        "date": "2026-09-18",
+        "command": "curl -sSL https://www.codereviewbench.com/api/leaderboard.json",
+        "result": "HTTP 200, schema.org Dataset JSON, key 'models' with 13 ranked models over 30 pull requests and 95 confirmed bugs, generatedAt 2026-09-11; the bare host answers 307, so the fetch URL pins www"
+      },
+      "caveats": [
+        "Every ranked entry runs on the publisher's own review harness, so a row is agent-model-system evidence, not model evidence.",
+        "The publisher is an AI code-review vendor scoring its own harness, and the ranked set is a curation: probed 2026-09-18, gpt-5.6-luna and gpt-5.6-terra have 30-case scorecards in the repository but no leaderboard row, so absence from this board is not evidence of poor review ability.",
+        "Findings are matched to human review comments by a single LLM judge (claude-haiku-4-5). Probed 2026-09-18, rescoring one unchanged kimi-k2.7-code submission moved F1 from 0.4311 to 0.4108 across two scoring dates, about 2 points, which exceeds the gap between adjacent ranks. That noise is recorded here and never combined statistically with a score.",
+        "The payload publishes no confidence interval, so a row records uncertainty as null and adjacent ranks are not an ordering claim.",
+        "One review pass per model at vendor defaults; no reasoning-effort variation is published, so effort is null and the board cannot separate effort.",
+        "The payload does not state the benchmark version, and the publisher also runs a heavy variant. The registry records light-v1, verified from the per-model scorecards on 2026-09-18; a version bump would not be detected automatically.",
+        "The metric is micro-averaged F1, verified against the per-model scorecards on 2026-09-18: the payload value is the scorecard f1Micro rounded to one decimal."
+      ]
+    },
+    {
       "id": "contextbench",
       "name": "ContextBench",
       "tier": "B",

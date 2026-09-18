@@ -25,6 +25,7 @@ test('benchmarks.md documents every framework named in the task inventory', () =
   const inventory = [
     'deepswe',
     'tbench-v2.1',
+    'codereviewbench',
     'contextbench',
     'swe-atlas',
     'swebench-promax',
