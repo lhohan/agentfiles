@@ -2326,159 +2326,159 @@
     "threshold_coverage": 0.5,
     "operational_data": {
       "source": "~/.pi/agent/models-store.json",
-      "read_at": "2026-09-20T04:55:01.025Z",
+      "read_at": "2026-09-20T07:37:13.547Z",
       "routes": {
         "mistral/zai-glm-5-2": {
           "input_price": {
             "value": 1.4,
             "source": "~/.pi/agent/models-store.json",
-            "read_at": "2026-09-19T05:23:18.509Z"
+            "read_at": "2026-09-20T05:09:18.119Z"
           },
           "output_price": {
             "value": 4.4,
             "source": "~/.pi/agent/models-store.json",
-            "read_at": "2026-09-19T05:23:18.509Z"
+            "read_at": "2026-09-20T05:09:18.119Z"
           },
           "context_limit": {
             "value": 1000000,
             "source": "~/.pi/agent/models-store.json",
-            "read_at": "2026-09-19T05:23:18.509Z"
+            "read_at": "2026-09-20T05:09:18.119Z"
           }
         },
         "openai-codex/gpt-5.6-luna": {
           "input_price": {
             "value": 0.2,
             "source": "~/.pi/agent/models-store.json",
-            "read_at": "2026-09-19T05:23:19.504Z"
+            "read_at": "2026-09-20T05:09:19.113Z"
           },
           "output_price": {
             "value": 1.2,
             "source": "~/.pi/agent/models-store.json",
-            "read_at": "2026-09-19T05:23:19.504Z"
+            "read_at": "2026-09-20T05:09:19.113Z"
           },
           "context_limit": {
             "value": 272000,
             "source": "~/.pi/agent/models-store.json",
-            "read_at": "2026-09-19T05:23:19.504Z"
+            "read_at": "2026-09-20T05:09:19.113Z"
           }
         },
         "openai-codex/gpt-5.6-sol": {
           "input_price": {
             "value": 5,
             "source": "~/.pi/agent/models-store.json",
-            "read_at": "2026-09-19T05:23:19.504Z"
+            "read_at": "2026-09-20T05:09:19.113Z"
           },
           "output_price": {
             "value": 30,
             "source": "~/.pi/agent/models-store.json",
-            "read_at": "2026-09-19T05:23:19.504Z"
+            "read_at": "2026-09-20T05:09:19.113Z"
           },
           "context_limit": {
             "value": 272000,
             "source": "~/.pi/agent/models-store.json",
-            "read_at": "2026-09-19T05:23:19.504Z"
+            "read_at": "2026-09-20T05:09:19.113Z"
           }
         },
         "opencode-go/deepseek-v4.1-flash": {
           "input_price": {
             "value": 0.15,
             "source": "~/.pi/agent/models-store.json",
-            "read_at": "2026-09-19T05:23:18.513Z"
+            "read_at": "2026-09-20T05:09:18.116Z"
           },
           "output_price": {
             "value": 0.6,
             "source": "~/.pi/agent/models-store.json",
-            "read_at": "2026-09-19T05:23:18.513Z"
+            "read_at": "2026-09-20T05:09:18.116Z"
           },
           "context_limit": {
             "value": 1000000,
             "source": "~/.pi/agent/models-store.json",
-            "read_at": "2026-09-19T05:23:18.513Z"
+            "read_at": "2026-09-20T05:09:18.116Z"
           }
         },
         "opencode-go/glm-5.3": {
           "input_price": {
             "value": 1.4,
             "source": "~/.pi/agent/models-store.json",
-            "read_at": "2026-09-19T05:23:18.513Z"
+            "read_at": "2026-09-20T05:09:18.116Z"
           },
           "output_price": {
             "value": 4.4,
             "source": "~/.pi/agent/models-store.json",
-            "read_at": "2026-09-19T05:23:18.513Z"
+            "read_at": "2026-09-20T05:09:18.116Z"
           },
           "context_limit": {
             "value": 1000000,
             "source": "~/.pi/agent/models-store.json",
-            "read_at": "2026-09-19T05:23:18.513Z"
+            "read_at": "2026-09-20T05:09:18.116Z"
           }
         },
         "opencode-go/glm-5.3-flash": {
           "input_price": {
             "value": 0.15,
             "source": "~/.pi/agent/models-store.json",
-            "read_at": "2026-09-19T05:23:18.513Z"
+            "read_at": "2026-09-20T05:09:18.116Z"
           },
           "output_price": {
             "value": 0.5,
             "source": "~/.pi/agent/models-store.json",
-            "read_at": "2026-09-19T05:23:18.513Z"
+            "read_at": "2026-09-20T05:09:18.116Z"
           },
           "context_limit": {
             "value": 1000000,
             "source": "~/.pi/agent/models-store.json",
-            "read_at": "2026-09-19T05:23:18.513Z"
+            "read_at": "2026-09-20T05:09:18.116Z"
           }
         },
         "opencode-go/gpt-5.6-luna": {
           "input_price": {
             "value": 0.2,
             "source": "~/.pi/agent/models-store.json",
-            "read_at": "2026-09-19T05:23:18.513Z"
+            "read_at": "2026-09-20T05:09:18.116Z"
           },
           "output_price": {
             "value": 1.2,
             "source": "~/.pi/agent/models-store.json",
-            "read_at": "2026-09-19T05:23:18.513Z"
+            "read_at": "2026-09-20T05:09:18.116Z"
           },
           "context_limit": {
             "value": 1050000,
             "source": "~/.pi/agent/models-store.json",
-            "read_at": "2026-09-19T05:23:18.513Z"
+            "read_at": "2026-09-20T05:09:18.116Z"
           }
         },
         "opencode-go/hy3": {
           "input_price": {
             "value": 0.14,
             "source": "~/.pi/agent/models-store.json",
-            "read_at": "2026-09-19T05:23:18.513Z"
+            "read_at": "2026-09-20T05:09:18.116Z"
           },
           "output_price": {
             "value": 0.58,
             "source": "~/.pi/agent/models-store.json",
-            "read_at": "2026-09-19T05:23:18.513Z"
+            "read_at": "2026-09-20T05:09:18.116Z"
           },
           "context_limit": {
             "value": 256000,
             "source": "~/.pi/agent/models-store.json",
-            "read_at": "2026-09-19T05:23:18.513Z"
+            "read_at": "2026-09-20T05:09:18.116Z"
           }
         },
         "opencode-go/kimi-k2.7-code": {
           "input_price": {
             "value": 0.95,
             "source": "~/.pi/agent/models-store.json",
-            "read_at": "2026-09-19T05:23:18.513Z"
+            "read_at": "2026-09-20T05:09:18.116Z"
           },
           "output_price": {
             "value": 4,
             "source": "~/.pi/agent/models-store.json",
-            "read_at": "2026-09-19T05:23:18.513Z"
+            "read_at": "2026-09-20T05:09:18.116Z"
           },
           "context_limit": {
             "value": 262144,
             "source": "~/.pi/agent/models-store.json",
-            "read_at": "2026-09-19T05:23:18.513Z"
+            "read_at": "2026-09-20T05:09:18.116Z"
           }
         }
       }
@@ -4503,17 +4503,17 @@
           "input_price": {
             "value": 1.4,
             "source": "~/.pi/agent/models-store.json",
-            "read_at": "2026-09-19T05:23:18.509Z"
+            "read_at": "2026-09-20T05:09:18.119Z"
           },
           "output_price": {
             "value": 4.4,
             "source": "~/.pi/agent/models-store.json",
-            "read_at": "2026-09-19T05:23:18.509Z"
+            "read_at": "2026-09-20T05:09:18.119Z"
           },
           "context_limit": {
             "value": 1000000,
             "source": "~/.pi/agent/models-store.json",
-            "read_at": "2026-09-19T05:23:18.509Z"
+            "read_at": "2026-09-20T05:09:18.119Z"
           }
         },
         "observations": [
@@ -4603,17 +4603,17 @@
           "input_price": {
             "value": 0.2,
             "source": "~/.pi/agent/models-store.json",
-            "read_at": "2026-09-19T05:23:19.504Z"
+            "read_at": "2026-09-20T05:09:19.113Z"
           },
           "output_price": {
             "value": 1.2,
             "source": "~/.pi/agent/models-store.json",
-            "read_at": "2026-09-19T05:23:19.504Z"
+            "read_at": "2026-09-20T05:09:19.113Z"
           },
           "context_limit": {
             "value": 272000,
             "source": "~/.pi/agent/models-store.json",
-            "read_at": "2026-09-19T05:23:19.504Z"
+            "read_at": "2026-09-20T05:09:19.113Z"
           }
         },
         "observations": [
@@ -4708,17 +4708,17 @@
           "input_price": {
             "value": 5,
             "source": "~/.pi/agent/models-store.json",
-            "read_at": "2026-09-19T05:23:19.504Z"
+            "read_at": "2026-09-20T05:09:19.113Z"
           },
           "output_price": {
             "value": 30,
             "source": "~/.pi/agent/models-store.json",
-            "read_at": "2026-09-19T05:23:19.504Z"
+            "read_at": "2026-09-20T05:09:19.113Z"
           },
           "context_limit": {
             "value": 272000,
             "source": "~/.pi/agent/models-store.json",
-            "read_at": "2026-09-19T05:23:19.504Z"
+            "read_at": "2026-09-20T05:09:19.113Z"
           }
         },
         "observations": [
@@ -4813,17 +4813,17 @@
           "input_price": {
             "value": 0.15,
             "source": "~/.pi/agent/models-store.json",
-            "read_at": "2026-09-19T05:23:18.513Z"
+            "read_at": "2026-09-20T05:09:18.116Z"
           },
           "output_price": {
             "value": 0.6,
             "source": "~/.pi/agent/models-store.json",
-            "read_at": "2026-09-19T05:23:18.513Z"
+            "read_at": "2026-09-20T05:09:18.116Z"
           },
           "context_limit": {
             "value": 1000000,
             "source": "~/.pi/agent/models-store.json",
-            "read_at": "2026-09-19T05:23:18.513Z"
+            "read_at": "2026-09-20T05:09:18.116Z"
           }
         },
         "observations": [
@@ -4913,17 +4913,17 @@
           "input_price": {
             "value": 1.4,
             "source": "~/.pi/agent/models-store.json",
-            "read_at": "2026-09-19T05:23:18.513Z"
+            "read_at": "2026-09-20T05:09:18.116Z"
           },
           "output_price": {
             "value": 4.4,
             "source": "~/.pi/agent/models-store.json",
-            "read_at": "2026-09-19T05:23:18.513Z"
+            "read_at": "2026-09-20T05:09:18.116Z"
           },
           "context_limit": {
             "value": 1000000,
             "source": "~/.pi/agent/models-store.json",
-            "read_at": "2026-09-19T05:23:18.513Z"
+            "read_at": "2026-09-20T05:09:18.116Z"
           }
         },
         "observations": [
@@ -5018,17 +5018,17 @@
           "input_price": {
             "value": 0.15,
             "source": "~/.pi/agent/models-store.json",
-            "read_at": "2026-09-19T05:23:18.513Z"
+            "read_at": "2026-09-20T05:09:18.116Z"
           },
           "output_price": {
             "value": 0.5,
             "source": "~/.pi/agent/models-store.json",
-            "read_at": "2026-09-19T05:23:18.513Z"
+            "read_at": "2026-09-20T05:09:18.116Z"
           },
           "context_limit": {
             "value": 1000000,
             "source": "~/.pi/agent/models-store.json",
-            "read_at": "2026-09-19T05:23:18.513Z"
+            "read_at": "2026-09-20T05:09:18.116Z"
           }
         },
         "observations": [
@@ -5079,17 +5079,17 @@
           "input_price": {
             "value": 0.2,
             "source": "~/.pi/agent/models-store.json",
-            "read_at": "2026-09-19T05:23:18.513Z"
+            "read_at": "2026-09-20T05:09:18.116Z"
           },
           "output_price": {
             "value": 1.2,
             "source": "~/.pi/agent/models-store.json",
-            "read_at": "2026-09-19T05:23:18.513Z"
+            "read_at": "2026-09-20T05:09:18.116Z"
           },
           "context_limit": {
             "value": 1050000,
             "source": "~/.pi/agent/models-store.json",
-            "read_at": "2026-09-19T05:23:18.513Z"
+            "read_at": "2026-09-20T05:09:18.116Z"
           }
         },
         "observations": [
@@ -5184,17 +5184,17 @@
           "input_price": {
             "value": 0.14,
             "source": "~/.pi/agent/models-store.json",
-            "read_at": "2026-09-19T05:23:18.513Z"
+            "read_at": "2026-09-20T05:09:18.116Z"
           },
           "output_price": {
             "value": 0.58,
             "source": "~/.pi/agent/models-store.json",
-            "read_at": "2026-09-19T05:23:18.513Z"
+            "read_at": "2026-09-20T05:09:18.116Z"
           },
           "context_limit": {
             "value": 256000,
             "source": "~/.pi/agent/models-store.json",
-            "read_at": "2026-09-19T05:23:18.513Z"
+            "read_at": "2026-09-20T05:09:18.116Z"
           }
         },
         "observations": [],
@@ -5208,17 +5208,17 @@
           "input_price": {
             "value": 0.95,
             "source": "~/.pi/agent/models-store.json",
-            "read_at": "2026-09-19T05:23:18.513Z"
+            "read_at": "2026-09-20T05:09:18.116Z"
           },
           "output_price": {
             "value": 4,
             "source": "~/.pi/agent/models-store.json",
-            "read_at": "2026-09-19T05:23:18.513Z"
+            "read_at": "2026-09-20T05:09:18.116Z"
           },
           "context_limit": {
             "value": 262144,
             "source": "~/.pi/agent/models-store.json",
-            "read_at": "2026-09-19T05:23:18.513Z"
+            "read_at": "2026-09-20T05:09:18.116Z"
           }
         },
         "observations": [
@@ -5383,17 +5383,17 @@
               "input_price": {
                 "value": 1.4,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.509Z"
+                "read_at": "2026-09-20T05:09:18.119Z"
               },
               "output_price": {
                 "value": 4.4,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.509Z"
+                "read_at": "2026-09-20T05:09:18.119Z"
               },
               "context_limit": {
                 "value": 1000000,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.509Z"
+                "read_at": "2026-09-20T05:09:18.119Z"
               }
             }
           },
@@ -5429,17 +5429,17 @@
               "input_price": {
                 "value": 0.2,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:19.504Z"
+                "read_at": "2026-09-20T05:09:19.113Z"
               },
               "output_price": {
                 "value": 1.2,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:19.504Z"
+                "read_at": "2026-09-20T05:09:19.113Z"
               },
               "context_limit": {
                 "value": 272000,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:19.504Z"
+                "read_at": "2026-09-20T05:09:19.113Z"
               }
             }
           },
@@ -5475,17 +5475,17 @@
               "input_price": {
                 "value": 5,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:19.504Z"
+                "read_at": "2026-09-20T05:09:19.113Z"
               },
               "output_price": {
                 "value": 30,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:19.504Z"
+                "read_at": "2026-09-20T05:09:19.113Z"
               },
               "context_limit": {
                 "value": 272000,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:19.504Z"
+                "read_at": "2026-09-20T05:09:19.113Z"
               }
             }
           },
@@ -5521,17 +5521,17 @@
               "input_price": {
                 "value": 0.15,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               },
               "output_price": {
                 "value": 0.6,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               },
               "context_limit": {
                 "value": 1000000,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               }
             }
           },
@@ -5567,17 +5567,17 @@
               "input_price": {
                 "value": 1.4,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               },
               "output_price": {
                 "value": 4.4,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               },
               "context_limit": {
                 "value": 1000000,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               }
             }
           },
@@ -5613,17 +5613,17 @@
               "input_price": {
                 "value": 0.15,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               },
               "output_price": {
                 "value": 0.5,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               },
               "context_limit": {
                 "value": 1000000,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               }
             }
           },
@@ -5659,17 +5659,17 @@
               "input_price": {
                 "value": 0.2,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               },
               "output_price": {
                 "value": 1.2,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               },
               "context_limit": {
                 "value": 1050000,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               }
             }
           },
@@ -5705,17 +5705,17 @@
               "input_price": {
                 "value": 0.14,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               },
               "output_price": {
                 "value": 0.58,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               },
               "context_limit": {
                 "value": 256000,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               }
             }
           },
@@ -5751,17 +5751,17 @@
               "input_price": {
                 "value": 0.95,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               },
               "output_price": {
                 "value": 4,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               },
               "context_limit": {
                 "value": 262144,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               }
             }
           }
@@ -5816,17 +5816,17 @@
               "input_price": {
                 "value": 1.4,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.509Z"
+                "read_at": "2026-09-20T05:09:18.119Z"
               },
               "output_price": {
                 "value": 4.4,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.509Z"
+                "read_at": "2026-09-20T05:09:18.119Z"
               },
               "context_limit": {
                 "value": 1000000,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.509Z"
+                "read_at": "2026-09-20T05:09:18.119Z"
               }
             }
           },
@@ -5858,17 +5858,17 @@
               "input_price": {
                 "value": 0.2,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:19.504Z"
+                "read_at": "2026-09-20T05:09:19.113Z"
               },
               "output_price": {
                 "value": 1.2,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:19.504Z"
+                "read_at": "2026-09-20T05:09:19.113Z"
               },
               "context_limit": {
                 "value": 272000,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:19.504Z"
+                "read_at": "2026-09-20T05:09:19.113Z"
               }
             }
           },
@@ -5900,17 +5900,17 @@
               "input_price": {
                 "value": 5,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:19.504Z"
+                "read_at": "2026-09-20T05:09:19.113Z"
               },
               "output_price": {
                 "value": 30,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:19.504Z"
+                "read_at": "2026-09-20T05:09:19.113Z"
               },
               "context_limit": {
                 "value": 272000,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:19.504Z"
+                "read_at": "2026-09-20T05:09:19.113Z"
               }
             }
           },
@@ -5942,17 +5942,17 @@
               "input_price": {
                 "value": 0.15,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               },
               "output_price": {
                 "value": 0.6,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               },
               "context_limit": {
                 "value": 1000000,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               }
             }
           },
@@ -5984,17 +5984,17 @@
               "input_price": {
                 "value": 1.4,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               },
               "output_price": {
                 "value": 4.4,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               },
               "context_limit": {
                 "value": 1000000,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               }
             }
           },
@@ -6026,17 +6026,17 @@
               "input_price": {
                 "value": 0.15,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               },
               "output_price": {
                 "value": 0.5,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               },
               "context_limit": {
                 "value": 1000000,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               }
             }
           },
@@ -6068,17 +6068,17 @@
               "input_price": {
                 "value": 0.2,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               },
               "output_price": {
                 "value": 1.2,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               },
               "context_limit": {
                 "value": 1050000,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               }
             }
           },
@@ -6110,17 +6110,17 @@
               "input_price": {
                 "value": 0.14,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               },
               "output_price": {
                 "value": 0.58,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               },
               "context_limit": {
                 "value": 256000,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               }
             }
           },
@@ -6152,17 +6152,17 @@
               "input_price": {
                 "value": 0.95,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               },
               "output_price": {
                 "value": 4,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               },
               "context_limit": {
                 "value": 262144,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               }
             }
           }
@@ -6226,17 +6226,17 @@
               "input_price": {
                 "value": 1.4,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.509Z"
+                "read_at": "2026-09-20T05:09:18.119Z"
               },
               "output_price": {
                 "value": 4.4,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.509Z"
+                "read_at": "2026-09-20T05:09:18.119Z"
               },
               "context_limit": {
                 "value": 1000000,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.509Z"
+                "read_at": "2026-09-20T05:09:18.119Z"
               }
             },
             "rank": 3,
@@ -6288,17 +6288,17 @@
               "input_price": {
                 "value": 0.2,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:19.504Z"
+                "read_at": "2026-09-20T05:09:19.113Z"
               },
               "output_price": {
                 "value": 1.2,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:19.504Z"
+                "read_at": "2026-09-20T05:09:19.113Z"
               },
               "context_limit": {
                 "value": 272000,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:19.504Z"
+                "read_at": "2026-09-20T05:09:19.113Z"
               }
             },
             "rank": 2,
@@ -6352,17 +6352,17 @@
               "input_price": {
                 "value": 5,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:19.504Z"
+                "read_at": "2026-09-20T05:09:19.113Z"
               },
               "output_price": {
                 "value": 30,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:19.504Z"
+                "read_at": "2026-09-20T05:09:19.113Z"
               },
               "context_limit": {
                 "value": 272000,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:19.504Z"
+                "read_at": "2026-09-20T05:09:19.113Z"
               }
             },
             "rank": 1,
@@ -6399,17 +6399,17 @@
               "input_price": {
                 "value": 0.15,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               },
               "output_price": {
                 "value": 0.6,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               },
               "context_limit": {
                 "value": 1000000,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               }
             }
           },
@@ -6458,17 +6458,17 @@
               "input_price": {
                 "value": 1.4,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               },
               "output_price": {
                 "value": 4.4,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               },
               "context_limit": {
                 "value": 1000000,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               }
             },
             "rank": 1,
@@ -6505,17 +6505,17 @@
               "input_price": {
                 "value": 0.15,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               },
               "output_price": {
                 "value": 0.5,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               },
               "context_limit": {
                 "value": 1000000,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               }
             }
           },
@@ -6564,17 +6564,17 @@
               "input_price": {
                 "value": 0.2,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               },
               "output_price": {
                 "value": 1.2,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               },
               "context_limit": {
                 "value": 1050000,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               }
             },
             "rank": 2,
@@ -6611,17 +6611,17 @@
               "input_price": {
                 "value": 0.14,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               },
               "output_price": {
                 "value": 0.58,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               },
               "context_limit": {
                 "value": 256000,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               }
             }
           },
@@ -6653,17 +6653,17 @@
               "input_price": {
                 "value": 0.95,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               },
               "output_price": {
                 "value": 4,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               },
               "context_limit": {
                 "value": 262144,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               }
             }
           }
@@ -6748,17 +6748,17 @@
               "input_price": {
                 "value": 5,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:19.504Z"
+                "read_at": "2026-09-20T05:09:19.113Z"
               },
               "output_price": {
                 "value": 30,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:19.504Z"
+                "read_at": "2026-09-20T05:09:19.113Z"
               },
               "context_limit": {
                 "value": 272000,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:19.504Z"
+                "read_at": "2026-09-20T05:09:19.113Z"
               }
             },
             "rank": 1,
@@ -6812,17 +6812,17 @@
               "input_price": {
                 "value": 1.4,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               },
               "output_price": {
                 "value": 4.4,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               },
               "context_limit": {
                 "value": 1000000,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               }
             },
             "rank": 1,
@@ -6876,17 +6876,17 @@
               "input_price": {
                 "value": 0.2,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:19.504Z"
+                "read_at": "2026-09-20T05:09:19.113Z"
               },
               "output_price": {
                 "value": 1.2,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:19.504Z"
+                "read_at": "2026-09-20T05:09:19.113Z"
               },
               "context_limit": {
                 "value": 272000,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:19.504Z"
+                "read_at": "2026-09-20T05:09:19.113Z"
               }
             },
             "rank": 2,
@@ -6940,17 +6940,17 @@
               "input_price": {
                 "value": 0.2,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               },
               "output_price": {
                 "value": 1.2,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               },
               "context_limit": {
                 "value": 1050000,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               }
             },
             "rank": 2,
@@ -6996,17 +6996,17 @@
               "input_price": {
                 "value": 1.4,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.509Z"
+                "read_at": "2026-09-20T05:09:18.119Z"
               },
               "output_price": {
                 "value": 4.4,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.509Z"
+                "read_at": "2026-09-20T05:09:18.119Z"
               },
               "context_limit": {
                 "value": 1000000,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.509Z"
+                "read_at": "2026-09-20T05:09:18.119Z"
               }
             },
             "rank": 3,
@@ -7074,17 +7074,17 @@
               "input_price": {
                 "value": 1.4,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.509Z"
+                "read_at": "2026-09-20T05:09:18.119Z"
               },
               "output_price": {
                 "value": 4.4,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.509Z"
+                "read_at": "2026-09-20T05:09:18.119Z"
               },
               "context_limit": {
                 "value": 1000000,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.509Z"
+                "read_at": "2026-09-20T05:09:18.119Z"
               }
             },
             "rank": 4,
@@ -7128,17 +7128,17 @@
               "input_price": {
                 "value": 0.2,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:19.504Z"
+                "read_at": "2026-09-20T05:09:19.113Z"
               },
               "output_price": {
                 "value": 1.2,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:19.504Z"
+                "read_at": "2026-09-20T05:09:19.113Z"
               },
               "context_limit": {
                 "value": 272000,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:19.504Z"
+                "read_at": "2026-09-20T05:09:19.113Z"
               }
             }
           },
@@ -7179,17 +7179,17 @@
               "input_price": {
                 "value": 5,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:19.504Z"
+                "read_at": "2026-09-20T05:09:19.113Z"
               },
               "output_price": {
                 "value": 30,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:19.504Z"
+                "read_at": "2026-09-20T05:09:19.113Z"
               },
               "context_limit": {
                 "value": 272000,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:19.504Z"
+                "read_at": "2026-09-20T05:09:19.113Z"
               }
             }
           },
@@ -7230,17 +7230,17 @@
               "input_price": {
                 "value": 0.15,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               },
               "output_price": {
                 "value": 0.6,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               },
               "context_limit": {
                 "value": 1000000,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               }
             },
             "rank": 2,
@@ -7284,17 +7284,17 @@
               "input_price": {
                 "value": 1.4,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               },
               "output_price": {
                 "value": 4.4,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               },
               "context_limit": {
                 "value": 1000000,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               }
             }
           },
@@ -7335,17 +7335,17 @@
               "input_price": {
                 "value": 0.15,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               },
               "output_price": {
                 "value": 0.5,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               },
               "context_limit": {
                 "value": 1000000,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               }
             },
             "rank": 3,
@@ -7389,17 +7389,17 @@
               "input_price": {
                 "value": 0.2,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               },
               "output_price": {
                 "value": 1.2,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               },
               "context_limit": {
                 "value": 1050000,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               }
             }
           },
@@ -7431,17 +7431,17 @@
               "input_price": {
                 "value": 0.14,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               },
               "output_price": {
                 "value": 0.58,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               },
               "context_limit": {
                 "value": 256000,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               }
             }
           },
@@ -7482,17 +7482,17 @@
               "input_price": {
                 "value": 0.95,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               },
               "output_price": {
                 "value": 4,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               },
               "context_limit": {
                 "value": 262144,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               }
             },
             "rank": 1,
@@ -7539,17 +7539,17 @@
               "input_price": {
                 "value": 0.95,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               },
               "output_price": {
                 "value": 4,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               },
               "context_limit": {
                 "value": 262144,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               }
             },
             "rank": 1,
@@ -7593,17 +7593,17 @@
               "input_price": {
                 "value": 0.15,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               },
               "output_price": {
                 "value": 0.6,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               },
               "context_limit": {
                 "value": 1000000,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               }
             },
             "rank": 2,
@@ -7647,17 +7647,17 @@
               "input_price": {
                 "value": 0.15,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               },
               "output_price": {
                 "value": 0.5,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               },
               "context_limit": {
                 "value": 1000000,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               }
             },
             "rank": 3,
@@ -7709,17 +7709,17 @@
               "input_price": {
                 "value": 1.4,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.509Z"
+                "read_at": "2026-09-20T05:09:18.119Z"
               },
               "output_price": {
                 "value": 4.4,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.509Z"
+                "read_at": "2026-09-20T05:09:18.119Z"
               },
               "context_limit": {
                 "value": 1000000,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.509Z"
+                "read_at": "2026-09-20T05:09:18.119Z"
               }
             },
             "rank": 4,
@@ -7788,17 +7788,17 @@
               "input_price": {
                 "value": 1.4,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.509Z"
+                "read_at": "2026-09-20T05:09:18.119Z"
               },
               "output_price": {
                 "value": 4.4,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.509Z"
+                "read_at": "2026-09-20T05:09:18.119Z"
               },
               "context_limit": {
                 "value": 1000000,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.509Z"
+                "read_at": "2026-09-20T05:09:18.119Z"
               }
             },
             "rank": 1,
@@ -7842,17 +7842,17 @@
               "input_price": {
                 "value": 0.2,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:19.504Z"
+                "read_at": "2026-09-20T05:09:19.113Z"
               },
               "output_price": {
                 "value": 1.2,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:19.504Z"
+                "read_at": "2026-09-20T05:09:19.113Z"
               },
               "context_limit": {
                 "value": 272000,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:19.504Z"
+                "read_at": "2026-09-20T05:09:19.113Z"
               }
             }
           },
@@ -7893,17 +7893,17 @@
               "input_price": {
                 "value": 5,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:19.504Z"
+                "read_at": "2026-09-20T05:09:19.113Z"
               },
               "output_price": {
                 "value": 30,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:19.504Z"
+                "read_at": "2026-09-20T05:09:19.113Z"
               },
               "context_limit": {
                 "value": 272000,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:19.504Z"
+                "read_at": "2026-09-20T05:09:19.113Z"
               }
             }
           },
@@ -7944,17 +7944,17 @@
               "input_price": {
                 "value": 0.15,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               },
               "output_price": {
                 "value": 0.6,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               },
               "context_limit": {
                 "value": 1000000,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               }
             }
           },
@@ -7995,17 +7995,17 @@
               "input_price": {
                 "value": 1.4,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               },
               "output_price": {
                 "value": 4.4,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               },
               "context_limit": {
                 "value": 1000000,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               }
             }
           },
@@ -8046,17 +8046,17 @@
               "input_price": {
                 "value": 0.15,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               },
               "output_price": {
                 "value": 0.5,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               },
               "context_limit": {
                 "value": 1000000,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               }
             }
           },
@@ -8097,17 +8097,17 @@
               "input_price": {
                 "value": 0.2,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               },
               "output_price": {
                 "value": 1.2,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               },
               "context_limit": {
                 "value": 1050000,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               }
             }
           },
@@ -8139,17 +8139,17 @@
               "input_price": {
                 "value": 0.14,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               },
               "output_price": {
                 "value": 0.58,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               },
               "context_limit": {
                 "value": 256000,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               }
             }
           },
@@ -8190,17 +8190,17 @@
               "input_price": {
                 "value": 0.95,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               },
               "output_price": {
                 "value": 4,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               },
               "context_limit": {
                 "value": 262144,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               }
             }
           }
@@ -8252,17 +8252,17 @@
               "input_price": {
                 "value": 1.4,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.509Z"
+                "read_at": "2026-09-20T05:09:18.119Z"
               },
               "output_price": {
                 "value": 4.4,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.509Z"
+                "read_at": "2026-09-20T05:09:18.119Z"
               },
               "context_limit": {
                 "value": 1000000,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.509Z"
+                "read_at": "2026-09-20T05:09:18.119Z"
               }
             },
             "rank": 1,
@@ -8322,17 +8322,17 @@
               "input_price": {
                 "value": 1.4,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.509Z"
+                "read_at": "2026-09-20T05:09:18.119Z"
               },
               "output_price": {
                 "value": 4.4,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.509Z"
+                "read_at": "2026-09-20T05:09:18.119Z"
               },
               "context_limit": {
                 "value": 1000000,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.509Z"
+                "read_at": "2026-09-20T05:09:18.119Z"
               }
             }
           },
@@ -8368,17 +8368,17 @@
               "input_price": {
                 "value": 0.2,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:19.504Z"
+                "read_at": "2026-09-20T05:09:19.113Z"
               },
               "output_price": {
                 "value": 1.2,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:19.504Z"
+                "read_at": "2026-09-20T05:09:19.113Z"
               },
               "context_limit": {
                 "value": 272000,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:19.504Z"
+                "read_at": "2026-09-20T05:09:19.113Z"
               }
             }
           },
@@ -8414,17 +8414,17 @@
               "input_price": {
                 "value": 5,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:19.504Z"
+                "read_at": "2026-09-20T05:09:19.113Z"
               },
               "output_price": {
                 "value": 30,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:19.504Z"
+                "read_at": "2026-09-20T05:09:19.113Z"
               },
               "context_limit": {
                 "value": 272000,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:19.504Z"
+                "read_at": "2026-09-20T05:09:19.113Z"
               }
             }
           },
@@ -8460,17 +8460,17 @@
               "input_price": {
                 "value": 0.15,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               },
               "output_price": {
                 "value": 0.6,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               },
               "context_limit": {
                 "value": 1000000,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               }
             }
           },
@@ -8506,17 +8506,17 @@
               "input_price": {
                 "value": 1.4,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               },
               "output_price": {
                 "value": 4.4,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               },
               "context_limit": {
                 "value": 1000000,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               }
             }
           },
@@ -8552,17 +8552,17 @@
               "input_price": {
                 "value": 0.15,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               },
               "output_price": {
                 "value": 0.5,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               },
               "context_limit": {
                 "value": 1000000,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               }
             }
           },
@@ -8598,17 +8598,17 @@
               "input_price": {
                 "value": 0.2,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               },
               "output_price": {
                 "value": 1.2,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               },
               "context_limit": {
                 "value": 1050000,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               }
             }
           },
@@ -8644,17 +8644,17 @@
               "input_price": {
                 "value": 0.14,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               },
               "output_price": {
                 "value": 0.58,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               },
               "context_limit": {
                 "value": 256000,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               }
             }
           },
@@ -8690,17 +8690,17 @@
               "input_price": {
                 "value": 0.95,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               },
               "output_price": {
                 "value": 4,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               },
               "context_limit": {
                 "value": 262144,
                 "source": "~/.pi/agent/models-store.json",
-                "read_at": "2026-09-19T05:23:18.513Z"
+                "read_at": "2026-09-20T05:09:18.116Z"
               }
             }
           }
@@ -8781,8 +8781,85 @@
     },
     "scoring_note": "Percentile ranks are computed inside one unit. Capability and stage scores are weighted means over present observations only; missing weight is reported, never redistributed."
   },
-  "judge": null,
-  "calibration": null,
+  "judge": {
+    "model": "opencode-go/hy4-preview",
+    "thinking": "high",
+    "prompt_version": 4,
+    "received_at": "2026-09-20T07:27:19.543Z",
+    "assessment": {
+      "strengths": [
+        "Freshness is not a concern: every scored unit reports snapshot_age_days 0 against max_snapshot_age_days 30, and the swebench-multilingual/multimodal boards report 0 against max_snapshot_age_days 90.",
+        "Operational fields are complete and attributed: each route carries input_price, output_price and context_limit with source '~/.pi/agent/models-store.json' and a read_at timestamp one day before reference_time, so no price or limit is asserted without provenance.",
+        "The scorecard is conservative about eligibility: run_stage_plan, review_plan and general carry signal 'no_comparable_evidence' rather than a fabricated ranking, and their rows are all eligible false with rank null.",
+        "Proxy evidence is explicitly downgraded rather than used: opencode-go/deepseek-v4.1-flash's deepswe entry is recorded as 'proxy-family (deliberately not scored)' for publisher 'deepseek-v4-flash'.",
+        "Implement's tie handling is transparent and does not overclaim: the rank-1 tie group states 'Capability ranks remain tied' and labels the resolution 'cost-broke-tie', keeping the operational preference separate from capability.",
+        "Coverage is reported with missing weight named per capability and never redistributed, so partial rows (for example mistral/zai-glm-5-2 at coverage 0.5 in implement, missing tool_use 0.3 and repository_understanding 0.2) are auditable."
+      ],
+      "risks": [
+        "Evidence base is three units only (deepswe population_size 28, tbench-v2.1 population_size 14, codereviewbench population_size 13); swebench-multilingual is scored but contributes no route evidence, and all three swebench-multimodal units are 'small-board-excluded'.",
+        "Half the plan is unevaluated: run_stage_plan, review_plan and general show coverage 0 for all nine routes, so the three baselines opencode-go/glm-5.3, openai-codex/gpt-5.6-sol and openai-codex/gpt-5.6-luna are unvalidated in those roles.",
+        "Every stage that does have eligible candidates has an unrankable baseline (implement baseline_coverage 0, review baseline_coverage 0.3, run_stage_break baseline_coverage 0), so no candidate rank is measured against the incumbent it would replace.",
+        "run_stage_break has a single eligible route; that winner's missing capability is adversarial_analysis at weight 0.4, the stage's largest weight, so its rank 1 rests on 0.6 coverage without its dominant capability observed.",
+        "review-stage ranks 2 through 4 sit at coverage 0.5 with software_engineering (0.3) and reasoning (0.2) unobserved, i.e. half the stage weight drives the ordering, and codereviewbench publishes uncertainty null so no interval bounds those percentiles.",
+        "The two gpt-5.6-luna routes share identical percentiles on both boards under the alias rule 'Published release is served by two providers; both routes claim this release', so the evidence cannot separate openai-codex from opencode-go even though their context limits differ (272000 vs 1050000).",
+        "contested_tolerance is documented as 'not yet applied to the gap between two routes in a stage', so apparent neighbour gaps inside a stage are unresolved by the scorecard's own admission."
+      ],
+      "disqualifiers": [
+        "No routing change is supported for any of the six stages: three report 'no_comparable_evidence' and three report 'baseline_unrankable' with the rationale 'eligible candidates are listed without a baseline comparison'. Coverage is too low to decide, in every stage.",
+        "run_stage_break cannot be reassigned on this evidence: the only eligible candidate is missing the stage's 0.4-weight capability, and the incumbent opencode-go/hy3 has baseline_coverage 0, leaving the stage with no comparison at all.",
+        "general is disqualified from any judgement: all four weighted capabilities (instruction_following 0.3, reasoning 0.3, long_context 0.2, multimodal 0.2) are missing for every route, so the default route has zero measured weight."
+      ],
+      "confidence": "low",
+      "divergence": [
+        "The implement rank-1 tie group lists openai-codex/gpt-5.6-sol (score 0.7745535714285714) and opencode-go/glm-5.3 (score 0.734375) as tied while their composites differ by less than contested_tolerance 0.05; I read the 'cost-broke-tie' selection of glm-5.3 as a price/context preference, not as evidence that it matches or exceeds sol on capability, especially given sol's output_price 30 versus glm-5.3's 4.4.",
+        "opencode-go/kimi-k2.7-code takes review rank 1 from a single unit (codereviewbench, population_size 13, uncertainty null) while the deepswe population contains 'kimi-k2-7-code' at percentile 0.08928571428571429 that route_evidence does not claim under any alias_rule; the review leadership therefore rests on the narrowest base available and excludes a same-name agentic observation.",
+        "implement reports baseline_coverage 0 for opencode-go/deepseek-v4.1-flash even though route_evidence holds a scored codereviewbench observation for it; that is a stage-definition artifact, and I would not read it as the model having no evidence, only none for this stage.",
+        "mistral/zai-glm-5-2 is scored in implement at coverage 0.5 from one deepswe observation whose percentile 0.16071428571428573 sits near the bottom of that 28-model board, so its rank 3 is an ordering among sparse rows rather than a demonstrated capability level.",
+        "review's baseline openai-codex/gpt-5.6-sol is reported with coverage 0.3 and missing the stage's own highest-weight capability 'review' (0.5); the scorecard correctly withholds a comparison, but I diverge from any reading that treats the incumbent review route as confirmed adequate.",
+        "I do not treat the absence of evidence in run_stage_plan, review_plan and general as evidence of baseline adequacy or inadequacy; the scorecard's 'no rank' is a measurement gap, and the three incumbent routes should be logged as unevaluated rather than retained with confidence."
+      ]
+    },
+    "self_candidate": null
+  },
+  "calibration": {
+    "calibration_version": 1,
+    "prompt_version": 4,
+    "judge": {
+      "model": "opencode-go/hy4-preview",
+      "thinking": "high"
+    },
+    "status": "complete",
+    "fixtures": [
+      {
+        "id": "rank-below-threshold",
+        "planted_defect": "A stage ranks a route whose coverage is below rank_threshold_coverage, even though the rules forbid a rank below the threshold.",
+        "prompt_file": "rank-below-threshold.prompt.md",
+        "response_file": "rank-below-threshold.result.json",
+        "judge_command": "pi -p --model opencode-go/hy4-preview --thinking high --no-session --no-tools --no-extensions --no-skills --no-prompt-templates --no-context-files < \"/Users/hans/dev/agentfiles/docs/routing-reviews/2026-09-20-pi-review-evidence/calibration/rank-below-threshold.prompt.md\" > \"/Users/hans/dev/agentfiles/docs/routing-reviews/2026-09-20-pi-review-evidence/calibration/rank-below-threshold.result.json\"",
+        "found": true
+      },
+      {
+        "id": "proxy-family-scored",
+        "planted_defect": "A family-level observation (source_scope proxy-family) is presented inside the scored observations, which promotes proxy evidence to a routed result.",
+        "prompt_file": "proxy-family-scored.prompt.md",
+        "response_file": "proxy-family-scored.result.json",
+        "judge_command": "pi -p --model opencode-go/hy4-preview --thinking high --no-session --no-tools --no-extensions --no-skills --no-prompt-templates --no-context-files < \"/Users/hans/dev/agentfiles/docs/routing-reviews/2026-09-20-pi-review-evidence/calibration/proxy-family-scored.prompt.md\" > \"/Users/hans/dev/agentfiles/docs/routing-reviews/2026-09-20-pi-review-evidence/calibration/proxy-family-scored.result.json\"",
+        "found": true
+      },
+      {
+        "id": "cross-unit-averaged",
+        "planted_defect": "Two observations from different units are averaged into one figure, which the rules forbid because values are only comparable inside one unit.",
+        "prompt_file": "cross-unit-averaged.prompt.md",
+        "response_file": "cross-unit-averaged.result.json",
+        "judge_command": "pi -p --model opencode-go/hy4-preview --thinking high --no-session --no-tools --no-extensions --no-skills --no-prompt-templates --no-context-files < \"/Users/hans/dev/agentfiles/docs/routing-reviews/2026-09-20-pi-review-evidence/calibration/cross-unit-averaged.prompt.md\" > \"/Users/hans/dev/agentfiles/docs/routing-reviews/2026-09-20-pi-review-evidence/calibration/cross-unit-averaged.result.json\"",
+        "found": true
+      }
+    ],
+    "detected": 3,
+    "scored": 3,
+    "total": 3,
+    "detection_note": "Keyword detection is a proxy. It shows the judge addressed the planted defect, not that its wording or reasoning was correct."
+  },
   "recommendations": [
     {
       "task": "run_stage_plan",
@@ -9688,159 +9765,159 @@
     },
     "operational_data": {
       "source": "~/.pi/agent/models-store.json",
-      "read_at": "2026-09-20T04:55:01.025Z",
+      "read_at": "2026-09-20T07:37:13.547Z",
       "routes": {
         "mistral/zai-glm-5-2": {
           "input_price": {
             "value": 1.4,
             "source": "~/.pi/agent/models-store.json",
-            "read_at": "2026-09-19T05:23:18.509Z"
+            "read_at": "2026-09-20T05:09:18.119Z"
           },
           "output_price": {
             "value": 4.4,
             "source": "~/.pi/agent/models-store.json",
-            "read_at": "2026-09-19T05:23:18.509Z"
+            "read_at": "2026-09-20T05:09:18.119Z"
           },
           "context_limit": {
             "value": 1000000,
             "source": "~/.pi/agent/models-store.json",
-            "read_at": "2026-09-19T05:23:18.509Z"
+            "read_at": "2026-09-20T05:09:18.119Z"
           }
         },
         "openai-codex/gpt-5.6-luna": {
           "input_price": {
             "value": 0.2,
             "source": "~/.pi/agent/models-store.json",
-            "read_at": "2026-09-19T05:23:19.504Z"
+            "read_at": "2026-09-20T05:09:19.113Z"
           },
           "output_price": {
             "value": 1.2,
             "source": "~/.pi/agent/models-store.json",
-            "read_at": "2026-09-19T05:23:19.504Z"
+            "read_at": "2026-09-20T05:09:19.113Z"
           },
           "context_limit": {
             "value": 272000,
             "source": "~/.pi/agent/models-store.json",
-            "read_at": "2026-09-19T05:23:19.504Z"
+            "read_at": "2026-09-20T05:09:19.113Z"
           }
         },
         "openai-codex/gpt-5.6-sol": {
           "input_price": {
             "value": 5,
             "source": "~/.pi/agent/models-store.json",
-            "read_at": "2026-09-19T05:23:19.504Z"
+            "read_at": "2026-09-20T05:09:19.113Z"
           },
           "output_price": {
             "value": 30,
             "source": "~/.pi/agent/models-store.json",
-            "read_at": "2026-09-19T05:23:19.504Z"
+            "read_at": "2026-09-20T05:09:19.113Z"
           },
           "context_limit": {
             "value": 272000,
             "source": "~/.pi/agent/models-store.json",
-            "read_at": "2026-09-19T05:23:19.504Z"
+            "read_at": "2026-09-20T05:09:19.113Z"
           }
         },
         "opencode-go/deepseek-v4.1-flash": {
           "input_price": {
             "value": 0.15,
             "source": "~/.pi/agent/models-store.json",
-            "read_at": "2026-09-19T05:23:18.513Z"
+            "read_at": "2026-09-20T05:09:18.116Z"
           },
           "output_price": {
             "value": 0.6,
             "source": "~/.pi/agent/models-store.json",
-            "read_at": "2026-09-19T05:23:18.513Z"
+            "read_at": "2026-09-20T05:09:18.116Z"
           },
           "context_limit": {
             "value": 1000000,
             "source": "~/.pi/agent/models-store.json",
-            "read_at": "2026-09-19T05:23:18.513Z"
+            "read_at": "2026-09-20T05:09:18.116Z"
           }
         },
         "opencode-go/glm-5.3": {
           "input_price": {
             "value": 1.4,
             "source": "~/.pi/agent/models-store.json",
-            "read_at": "2026-09-19T05:23:18.513Z"
+            "read_at": "2026-09-20T05:09:18.116Z"
           },
           "output_price": {
             "value": 4.4,
             "source": "~/.pi/agent/models-store.json",
-            "read_at": "2026-09-19T05:23:18.513Z"
+            "read_at": "2026-09-20T05:09:18.116Z"
           },
           "context_limit": {
             "value": 1000000,
             "source": "~/.pi/agent/models-store.json",
-            "read_at": "2026-09-19T05:23:18.513Z"
+            "read_at": "2026-09-20T05:09:18.116Z"
           }
         },
         "opencode-go/glm-5.3-flash": {
           "input_price": {
             "value": 0.15,
             "source": "~/.pi/agent/models-store.json",
-            "read_at": "2026-09-19T05:23:18.513Z"
+            "read_at": "2026-09-20T05:09:18.116Z"
           },
           "output_price": {
             "value": 0.5,
             "source": "~/.pi/agent/models-store.json",
-            "read_at": "2026-09-19T05:23:18.513Z"
+            "read_at": "2026-09-20T05:09:18.116Z"
           },
           "context_limit": {
             "value": 1000000,
             "source": "~/.pi/agent/models-store.json",
-            "read_at": "2026-09-19T05:23:18.513Z"
+            "read_at": "2026-09-20T05:09:18.116Z"
           }
         },
         "opencode-go/gpt-5.6-luna": {
           "input_price": {
             "value": 0.2,
             "source": "~/.pi/agent/models-store.json",
-            "read_at": "2026-09-19T05:23:18.513Z"
+            "read_at": "2026-09-20T05:09:18.116Z"
           },
           "output_price": {
             "value": 1.2,
             "source": "~/.pi/agent/models-store.json",
-            "read_at": "2026-09-19T05:23:18.513Z"
+            "read_at": "2026-09-20T05:09:18.116Z"
           },
           "context_limit": {
             "value": 1050000,
             "source": "~/.pi/agent/models-store.json",
-            "read_at": "2026-09-19T05:23:18.513Z"
+            "read_at": "2026-09-20T05:09:18.116Z"
           }
         },
         "opencode-go/hy3": {
           "input_price": {
             "value": 0.14,
             "source": "~/.pi/agent/models-store.json",
-            "read_at": "2026-09-19T05:23:18.513Z"
+            "read_at": "2026-09-20T05:09:18.116Z"
           },
           "output_price": {
             "value": 0.58,
             "source": "~/.pi/agent/models-store.json",
-            "read_at": "2026-09-19T05:23:18.513Z"
+            "read_at": "2026-09-20T05:09:18.116Z"
           },
           "context_limit": {
             "value": 256000,
             "source": "~/.pi/agent/models-store.json",
-            "read_at": "2026-09-19T05:23:18.513Z"
+            "read_at": "2026-09-20T05:09:18.116Z"
           }
         },
         "opencode-go/kimi-k2.7-code": {
           "input_price": {
             "value": 0.95,
             "source": "~/.pi/agent/models-store.json",
-            "read_at": "2026-09-19T05:23:18.513Z"
+            "read_at": "2026-09-20T05:09:18.116Z"
           },
           "output_price": {
             "value": 4,
             "source": "~/.pi/agent/models-store.json",
-            "read_at": "2026-09-19T05:23:18.513Z"
+            "read_at": "2026-09-20T05:09:18.116Z"
           },
           "context_limit": {
             "value": 262144,
             "source": "~/.pi/agent/models-store.json",
-            "read_at": "2026-09-19T05:23:18.513Z"
+            "read_at": "2026-09-20T05:09:18.116Z"
           }
         }
       }

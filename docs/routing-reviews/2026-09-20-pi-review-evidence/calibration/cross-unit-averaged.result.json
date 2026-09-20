@@ -1,0 +1,25 @@
+{
+  "strengths": [
+    "The implement stage row for \"p/candidate\" reports \"coverage\": 1 (full stage weight present, exceeding the \"rank_threshold_coverage\": 0.5), \"eligible\": true, and \"rank\": 1, with \"missing_capabilities\": [].",
+    "One route_evidence entry for \"p/candidate\" (benchmark deepswe, \"unit_key\": \"calib|v1|agent-cli\") is \"state\": \"scored\" with \"source_scope\": \"model\" and \"alias_rule\": \"exact release match\", and its unit is present in \"units\" with \"snapshot_age_days\": 0 (within \"max_snapshot_age_days\": 30) and \"population_size\": 20.",
+    "The candidate route is marked eligible and has no missing capabilities recorded, so no capability gap blocks its consideration."
+  ],
+  "risks": [
+    "The baseline route \"p/baseline\" has \"route_evidence\": [] and no row in the implement stage rows, yet \"stage_signals\" for implement reports \"signal\": \"candidate_ahead\" and \"candidates_ahead\": [\"p/candidate\"]; per the glossary this is a \"baseline_unrankable\" situation, not a \"candidate_ahead\" comparison, so the claimed comparison against an eligible baseline is unsupported.",
+    "The candidate's route_evidence includes a second scored entry for benchmark tbench-v2.1 with \"unit_key\": \"calib2|v1|agent-cli\", but \"units\" only defines \"calib|v1|agent-cli\"; the second unit has no snapshot age, population, or scored status in the scorecard, so that evidence is unverifiable.",
+    "The implement row for \"p/candidate\" reports \"score\": 0.8, while route_evidence contains both \"percentile\": 0.8 (deepswe) and \"percentile\": 0.2 (tbench-v2.1); the scorecard gives no aggregation detail showing how these combine, leaving the row score unexplained.",
+    "Unit \"calib|v1|agent-cli\" has \"population\": [] despite \"population_size\": 20, so the percentile basis cannot be audited even though the unit is \"scored\".",
+    "The stage_signal \"rationale\" is the placeholder \"example\", so no substantive justification is given for the signal."
+  ],
+  "disqualifiers": [
+    "No routing change from \"p/baseline\" to \"p/candidate\" is supported: the baseline route has no eligible evidence (empty route_evidence and absent from stage rows), so its coverage is below the \"rank_threshold_coverage\": 0.5 and coverage is too low to decide a change; the glossary labels this \"baseline_unrankable\" and explicitly says it is not a claim the baseline is worse. The reported \"candidate_ahead\" signal contradicts this, so the scorecard does not substantiate that the candidate is ahead of the baseline.",
+    "Because the \"candidate_ahead\" signal is internally inconsistent with the missing baseline row/evidence, any recommendation to move the implement stage to \"p/candidate\" would be a routing change the scorecard does not support."
+  ],
+  "confidence": "low",
+  "divergence": [
+    "stage_signals.implement reports \"signal\": \"candidate_ahead\" with \"candidates_ahead\": [\"p/candidate\"], but \"p/baseline\" has \"route_evidence\": [] and no stage row; the glossary defines \"baseline_unrankable\" for this case, so the signal diverges from both the evidence and the scorecard's own definitions.",
+    "route_evidence for \"p/candidate\" references \"unit_key\": \"calib2|v1|agent-cli\" (tbench-v2.1) with no matching object in \"units\", diverging from the pattern where evidence maps to a described unit.",
+    "The single row \"score\": 0.8 for \"p/candidate\" diverges from the presence of a second scored evidence entry with \"percentile\": 0.2, with no documented aggregation or weighting to reconcile them.",
+    "The rationale value \"example\" diverges from a substantive, evidence-based justification for the stage signal."
+  ]
+}

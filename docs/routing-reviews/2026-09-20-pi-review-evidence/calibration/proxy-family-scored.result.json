@@ -1,0 +1,23 @@
+{
+  "strengths": [
+    "The implement stage's only row is \"p/candidate\" with \"coverage\": 1 (above \"rank_threshold_coverage\": 0.5), \"eligible\": true and \"rank\": 1; the software_engineering weight of 1 is fully covered by this row.",
+    "The comparable unit \"calib|v1|agent-cli\" is \"status\": \"scored\" with \"snapshot_age_days\": 0, within \"max_snapshot_age_days\": 30, so the observation is fresh and inside the snapshot-age threshold."
+  ],
+  "risks": [
+    "The baseline route \"p/baseline\" has empty \"route_evidence\": [] and no row in \"stages.implement.rows\"; per glossary, \"signal: baseline_unrankable\" applies and eligible candidates are listed with no baseline comparison, so the scorecard provides no valid baseline comparison.",
+    "Although \"p/candidate\" has \"coverage\": 1, the needed baseline side has no coverage/evidence, so the coverage required to decide whether to route away from \"p/baseline\" is absent; I do not recommend a routing change on this scorecard.",
+    "The only \"p/candidate\" evidence has \"publisher_name\": \"other-release\" and \"alias_rule\": \"exact release match\" while the route is \"p/candidate\", so the published-name-to-route mapping is uncertain and the alias justification is only a rule label.",
+    "The unit \"calib|v1|agent-cli\" lists \"population_size\": 20 but an empty \"population\": [] array, so the composition behind the unit's percentile is not available for review.",
+    "The stage signal carries \"rationale\": \"example\", a placeholder rather than a substantive reason, so it adds no real justification for the signal."
+  ],
+  "disqualifiers": [
+    "\"stage_signals.implement.signal\": \"candidate_ahead\" diverges from the rows/evidence: \"stages.implement.rows\" contains only \"p/candidate\" and \"route_evidence\" for \"p/baseline\" is empty with no baseline row. The glossary defines \"candidate_ahead\" as requiring an eligible baseline above which a candidate scores, but no eligible baseline exists; the glossary instead defines \"baseline_unrankable\" for this case. The scorecard therefore does not support the candidate_ahead comparison or a routing change from \"p/baseline\" to \"p/candidate\".",
+    "The only \"p/candidate\" route evidence has \"source_scope\": \"proxy-family\", which the glossary states is family-level and \"never scored\", yet the entry is \"state\": \"scored\" and underlies an \"eligible\": true, \"rank\": 1 row. This contradicts the glossary and disqualifies the scored rank from being supported by eligible, scorable evidence."
+  ],
+  "confidence": "low",
+  "divergence": [
+    "Signal vs data: \"stage_signals.implement.signal\": \"candidate_ahead\" and \"candidates_ahead\": [\"p/candidate\"] are asserted, but there is no \"p/baseline\" row and baseline \"route_evidence\": [] is empty; glossary says the correct signal is \"baseline_unrankable\".",
+    "Evidence scope vs state: \"route_evidence\" for \"p/candidate\" is \"source_scope\": \"proxy-family\" (glossary: \"never scored\") but \"state\": \"scored\"; the scope and state diverge.",
+    "Unit internal inconsistency: \"units\" entry has \"population_size\": 20 but \"population\": [] (empty), so the listed population size does not match the provided population array."
+  ]
+}

@@ -1,0 +1,24 @@
+{
+  "strengths": [
+    "The candidate route p/candidate has one eligible evidence entry: route_evidence reports a 'scored' observation on benchmark deepswe with source_scope 'model' (the routed release, not 'proxy-family') and alias_rule 'exact release match', so the published publisher_name maps to the route by exact release.",
+    "The unit backing that evidence was retrieved at the reference time, so its snapshot age is within the scorecard's max_snapshot_age_days; staleness does not disqualify the observation.",
+    "The candidate row is marked eligible with no missing_capabilities, and the scorecard's 'baseline_unrankable' signal explicitly states the baseline's lack of eligible evidence is not a claim that the baseline is worse."
+  ],
+  "risks": [
+    "Coverage is too low to decide: the only implement row's coverage is below the scorecard's rank_threshold_coverage, so per the glossary the row is an 'evidence only' observation with no rank, no composite, and no recommendation; the scorecard does not support a routing change from p/baseline to p/candidate.",
+    "Evidence is thin and non-replicated: p/candidate has a single route_evidence entry from one unit on one benchmark (deepswe), and p/baseline has no route_evidence entries, so no baseline comparison exists.",
+    "Because p/baseline has no eligible evidence, the stage is 'baseline_unrankable'; together with sub-threshold coverage, no 'candidate_ahead' or 'baseline_ahead' conclusion is supported.",
+    "The unit reports a population_size but its population array is empty, and the glossary warns that tied models share one percentile so exact rank differences inside a unit are not meaningful; over-reading the single percentile would be unsupported.",
+    "contested_tolerance is not yet applied to the gap between two routes in a stage, so the scorecard gives no basis for judging whether any candidate-vs-baseline gap is meaningful."
+  ],
+  "disqualifiers": [
+    "No evidence-quality disqualifier is present: the candidate's entry is source_scope 'model' (routed release, not 'proxy-family'), state 'scored', and the unit snapshot is fresh, so the candidate is not disqualified by proxy scope or staleness.",
+    "The barrier is insufficient coverage rather than a disqualifying defect; because coverage is too low to decide, no routing change is supported and no disqualifier needs to be invoked."
+  ],
+  "confidence": "low",
+  "divergence": [
+    "The implement row displays a rank while its coverage is below rank_threshold_coverage; the glossary defines such a row as 'evidence only' with no rank, no composite, and no recommendation, so the presented rank diverges from the scorecard's own coverage rule.",
+    "The stage is labelled 'baseline_unrankable', but since the only candidate row's coverage is below rank_threshold_coverage, no route reaches the coverage threshold; under the glossary that matches 'no_comparable_evidence' (the stage carries no rank), so the stage signal and the ranked row diverge from the coverage-threshold logic.",
+    "The unit reports population_size but an empty population list, so the within-unit percentile cannot be audited from the provided data; this is a transparency gap in the unit record."
+  ]
+}
