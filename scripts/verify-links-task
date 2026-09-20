@@ -22,7 +22,8 @@ if [ ! -d "$stow_dir" ]; then
 fi
 
 err_tmp="$(mktemp)"
-trap 'rm -f "$err_tmp"' EXIT INT TERM
+unreadable_tmp="$(mktemp)"
+trap 'rm -f "$err_tmp" "$unreadable_tmp"' EXIT INT TERM
 checked=0
 
 for pkg_dir in "$stow_dir"/*/; do
@@ -56,12 +57,32 @@ for pkg_dir in "$stow_dir"/*/; do
 
         target_path="$target/$target_rel"
         # source_rel is the symlink content, relative to the link's directory
-        # (i.e. dirname target_path), not to the target root.
+        # (i.e. dirname target_path), not to the target root. When the target
+        # directory is absent or unreadable the path cannot be resolved, so say
+        # so instead of emitting a mangled absolute path.
         target_dir=$(dirname -- "$target_path")
-        source_abs=$(cd "$target_dir" && cd "$(dirname -- "$source_rel")" && pwd)/$(basename -- "$source_rel")
+        source_base=$(basename -- "$source_rel")
+        if resolved=$(cd "$target_dir" 2>/dev/null && cd "$(dirname -- "$source_rel")" 2>/dev/null && pwd); then
+            source_abs="$resolved/$source_base"
+        else
+            # Either directory may be absent or unreadable. Fall back to a
+            # textual join so the reader still sees a usable path.
+            source_abs="$target_dir/$source_rel"
+        fi
 
         if [ ! -e "$target_path" ] && [ ! -L "$target_path" ]; then
-            echo "MISSING: $target_path (expected link to $source_abs)" >> "$err_tmp"
+            # A path this process cannot stat is not evidence of absence. Read
+            # the error text to separate a sandbox or permission denial from a
+            # genuinely missing link, because the shell cannot expose errno.
+            probe=$(ls -ld -- "$target_path" 2>&1 >/dev/null)
+            case "$probe" in
+                *"not permitted"*|*"Permission denied"*)
+                    echo "UNREADABLE: $target_path (denies access to this process; cannot verify; expected link to $source_abs)" >> "$unreadable_tmp"
+                    ;;
+                *)
+                    echo "MISSING: $target_path (expected link to $source_abs)" >> "$err_tmp"
+                    ;;
+            esac
         elif [ ! -L "$target_path" ]; then
             echo "NOT-A-LINK: $target_path (expected link to $source_abs)" >> "$err_tmp"
         else
@@ -85,10 +106,17 @@ for pkg_dir in "$stow_dir"/*/; do
 done
 
 errors=$(wc -l < "$err_tmp" | tr -d ' ')
+unreadable=$(wc -l < "$unreadable_tmp" | tr -d ' ')
 
-if [ "$errors" -gt 0 ]; then
-    echo "verify-links: $errors error(s) found across $checked link(s) checked"
-    cat "$err_tmp"
+if [ "$errors" -gt 0 ] || [ "$unreadable" -gt 0 ]; then
+    echo "verify-links: $errors error(s) and $unreadable unverifiable link(s) across $checked link(s) checked"
+    if [ "$errors" -gt 0 ]; then
+        cat "$err_tmp"
+    fi
+    if [ "$unreadable" -gt 0 ]; then
+        cat "$unreadable_tmp"
+        echo "verify-links: unverifiable is not the same as missing. Re-run outside a sandbox that denies access to these paths."
+    fi
     exit 1
 fi
 
