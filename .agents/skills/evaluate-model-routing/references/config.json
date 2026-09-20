@@ -144,6 +144,46 @@
       "evidence_scope": "proxy-family",
       "verified": "2026-09-11",
       "note": "Board publishes deepseek-v4-flash; the routed alias is deepseek-v4.1-flash. Family evidence only, never scored."
+    },
+    {
+      "route_id": "mistral/zai-glm-5-2",
+      "source": "codereviewbench",
+      "source_name": "GLM-5.2",
+      "source_slug": "glm-5.2@fireworks",
+      "canonical_release": "glm-5.2",
+      "evidence_scope": "model",
+      "verified": "2026-09-18",
+      "note": "Board publishes glm-5.2 served through Fireworks, the same release the DeepSWE alias records. Review evidence from the kodus harness."
+    },
+    {
+      "route_id": "opencode-go/deepseek-v4.1-flash",
+      "source": "codereviewbench",
+      "source_name": "DeepSeek V4.1 Flash",
+      "source_slug": "deepseek-v4.1-flash@fireworks",
+      "canonical_release": "deepseek-v4.1-flash",
+      "evidence_scope": "model",
+      "verified": "2026-09-18",
+      "note": "Names the routed release, not the deepseek-v4-flash family recorded for DeepSWE. Review evidence from the kodus harness."
+    },
+    {
+      "route_id": "opencode-go/kimi-k2.7-code",
+      "source": "codereviewbench",
+      "source_name": "Kimi K2.7 Code",
+      "source_slug": "kimi-k2.7-code",
+      "canonical_release": "kimi-k2.7-code",
+      "evidence_scope": "model",
+      "verified": "2026-09-18",
+      "note": "Exact published name match."
+    },
+    {
+      "route_id": "opencode-go/glm-5.3-flash",
+      "source": "codereviewbench",
+      "source_name": "GLM-5.3 Flash",
+      "source_slug": "glm-5.3-flash",
+      "canonical_release": "glm-5.3-flash",
+      "evidence_scope": "model",
+      "verified": "2026-09-18",
+      "note": "Exact published name match."
     }
   ]
 }

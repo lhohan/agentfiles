@@ -1,0 +1,94 @@
+{
+  "manifest_version": 1,
+  "agent": "pi",
+  "profile": ".agents/skills/evaluate-model-routing/references/agents/pi.md",
+  "profile_verified_at": "2026-09-20",
+  "run_date": "2026-09-20",
+  "run_slug": "review-evidence",
+  "enabled_models": [
+    "opencode-go/kimi-k2.7-code",
+    "opencode-go/deepseek-v4.1-flash",
+    "opencode-go/minimax-m3",
+    "opencode-go/glm-5.3",
+    "opencode-go/glm-5.3-flash",
+    "opencode-go/longcat-2.0",
+    "opencode-go/gpt-5.6-luna",
+    "opencode-go/hy3",
+    "opencode-go/hy4-preview",
+    "opencode-go/qwen3.8-flash",
+    "opencode-go/union-alpha",
+    "mistral/mistral-medium-3.5",
+    "mistral/zai-glm-5-2",
+    "mistral/mistral-small-2603",
+    "openai-codex/gpt-5.6-sol",
+    "openai-codex/gpt-5.6-luna",
+    "omlx/medgemma-1.5-4b-it-4bit",
+    "omlx/GLM-OCR-4bit",
+    "omlx/Qwen3.5-9B-MLX-4bit"
+  ],
+  "candidates": [
+    "opencode-go/glm-5.3",
+    "opencode-go/deepseek-v4.1-flash",
+    "opencode-go/gpt-5.6-luna",
+    "openai-codex/gpt-5.6-sol",
+    "openai-codex/gpt-5.6-luna",
+    "opencode-go/hy3",
+    "mistral/zai-glm-5-2",
+    "opencode-go/kimi-k2.7-code",
+    "opencode-go/glm-5.3-flash"
+  ],
+  "stages": [
+    { "task": "run_stage_plan", "routes": [{ "rank": 1, "model_id": "opencode-go/glm-5.3" }, { "rank": 2, "model_id": "mistral/zai-glm-5-2" }] },
+    { "task": "review_plan", "routes": [{ "rank": 1, "model_id": "openai-codex/gpt-5.6-sol" }, { "rank": 2, "model_id": "mistral/zai-glm-5-2" }] },
+    {
+      "task": "implement",
+      "routes": [
+        { "rank": 1, "model_id": "opencode-go/deepseek-v4.1-flash" },
+        { "rank": 2, "model_id": "opencode-go/gpt-5.6-luna" },
+        { "rank": 3, "model_id": "openai-codex/gpt-5.6-luna" }
+      ]
+    },
+    { "task": "review", "routes": [{ "rank": 1, "model_id": "openai-codex/gpt-5.6-sol" }, { "rank": 2, "model_id": "mistral/zai-glm-5-2" }] },
+    {
+      "task": "run_stage_break",
+      "routes": [
+        { "rank": 1, "model_id": "opencode-go/hy3" },
+        { "rank": 2, "model_id": "openai-codex/gpt-5.6-luna" },
+        { "rank": 3, "model_id": "opencode-go/gpt-5.6-luna" }
+      ]
+    },
+    { "task": "general", "routes": [{ "rank": 1, "model_id": "openai-codex/gpt-5.6-luna" }] }
+  ],
+  "recommendations": [
+    {
+      "task": "run_stage_plan",
+      "decision": "evidence-only",
+      "rationale": "Every route has 0% coverage of this stage. repository_understanding, reasoning, long_context, and instruction_following have no tier A source, so no route can be ranked and the configured chain is unchanged for lack of evidence, not for lack of merit. Do not read this as support for the current chain."
+    },
+    {
+      "task": "review_plan",
+      "decision": "evidence-only",
+      "rationale": "Every route has 0% coverage. reasoning and adversarial_analysis have no tier A source and repository_understanding is unmeasured, so plan review cannot be ranked by published data. Local plan samples remain the only route to evidence for this stage."
+    },
+    {
+      "task": "implement",
+      "decision": "add-secondary",
+      "rationale": "openai-codex/gpt-5.6-sol (0.775) and opencode-go/glm-5.3 (0.734) tie for rank 1 within the 0.05 tolerance, and opencode-go/glm-5.3 dominates on both input and output price (1.40/4.40 against 5.00/30.00 USD per million tokens). It is a candidate to add as an implementation secondary. This is additive: the configured rank 1, opencode-go/deepseek-v4.1-flash, is unrankable here because its only software-engineering observation is proxy-family and unscored, so it cannot be compared and must not be replaced on this evidence. The configured ranks 2 and 3 already match the attested rank-2 group."
+    },
+    {
+      "task": "review",
+      "decision": "replace",
+      "rationale": "The configured rank 1, openai-codex/gpt-5.6-sol, has no review observation at all: it covers only 30% of this stage through software_engineering and is evidence-only. Four enabled routes carry review evidence, led by opencode-go/kimi-k2.7-code at 0.885 with a 0.154 gap to the next candidate, well above the separation tolerance. Recommend moving opencode-go/kimi-k2.7-code to rank 1 and keeping openai-codex/gpt-5.6-sol at rank 2, so the stage gains its primary capability without losing the incumbent. Apply only after the validation step in section 9: the evidence is one vendor harness at 50% coverage, judged by one LLM whose rescoring noise is about 2 points, and absence of a published row for the incumbent is missing evidence, not proof of worse review."
+    },
+    {
+      "task": "run_stage_break",
+      "decision": "add-secondary",
+      "rationale": "mistral/zai-glm-5-2 is the only route that reaches the coverage threshold for this stage (0.407 at 60%), so it is worth adding as a break secondary. Read it narrowly: adversarial_analysis carries 0.4 of the stage and has no tier A source, so 60% of the rank comes from review and software_engineering. The configured rank 1, opencode-go/hy3, has 0% coverage and cannot be assessed either way."
+    },
+    {
+      "task": "general",
+      "decision": "evidence-only",
+      "rationale": "No route has evidence for instruction_following, reasoning, long_context, or multimodal with which this stage is weighted, so the session-start model cannot be ranked. Its 0.20/1.20 price and 272K context are operational facts, not routing-quality results."
+    }
+  ]
+}
