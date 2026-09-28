@@ -1,0 +1,281 @@
+---
+name: evaluate-skills
+description: Evaluate Claude Code skills against best practices for size, structure, examples, and prompt engineering. Use when reviewing skills for deployment, optimization, or standards compliance.
+version: "1.0.1"
+---
+
+# Claude Code Skill Evaluator
+
+Systematically evaluate Claude Code skills for quality, compliance with best practices, and optimization opportunities. Provides detailed assessment with actionable suggestions for improvement.
+
+## Table of Contents
+
+- [Instructions](#instructions)
+  - [1. Find Skill](#1-find-skill)
+  - [2. Read the Skill File](#2-read-the-skill-file)
+  - [3. Analyze Against Best Practices](#3-analyze-against-best-practices)
+    - [Dimension 1: Size & Length](#dimension-1-size--length)
+    - [Dimension 2: Token Economy](#dimension-2-token-economy)
+    - [Dimension 3: Degrees of Freedom](#dimension-3-degrees-of-freedom)
+    - [Dimension 4: Scope Definition](#dimension-4-scope-definition)
+    - [Dimension 5: Description Quality](#dimension-5-description-quality)
+    - [Dimension 6: Structure & Organization](#dimension-6-structure--organization)
+    - [Dimension 7: Examples](#dimension-7-examples)
+    - [Dimension 8: Anti-Pattern Detection](#dimension-8-anti-pattern-detection)
+    - [Dimension 9: Prompt Engineering Quality](#dimension-9-prompt-engineering-quality)
+    - [Dimension 10: Completeness](#dimension-10-completeness)
+  - [4. Generate Comprehensive Evaluation Report](#4-generate-comprehensive-evaluation-report)
+  - [5. Deliver Report to User](#5-deliver-report-to-user)
+- [Important Guidelines](#important-guidelines)
+- [Requirements](#requirements)
+- [Context & Standards](#context--standards)
+
+## Instructions
+
+### 1. Find Skill
+
+Identify the skill passed in the directory passed to you or find all in the user's `~/.claude/skills/` directory. For each directory (excluding hidden files), verify it contains a `SKILL.md` file.
+
+Present the user with:
+- List of available skills
+- Ask which skill to evaluate (or accept skill name as input)
+
+### 2. Read the Skill File
+
+Once a skill is selected, read its `SKILL.md` file and extract:
+- Frontmatter metadata (name, description)
+- Total line count
+- Word count
+- Character count
+- Structure and sections
+
+#### Error Handling
+
+If SKILL.md is malformed, missing frontmatter, or unreadable:
+- Report the specific error to the user (e.g., "SKILL.md missing required frontmatter field: name")
+- Skip the full evaluation
+- Suggest corrective action if possible
+
+#### Review Example Report Format
+
+Before analyzing, consult the example evaluation reports:
+- **`examples/EXAMPLE.md`** - Demonstrates evaluation of a production-ready skill with passing scores
+- **`examples/EXAMPLE-WITH-WARNINGS.md`** - Demonstrates evaluation of a near-production skill with warnings and improvement suggestions
+
+These examples show proper report structure, formatting, status indicators (✓ Pass / ⚠ Warning / ❌ Fail), and how to deliver actionable feedback across the quality spectrum.
+
+### 3. Analyze Against Best Practices
+
+Evaluate the skill across **10 dimensions**:
+
+#### Dimension 1: Size & Length
+**Guidelines:**
+- Body: Under 500 lines (hard maximum)
+- Name: Maximum 64 characters
+- Description: Maximum 1024 characters (200 char summary preferred)
+- Table of Contents: Include if over 100 lines
+
+**Assessment:**
+- Count total lines in SKILL.md body
+- Flag if over 500 lines
+- Compliment if well-sized (ideal: 100-300 lines for medium skills)
+- Check if TOC exists (expected for 100+ line skills)
+- Note: `audit-skills` applies a stricter 200-line fleet-health flag for
+  cross-skill context. A skill between 200-500 lines passes this evaluation
+  but will appear in the fleet audit as a candidate for splitting.
+
+#### Dimension 2: Token Economy
+**Guidelines:**
+- Default assumption: Claude is already very smart
+- Challenge each piece of information: "Does Claude really need this explanation?"
+- Avoid over-explaining concepts Claude already knows (e.g., what PDFs are, how libraries work)
+- Concise examples preferred over verbose explanations
+
+**Assessment:**
+- Are there paragraphs explaining concepts Claude inherently knows?
+- Could explanations be shortened without losing meaning?
+- Is the skill concise within its size limits, or padded with unnecessary context?
+- Does each section justify its token cost?
+
+#### Dimension 3: Degrees of Freedom
+**Guidelines:**
+- High freedom (text-based instructions): Use when multiple approaches are valid or decisions depend on context
+- Medium freedom (pseudocode/scripts with parameters): Use when a preferred pattern exists but variation is acceptable
+- Low freedom (specific scripts, few parameters): Use when operations are fragile, consistency is critical, or exact sequence required
+
+**Assessment:**
+- Does the skill match instruction specificity to task fragility?
+- Are fragile/destructive operations given explicit, low-freedom instructions?
+- Are context-dependent tasks given appropriate flexibility?
+- Does the skill avoid over-constraining where multiple valid approaches exist?
+
+#### Dimension 4: Scope Definition
+**Guidelines:**
+- Narrow focus (one skill = one capability)
+- Clear boundary of what the skill does and doesn't do
+- No scope creep (e.g., "document processing" → "PDF form filling")
+
+**Assessment:**
+- Does the description clearly state what the skill does?
+- Are there multiple conflicting capabilities within one skill?
+- Is the boundary clear to a new user?
+
+#### Dimension 5: Description Quality
+**Guidelines:**
+- Third-person voice (avoid "I can" or "you can")
+- Include both WHAT and WHEN TO USE
+- Specific, searchable terminology
+- 200 character summary ideal
+
+**Assessment:**
+- Voice and tone appropriate?
+- Discovery terms clear? (Would users search for these terms?)
+- Is "when to use" explained?
+
+#### Dimension 6: Structure & Organization
+**Guidelines:**
+- Clear section hierarchy (headings, subsections)
+- Logical flow (progressive disclosure): start with a small, stable entry point and point to deeper sections/references rather than front-loading everything
+- Step-by-step instructions preferred for workflows
+- Rules/constraints clearly stated
+
+**Assessment:**
+- Is structure logical?
+- Can a user easily navigate?
+- Are instructions sequential or scattered?
+
+#### Dimension 7: Examples
+**Guidelines:**
+- Quality over quantity
+- Typical: 2-3 examples for basic skills, more for format-heavy
+- Concrete (not abstract)
+- Show patterns and edge cases
+
+**Assessment:**
+- How many examples? (count them)
+- Are examples concrete and realistic?
+- Do they demonstrate key patterns?
+- Are there enough to show variations?
+
+#### Dimension 8: Anti-Pattern Detection
+**Red flags (check for these):**
+- ❌ Windows-style paths (should use forward slashes)
+- ❌ Magic numbers without justification
+- ❌ Vague terminology (inconsistent synonyms)
+- ❌ Time-sensitive instructions (date-dependent)
+- ❌ Nested file references (over 1 level from SKILL.md - all reference files should link directly from SKILL.md)
+- ❌ Vague descriptions (missing WHAT or WHEN)
+- ❌ Scope creep (trying to do too much)
+- ❌ No error handling or validation steps
+- ❌ No user feedback loops (for complex workflows)
+- ❌ Multiple conflicting approaches for same task
+- ❌ MCP tool references without server prefix (should use `ServerName:tool_name` format)
+- ❌ Assumed package availability (missing explicit installation instructions)
+- ❌ Vague/generic naming (`helper`, `utils`, `tools` instead of imperative verb form like `process-pdfs`)
+
+**Assessment:**
+- Count violations
+- Severity of each violation
+- Impact on usability
+
+#### Dimension 9: Prompt Engineering Quality
+**Guidelines:**
+- Imperative language (verb-first instructions)
+- Explicit rules with clear boundaries
+- Validation loops where appropriate (especially for destructive ops)
+- Clear error handling
+- Assumes user is intelligent (don't over-explain)
+
+**Assessment:**
+- Is language imperative?
+- Are there validation steps?
+- How clear are the rules?
+- Is error handling explicit?
+
+#### Dimension 10: Completeness
+**Guidelines:**
+- Requirements listed (what's needed to use the skill)
+- Edge cases acknowledged
+- Limitations stated where relevant
+
+**Assessment:**
+- Are prerequisites clear?
+- Are limitations or edge cases mentioned?
+- Is scope of responsibility clear?
+
+### 4. Generate Comprehensive Evaluation Report
+
+Create a detailed evaluation report with these components:
+
+1. **Executive Summary**: 1-2 paragraphs covering overall assessment, key strengths, and critical issues
+
+2. **Metrics**: Present line count, word count, character count, and guideline compliance assessment
+
+3. **Dimensional Analysis**: For each of the 10 dimensions:
+   - Status indicator (✓ Pass / ⚠ Warning / ❌ Fail)
+   - 1-2 sentence assessment explaining the rating
+
+4. **Detected Issues**: Organize by severity:
+   - Critical Issues (must fix) - any ❌ Fail items with explanation
+   - Warnings (should address) - any ⚠ Warning items with explanation
+   - Observations (minor items worth noting)
+
+5. **Comparative Analysis**: Compare the skill against official skills repository patterns with examples and rationale
+
+6. **Actionable Suggestions**: Numbered list of specific improvements, prioritized by impact:
+   - High Priority (do this first)
+   - Medium Priority (nice to have)
+   - Low Priority (optional refinements)
+
+   Each suggestion should include concrete rationale, not vague guidance.
+
+7. **Overall Assessment**:
+   - Professional verdict on production-readiness
+   - Clear recommendation (Keep as-is / Minor tweaks / Significant refactor / Major restructure)
+
+8. **Report Metadata** (optional footer):
+   - Evaluation date (YYYY-MM-DD format)
+   - Skill path evaluated
+   - Evaluator skill version (if tracking multiple versions of evaluate-skills itself)
+
+### 5. Deliver Report to User
+
+Present the complete evaluation report to the user in a clear, formatted structure. Ensure:
+- Status indicators are visible (✓ Pass / ⚠ Warning / ❌ Fail)
+- Actionable suggestions are specific (not vague)
+- Rationale is explained for each issue
+- Prioritization is clear
+
+## Important Guidelines
+
+- **Be brutally honest**: Point out real issues, don't sugarcoat
+- **Specific over vague**: "The examples don't show error handling" not "examples could be better"
+- **Professional tone**: Constructive criticism, not harsh
+- **Evidence-based**: Reference specific lines or patterns from the skill
+- **Proportional feedback**: Don't over-critique minor issues
+- **Future-focused**: Suggest improvements, not judgment
+
+## Requirements
+
+- User has installed skills in `~/.claude/skills/`
+- Target skill has a valid `SKILL.md` file with frontmatter
+- User accepts the detailed, honest evaluation
+
+## Edge Cases & Limitations
+
+The skill evaluator has the following constraints:
+
+- **Missing frontmatter:** If SKILL.md lacks valid frontmatter (name, description), report error and cannot proceed with evaluation
+- **Oversized skills:** Skills over 500 lines are flagged as critical issues immediately during metrics analysis
+- **Missing examples directory:** Note as observation in Dimension 5 analysis; not a failure condition
+- **Non-standard paths:** Skill must be accessible at the provided path; symbolic links are supported if they resolve correctly
+
+## Context & Standards
+
+This evaluator uses best practices from:
+- Official Anthropic Claude Code Skills documentation
+- Analysis of official skills repository patterns
+- Professional technical writing standards
+- Prompt engineering best practices for LLM interactions
+
+All assessments are comparative to **official guidelines**, not arbitrary standards.
