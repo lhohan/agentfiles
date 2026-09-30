@@ -1,7 +1,7 @@
 {
   "lastChangelogVersion": "0.85.1",
-  "defaultProvider": "openai-codex",
-  "defaultModel": "gpt-5.6-luna",
+  "defaultProvider": "omlx",
+  "defaultModel": "main",
   "defaultThinkingLevel": "high",
   "theme": "kanagawa-dragon",
   "terminal": {
@@ -21,12 +21,13 @@
     "npm:pi-answer@0.1.4"
   ],
   "enabledModels": [
-    "opencode-go/kimi-k2.7-code",
     "opencode-go/deepseek-v4.1-flash",
     "opencode-go/minimax-m3",
     "opencode-go/glm-5.3",
     "opencode-go/glm-5.3-flash",
     "opencode-go/longcat-2.0",
+    "opencode-go/mimo-v2.6-pro",
+    "opencode-go/mimo-v2.6-flash",
     "opencode-go/gpt-5.6-luna",
     "opencode-go/hy3",
     "opencode-go/hy4-preview",
@@ -34,11 +35,15 @@
     "mistral/mistral-medium-3.5",
     "mistral/zai-glm-5-2",
     "mistral/mistral-small-2603",
-    "openai-codex/gpt-5.6-sol",
-    "openai-codex/gpt-5.6-luna",
-    "omlx/medgemma-1.5-4b-it-4bit",
-    "omlx/GLM-OCR-4bit",
-    "omlx/Qwen3.5-9B-MLX-4bit"
+    "openai-codex/gpt-6-sol",
+    "openai-codex/gpt-6-luna",
+    "omlx/scanner",
+    "omlx/nano",
+    "omlx/mini",
+    "omlx/main",
+    "omlx/medic",
+    "omlx/main:flash",
+    "omlx/main:thinker"
   ],
   "enableSkillCommands": true,
   "showHardwareCursor": true,
@@ -46,14 +51,14 @@
   "quietStartup": false,
   "doubleEscapeAction": "tree",
   "sessionStartModel": {
-    "model": "openai-codex/gpt-5.6-luna",
+    "model": "opencode-go/glm-5.3-flash",
     "thinkingLevel": "high"
   },
   "answer": {
     "extractionModels": [
       {
         "provider": "omlx",
-        "id": "Qwen3.5-9B-MLX-4bit"
+        "id": "mini"
       },
       {
         "provider": "mistral",
