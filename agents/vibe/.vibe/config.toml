@@ -7,7 +7,7 @@ include_project_context = true
 include_prompt_detail = true
 include_model_info = true
 enable_commit_signature = false
-active_model = "zai-glm-5-3"
+active_model = "mistral-large-4"
 instructions = "Use the skill 'karpathy-guidelines' for coding tasks."
 vim_keybindings = false
 disable_welcome_banner_animation = false
@@ -56,85 +56,32 @@ api_style = "openai"
 backend = "generic"
 
 [[models]]
-name = "mistral-medium-3.5"
+name = "mistral-large-4"
 provider = "mistral"
 alias = "plan"
 temperature = 0.7
 thinking = "max"
 
 [[models]]
-name = "mistral-medium-3.5"
+name = "mistral-large-4"
 provider = "mistral"
 alias = "default"
 temperature = 0.3
 thinking = "high"
 
 [[models]]
-name = "mistral-medium-3.5"
+name = "zai-glm-5-3"
 provider = "mistral"
 alias = "review"
 temperature = 0.3
 thinking = "max"
 
 [[models]]
-name = "mistral-medium-3.5"
+name = "mistral-large-4"
 provider = "mistral"
 alias = "brainstorming"
 temperature = 0.9
 thinking = "low"
-
-[[models]]
-name = "medgemma-1.5-4b-it-4bit"
-provider = "omlx"
-alias = "medgemma"
-temperature = 0.3
-thinking = "off"
-supports_images = true
-
-[[models]]
-name = "kimi-k2.7-code"
-provider = "opencode-go"
-alias = "kimi-k2.7-code"
-temperature = 0.3
-thinking = "off"
-input_price = 0.95
-output_price = 4.0
-
-[[models]]
-name = "kimi-k2.6"
-provider = "opencode-go"
-alias = "kimi-k2.6"
-temperature = 0.3
-thinking = "off"
-input_price = 0.95
-output_price = 4.0
-
-[[models]]
-name = "deepseek-v4-pro"
-provider = "opencode-go"
-alias = "deepseek-v4-pro"
-temperature = 0.3
-thinking = "off"
-input_price = 1.74
-output_price = 3.48
-
-[[models]]
-name = "deepseek-v4-flash"
-provider = "opencode-go"
-alias = "deepseek-v4-flash"
-temperature = 0.3
-thinking = "off"
-input_price = 0.14
-output_price = 0.28
-
-[[models]]
-name = "glm-5.2"
-provider = "opencode-go"
-alias = "glm-5.2"
-temperature = 0.3
-thinking = "off"
-input_price = 1.4
-output_price = 4.4
 
 [[models]]
 name = "zai-glm-5-3"
@@ -145,6 +92,15 @@ thinking = "high"
 input_price = 1.4
 output_price = 4.4
 cached_input_price = 0.14
+
+[[models]]
+name = "mistral-large-4"
+provider = "mistral"
+alias = "mistral-large-4"
+temperature = 0.3
+thinking = "high"
+input_price = 0.68
+output_price = 2.09
 
 [[transcribe_providers]]
 name = "mistral"
@@ -215,6 +171,7 @@ allowlist = [
     "/Users/hans/.vibe/plans/*",
     "basename",
     "bd",
+    "cargo --version",
     "cargo test",
     "cat",
     "cd",
