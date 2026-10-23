@@ -1,5 +1,5 @@
 {
-  "lastChangelogVersion": "1.1.0",
+  "lastChangelogVersion": "1.4.0",
   "defaultProvider": "omlx",
   "defaultModel": "main",
   "defaultThinkingLevel": "high",
@@ -28,6 +28,7 @@
     "omlx/medic",
     "omlx/main:flash",
     "omlx/main:thinker",
+    "local-rec/flint",
     "mistral/mistral-medium-3.5",
     "mistral/mistral-small-2603",
     "mistral/mistral-large-4",
