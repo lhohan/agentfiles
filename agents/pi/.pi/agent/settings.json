@@ -71,10 +71,6 @@
   "autocompleteMaxVisible": 5,
   "quietStartup": false,
   "doubleEscapeAction": "tree",
-  "sessionStartModel": {
-    "model": "opencode-go/glm-5.3-flash",
-    "thinkingLevel": "high"
-  },
   "answer": {
     "extractionModels": [
       {
