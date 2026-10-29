@@ -44,9 +44,9 @@
       "api": "openai-completions",
       "authHeader": true,
       "models": [
-        { "id": "scanner", "contextWindow": 131072 },
+        { "id": "scanner", "contextWindow": 131072, "input": ["text", "image"] },
         { "id": "nano", "contextWindow": 194560 },
-        { "id": "mini", "contextWindow": 194560 },
+        { "id": "mini", "contextWindow": 194560, "input": ["text", "image"] },
         { "id": "main", "contextWindow": 194560 },
         { "id": "medic", "contextWindow": 131072 },
         { "id": "main:flash", "contextWindow": 194560 },
