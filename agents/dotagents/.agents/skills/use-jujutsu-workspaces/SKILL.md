@@ -1,6 +1,6 @@
 ---
 name: use-jujutsu-workspaces
-description: Use when running multiple agents or tasks in parallel against a Jujutsu repo with isolated working directories. Use this skill for jj workspace creation, inspection, comparison, cleanup, and stale-workspace recovery.
+description: Use when running multiple agents or tasks in parallel against a Jujutsu repo with isolated working directories under ~/dev/workspaces/. Use this skill for jj workspace creation, inspection, comparison, cleanup, and stale-workspace recovery.
 ---
 
 # Use jj Workspaces for Parallel Agent Work
@@ -10,6 +10,7 @@ description: Use when running multiple agents or tasks in parallel against a Juj
 - [Purpose](#purpose)
 - [Prerequisites](#prerequisites)
 - [Core Rule](#core-rule)
+- [Workspace Location](#workspace-location)
 - [Glossary](#glossary)
 - [When to Use](#when-to-use)
 - [Standard Workflow](#standard-workflow)
@@ -39,6 +40,8 @@ Use this skill when:
 
 This skill requires `jj` (Jujutsu) and either `uuidgen` or `date +%s` for unique ID generation; if unavailable, report to the user do not try to work around these facts.
 
+This skill assumes main repositories live directly under `~/dev/`. All workspaces are created under the fixed root `~/dev/workspaces/`; there is no fallback for repositories outside `~/dev/`.
+
 ---
 
 ## Core Rule
@@ -48,6 +51,26 @@ This skill requires `jj` (Jujutsu) and either `uuidgen` or `date +%s` for unique
 A workspace isolates a working-copy commit. Multiple agents can read or review from the same workspace, but only one agent at a time should produce changes in it.
 
 Create one workspace per task that modifies code.
+
+---
+
+## Workspace Location
+
+All workspaces live under a single dedicated root, grouped by repository, so `~/dev/` stays limited to main repositories:
+
+```
+~/dev/
+├── myapp/                          # main repository
+├── another-project/                # main repository
+└── workspaces/
+    ├── myapp/
+    │   ├── feature-auth-a3f2c1b8/
+    │   └── fix-timeout-d7e81234/
+    └── another-project/
+        └── feature-x-c9d4e5f6/
+```
+
+The project subdirectory under `workspaces/` is the main repository's directory name (`REPO`, derived in the workflow below). Workspace directories and jj workspace names both use the `<task>-<short-uuid>` suffix.
 
 ---
 
@@ -94,29 +117,34 @@ jj log               # shows current position
 
 ### 2. Create a new workspace
 
-**Always specify a revision or bookmark with `-r`.** Workspaces should be created as siblings of the main repo directory.
+**Always specify a revision or bookmark with `-r`.** Workspaces are created under the workspaces root `~/dev/workspaces/<repo>/` (see [Workspace Location](#workspace-location)), never as siblings of the main repo directory.
 
-A workspace name must be unique. Use a suffix that combines the task name with a short UUID (or use `date +%s` if `uuidgen` is unavailable):
+Run these from the main repository directory (e.g. `~/dev/myapp`). A workspace name must be unique per repo. Use a suffix that combines the task name with a short UUID (or use `date +%s` if `uuidgen` is unavailable):
 
 ```bash
-# SUFFIX = <task>-<short-uuid>
+# From the main repo directory:
+REPO=$(basename "$(jj workspace root)")   # main repo directory name, e.g. myapp
 SUFFIX=<task>-$(uuidgen | tr '[:upper:]' '[:lower:]' | cut -d- -f1)
-jj workspace add ../<repo>-${SUFFIX} --name ${SUFFIX} -r main
+mkdir -p ~/dev/workspaces/${REPO}
+jj workspace add ~/dev/workspaces/${REPO}/${SUFFIX} --name ${SUFFIX} -r main
 ```
 
-Example for a repo called `my-app` and task 'fix rate limit':
+Example for a repo called `myapp` and task 'fix rate limit':
 
 ```bash
+REPO=myapp
 SUFFIX=fix-rate-limit-$(uuidgen | tr '[:upper:]' '[:lower:]' | cut -d- -f1)
-jj workspace add ../my-app-${SUFFIX} --name ${SUFFIX} -r main
+mkdir -p ~/dev/workspaces/${REPO}
+jj workspace add ~/dev/workspaces/${REPO}/${SUFFIX} --name ${SUFFIX} -r main
+# creates ~/dev/workspaces/myapp/fix-rate-limit-<short-uuid>/
 ```
 
-Workspace names must be unique per repo. jj will error if a duplicate name is attempted. The UUID suffix prevents collisions.
+`mkdir -p` is required: `jj workspace add` does not create missing parent directories. Workspace names must be unique per repo. jj will error if a duplicate name is attempted. The UUID suffix prevents collisions.
 
 ### 3. Work only inside the assigned workspace
 
 ```bash
-cd ../my-app-${SUFFIX}
+cd ~/dev/workspaces/${REPO}/${SUFFIX}
 jj status
 ```
 
@@ -162,7 +190,7 @@ The `<name>@` syntax resolves to the working-copy commit of workspace `<name>`.
 The task workspace's commits are already in the shared graph. From inside the task workspace, move to the main workspace and rebase the task's commits onto the target branch:
 
 ```bash
-cd ../my-app
+cd ~/dev/${REPO}
 jj rebase -s ${SUFFIX}@ -d main
 ```
 
@@ -178,8 +206,9 @@ jj git push --bookmark ${SUFFIX}
 `jj workspace forget` and directory deletion are independent — either order works. But deleting the directory first is the safer habit: if you `forget` first, you lose the name-to-directory mapping and may leave a stale directory behind.
 
 ```bash
-rm -rf ../<repo>-${SUFFIX}
+rm -rf ~/dev/workspaces/${REPO}/${SUFFIX}
 jj workspace forget ${SUFFIX}
+rmdir ~/dev/workspaces/${REPO} 2>/dev/null   # optional: drop the project dir when empty
 ```
 
 ---
@@ -191,7 +220,7 @@ jj workspace forget ${SUFFIX}
 - Use one workspace per writing task.
 - Use unique workspace names (append UUID suffix).
 - Always specify `-r <revision>` when creating workspaces.
-- Create workspaces as siblings of the main repo.
+- Create workspaces under `~/dev/workspaces/<repo-name>/`.
 - Run `jj workspace list` before creating new workspaces.
 - Keep agent commands scoped to the assigned directory.
 - Use `jj log` to inspect all workspace heads.
@@ -203,6 +232,7 @@ jj workspace forget ${SUFFIX}
 - Assume `@` means the same commit across directories.
 - Modify another workspace's `@` from a different workspace.
 - Delete a workspace directory without also running `jj workspace forget`.
+- Create workspaces as siblings of the main repo directory.
 - Rely on default `-r` (inherit parent); always be explicit.
 
 ---
@@ -210,10 +240,12 @@ jj workspace forget ${SUFFIX}
 ## Read-Only Review Pattern
 
 ```bash
-cd ~/dev/my-app
+cd ~/dev/myapp
+REPO=myapp
 SUFFIX=review-$(uuidgen | tr '[:upper:]' '[:lower:]' | cut -d- -f1)
-jj workspace add ../my-app-${SUFFIX} --name ${SUFFIX} -r main
-cd ../my-app-${SUFFIX}
+mkdir -p ~/dev/workspaces/${REPO}
+jj workspace add ~/dev/workspaces/${REPO}/${SUFFIX} --name ${SUFFIX} -r main
+cd ~/dev/workspaces/${REPO}/${SUFFIX}
 jj status
 jj log
 # ... run tests, review code ...
@@ -222,7 +254,7 @@ jj log
 The original workspace remains untouched:
 
 ```bash
-cd ../my-app
+cd ~/dev/${REPO}
 jj status
 ```
 
@@ -232,21 +264,23 @@ jj status
 
 ```bash
 # In main workspace:
-cd ~/dev/my-app
+cd ~/dev/myapp
+REPO=myapp
+mkdir -p ~/dev/workspaces/${REPO}
 SUFFIX_A=refactor-auth-$(uuidgen | tr '[:upper:]' '[:lower:]' | cut -d- -f1)
-jj workspace add ../my-app-${SUFFIX_A} --name ${SUFFIX_A} -r main
+jj workspace add ~/dev/workspaces/${REPO}/${SUFFIX_A} --name ${SUFFIX_A} -r main
 
 SUFFIX_B=fix-rate-limit-$(uuidgen | tr '[:upper:]' '[:lower:]' | cut -d- -f1)
-jj workspace add ../my-app-${SUFFIX_B} --name ${SUFFIX_B} -r main
+jj workspace add ~/dev/workspaces/${REPO}/${SUFFIX_B} --name ${SUFFIX_B} -r main
 ```
 
 Assign work:
 
 | **Workspace** | **Agent task** |
 |---|---|
-| `my-app-${SUFFIX_A}` | Refactor auth middleware |
-| `my-app-${SUFFIX_B}` | Fix rate-limit bug |
-| `my-app` | Human/manual work |
+| `~/dev/workspaces/myapp/${SUFFIX_A}` | Refactor auth middleware |
+| `~/dev/workspaces/myapp/${SUFFIX_B}` | Fix rate-limit bug |
+| `~/dev/myapp` | Human/manual work |
 
 Review results:
 
@@ -260,7 +294,7 @@ Integrate the selected revision:
 
 ```bash
 # From inside the task workspace
-cd ../my-app
+cd ~/dev/${REPO}
 jj rebase -s ${SUFFIX_A}@ -d main
 ```
 
@@ -274,7 +308,7 @@ jj git push --bookmark ${SUFFIX_A}
 Clean up rejected workspace:
 
 ```bash
-rm -rf ../my-app-${SUFFIX_B}
+rm -rf ~/dev/workspaces/${REPO}/${SUFFIX_B}
 jj workspace forget ${SUFFIX_B}
 ```
 
@@ -309,12 +343,14 @@ Note: `jj workspace root` returns the **current workspace's directory**, not the
 ## Command Reference
 
 ```bash
-# Create a workspace (always use -r):
-jj workspace add ../path --name <name> -r <revision>
+# Create a workspace under the workspaces root (always use -r):
+REPO=$(basename "$(jj workspace root)")   # run from the main repo directory
+mkdir -p ~/dev/workspaces/${REPO}
+jj workspace add ~/dev/workspaces/${REPO}/<name> --name <name> -r <revision>
 
 # Example: create from main with unique ID:
 SUFFIX=fix-rate-limit-$(uuidgen | tr '[:upper:]' '[:lower:]' | cut -d- -f1)
-jj workspace add ../repo-${SUFFIX} --name ${SUFFIX} -r main
+jj workspace add ~/dev/workspaces/${REPO}/${SUFFIX} --name ${SUFFIX} -r main
 
 # List workspaces:
 jj workspace list
@@ -351,9 +387,11 @@ jj log
 Create isolated workspace:
 
 ```bash
+REPO=$(basename "$(jj workspace root)")
 SUFFIX=<task>-$(uuidgen | tr '[:upper:]' '[:lower:]' | cut -d- -f1)
-jj workspace add ../<repo>-${SUFFIX} --name ${SUFFIX} -r main
-cd ../<repo>-${SUFFIX}
+mkdir -p ~/dev/workspaces/${REPO}
+jj workspace add ~/dev/workspaces/${REPO}/${SUFFIX} --name ${SUFFIX} -r main
+cd ~/dev/workspaces/${REPO}/${SUFFIX}
 ```
 
 After task work:
@@ -366,8 +404,7 @@ jj log
 Before cleanup:
 
 ```bash
-cd ..
-rm -rf <repo>-${SUFFIX}
+rm -rf ~/dev/workspaces/${REPO}/${SUFFIX}
 jj workspace forget ${SUFFIX}
 ```
 
@@ -375,14 +412,16 @@ jj workspace forget ${SUFFIX}
 
 ## Skill Summary
 
-Use jj workspaces as the default isolation mechanism for parallel agent work in Jujutsu repositories.
+Use jj workspaces as the default isolation mechanism for parallel agent work in Jujutsu repositories. Workspaces live under `~/dev/workspaces/<repo>/`, keeping `~/dev/` limited to main repositories.
 
 The safe pattern is:
 
 ```bash
+REPO=$(basename "$(jj workspace root)")
 SUFFIX=<task>-$(uuidgen | tr '[:upper:]' '[:lower:]' | cut -d- -f1)
-jj workspace add ../<repo>-${SUFFIX} --name ${SUFFIX} -r main
-cd ../<repo>-${SUFFIX}
+mkdir -p ~/dev/workspaces/${REPO}
+jj workspace add ~/dev/workspaces/${REPO}/${SUFFIX} --name ${SUFFIX} -r main
+cd ~/dev/workspaces/${REPO}/${SUFFIX}
 # work here only
 jj log
 jj diff -r ${SUFFIX}@
