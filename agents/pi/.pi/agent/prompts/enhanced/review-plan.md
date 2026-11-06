@@ -1,5 +1,5 @@
 ---
-model: mistral/zai-glm-5-2
+model: mistral/zai-glm-5-3
 thinking: high
 restore: true
 ---
