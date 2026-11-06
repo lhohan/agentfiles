@@ -41,6 +41,19 @@ however cheap the replacement looks.
 | 9 | Answer extraction | `settings.json --> answer.extractionModels` | `omlx/Qwen3.5-9B-MLX-4bit`, `mistral-small-2603` |
 | 10 | Per-skill override | `extensions/skill-model-switch.json` | `gpt-5.4-mini` for `english-teacher-grader` |
 
+## Current-state check (2026-11-06)
+
+The table above is the original enumeration. These rows have since changed; see
+`docs/pi/cir/2026-11-06-pi-model-catalog-sync-and-stale-model-replacement.md`.
+
+| # | Change |
+|---|---|
+| 2, 4 | `openai-codex/gpt-5.6-sol` removed; the route now names `mistral/zai-glm-5-2` directly |
+| 3, 5 | `openai-codex/gpt-5.6-luna` removed from the fallback list |
+| 6 | `sessionStartModel` is not defined in `settings.json`; this call site does not exist |
+| 9 | `answer.extractionModels` is `omlx/mini` and `mistral/mistral-small-2603` |
+| 10 | The `english-teacher-grader` mapping was cleared, so no per-skill override remains |
+
 ## Classification
 
 | Operation | Signal | Load-bearing | Volume | Verdict |
