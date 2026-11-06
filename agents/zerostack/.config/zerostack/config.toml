@@ -37,6 +37,6 @@ output_token_cost = 4.0
 
 [quick_models.smart-latest]
 provider = "opencode-go"
-model = "mimo-v2.5-pro"
+model = "mimo-v2.6-pro"
 input_token_cost = 0.435
 output_token_cost = 0.87
