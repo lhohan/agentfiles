@@ -56,6 +56,7 @@ Agent configuration files are managed with Mise and GNU Stow.
 - [agentfiles-commit-prefixes](.agents/skills/agentfiles-commit-prefixes/) guides commit subjects.
 - [extension-security-review](.agents/skills/extension-security-review/) reviews extensions/plugins before install.
 - [evaluate-model-routing](.agents/skills/evaluate-model-routing/) evaluates model routing across coding agents (Pi first). It verifies a per-agent profile, fetches published benchmark results with zero-dependency Node scripts, scores capabilities per stage with declared weights, adds an advisory judge assessment, and renders a fixed Markdown + HTML report under `docs/routing-reviews/`. It is recommendation-only and never changes routing.
+- [audit-model-config](.agents/skills/audit-model-config/) finds and fixes model references that no longer work. It refreshes Pi's catalogs, audits every configured model reference in the repository against the live catalog, provider auth, and a reachability probe, then updates the configuration with an approval step and records the change.
 
 ## Pi
 
