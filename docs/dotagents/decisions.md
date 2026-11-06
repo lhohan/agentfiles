@@ -66,7 +66,7 @@ Dotagents-specific decisions are listed in reverse chronological order (most rec
 
 **Accepting** the skill may evolve, be rewritten, or be removed if it does not solve a real repeated need
 
-### dotagents-007: Vendor web-browser skill from mitsuhiko/agent-stuff [Accepted]
+### dotagents-007: Vendor web-browser skill from mitsuhiko/agent-stuff [Superseded by CIR 2026-11-09-remove-web-browser-skill]
 
 **In the context of** needing browser automation for project "web vision" work
 
