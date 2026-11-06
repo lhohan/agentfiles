@@ -7,10 +7,10 @@ import type { ExtensionAPI } from "@mariozechner/pi-coding-agent";
 
 // The exact built-in prompt prefix we're looking for.
 const TARGET_STRING =
-  "You are an expert coding assistant operating inside ";
+  "You are a coding assistant running inside ";
 
 // The replacement string removes the role-based persona while preserving the rest of Pi's framing.
-const REPLACEMENT_STRING = "You are operating inside ";
+const REPLACEMENT_STRING = "You are running inside ";
 
 // Flag to track if we've already warned about a failed replacement
 let hasWarned = false;
