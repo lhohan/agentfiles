@@ -18,7 +18,8 @@
   "hideThinkingBlock": true,
   "packages": [
     "npm:pi-prompt-template-model@0.7.3",
-    "npm:pi-answer@0.1.4"
+    "npm:pi-answer@0.1.4",
+    "npm:pi-warden@2.7.0"
   ],
   "enabledModels": [
     "omlx/scanner",
@@ -108,6 +109,7 @@
   "deviceId": "0ab25dfb-41c4-40c7-bd54-48035dd371d0",
   "extensionChangelogVersions": {
     "{\"source\":\"npm:pi-prompt-template-model@0.7.3\",\"scope\":\"user\"}": "0.7.3",
-    "{\"source\":\"npm:pi-answer@0.1.4\",\"scope\":\"user\"}": "0.1.4"
+    "{\"source\":\"npm:pi-answer@0.1.4\",\"scope\":\"user\"}": "0.1.4",
+    "{\"source\":\"npm:pi-warden@2.7.0\",\"scope\":\"user\"}": "2.7.0"
   }
 }
