@@ -3,6 +3,9 @@
   "defaultProvider": "opencode-go",
   "defaultModel": "deepseek-v4.1-flash",
   "defaultThinkingLevel": "high",
+  "defaultTools": [
+    "+codemode"
+  ],
   "theme": "kanagawa-dragon",
   "terminal": {
     "showImages": true
