@@ -1,7 +1,7 @@
 {
   "lastChangelogVersion": "1.5.0",
-  "defaultProvider": "opencode-go",
-  "defaultModel": "deepseek-v4.1-flash",
+  "defaultProvider": "openai",
+  "defaultModel": "gpt-6.1-terra",
   "defaultThinkingLevel": "high",
   "defaultTools": [
     "+codemode"
@@ -37,7 +37,9 @@
     "mistral/mistral-small-2603",
     "mistral/mistral-large-4",
     "mistral/zai-glm-5-3",
+    "openai/gpt-6-astra",
     "openai/gpt-6-luna",
+    "openai/gpt-6-sol",
     "openai/gpt-6.1-sol",
     "openai/gpt-6.1-terra",
     "opencode-go/claude-haiku-5-5",

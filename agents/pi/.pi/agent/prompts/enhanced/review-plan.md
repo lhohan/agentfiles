@@ -1,5 +1,5 @@
 ---
-model: mistral/zai-glm-5-3
+model: openai/gpt-6.1-sol
 thinking: high
 restore: true
 ---
