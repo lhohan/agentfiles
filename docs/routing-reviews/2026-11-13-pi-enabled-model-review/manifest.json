@@ -1,0 +1,166 @@
+{
+  "manifest_version": 1,
+  "agent": "pi",
+  "profile": ".agents/skills/evaluate-model-routing/references/agents/pi.md",
+  "profile_verified_at": "2026-11-13",
+  "run_date": "2026-11-13",
+  "run_slug": "enabled-model-review",
+  "enabled_models": [
+    "omlx/scanner",
+    "omlx/nano",
+    "omlx/mini",
+    "omlx/main",
+    "omlx/medic",
+    "omlx/main:flash",
+    "omlx/main:thinker",
+    "local-rec/flint",
+    "mistral/mistral-medium-3.5",
+    "mistral/mistral-small-2603",
+    "mistral/mistral-large-4",
+    "mistral/zai-glm-5-3",
+    "openai/gpt-6-astra",
+    "openai/gpt-6-luna",
+    "openai/gpt-6-sol",
+    "openai/gpt-6.1-sol",
+    "openai/gpt-6.1-terra",
+    "opencode-go/claude-haiku-5-5",
+    "opencode-go/deepseek-v4-pro",
+    "opencode-go/deepseek-v4.1-flash",
+    "opencode-go/glm-5.2",
+    "opencode-go/glm-5.3",
+    "opencode-go/glm-5.3-flash",
+    "opencode-go/gemini-4-argon",
+    "opencode-go/gpt-5.6-luna",
+    "opencode-go/gpt-6-luna",
+    "opencode-go/grok-4.7",
+    "opencode-go/hy3",
+    "opencode-go/hy4",
+    "opencode-go/hy4-preview",
+    "opencode-go/kimi-k2.7-code",
+    "opencode-go/kimi-k3",
+    "opencode-go/kimi-k3.1-pro",
+    "opencode-go/longcat-2.0",
+    "opencode-go/longcat-2.5-free",
+    "opencode-go/mimo-v2.6-flash",
+    "opencode-go/mimo-v2.6-pro",
+    "opencode-go/minimax-m3",
+    "opencode-go/minimax-m3.1-flash",
+    "opencode-go/qwen3.7-plus",
+    "opencode-go/qwen3.8-flash",
+    "opencode-go/qwen3.8-max",
+    "opencode-go/step-5-preview",
+    "opencode-go/beam-free"
+  ],
+  "candidates": [
+    "omlx/scanner",
+    "omlx/nano",
+    "omlx/mini",
+    "omlx/main",
+    "omlx/medic",
+    "omlx/main:flash",
+    "omlx/main:thinker",
+    "local-rec/flint",
+    "mistral/mistral-medium-3.5",
+    "mistral/mistral-small-2603",
+    "mistral/mistral-large-4",
+    "mistral/zai-glm-5-3",
+    "openai/gpt-6-astra",
+    "openai/gpt-6-luna",
+    "openai/gpt-6-sol",
+    "openai/gpt-6.1-sol",
+    "openai/gpt-6.1-terra",
+    "opencode-go/claude-haiku-5-5",
+    "opencode-go/deepseek-v4-pro",
+    "opencode-go/deepseek-v4.1-flash",
+    "opencode-go/glm-5.2",
+    "opencode-go/glm-5.3",
+    "opencode-go/glm-5.3-flash",
+    "opencode-go/gemini-4-argon",
+    "opencode-go/gpt-5.6-luna",
+    "opencode-go/gpt-6-luna",
+    "opencode-go/grok-4.7",
+    "opencode-go/hy3",
+    "opencode-go/hy4",
+    "opencode-go/hy4-preview",
+    "opencode-go/kimi-k2.7-code",
+    "opencode-go/kimi-k3",
+    "opencode-go/kimi-k3.1-pro",
+    "opencode-go/longcat-2.0",
+    "opencode-go/longcat-2.5-free",
+    "opencode-go/mimo-v2.6-flash",
+    "opencode-go/mimo-v2.6-pro",
+    "opencode-go/minimax-m3",
+    "opencode-go/minimax-m3.1-flash",
+    "opencode-go/qwen3.7-plus",
+    "opencode-go/qwen3.8-flash",
+    "opencode-go/qwen3.8-max",
+    "opencode-go/step-5-preview",
+    "opencode-go/beam-free"
+  ],
+  "stages": [
+    {
+      "task": "run_stage_plan",
+      "routes": [
+        {
+          "rank": 1,
+          "model_id": "opencode-go/glm-5.3"
+        },
+        {
+          "rank": 2,
+          "model_id": "mistral/zai-glm-5-3"
+        }
+      ]
+    },
+    {
+      "task": "review_plan",
+      "routes": [
+        {
+          "rank": 1,
+          "model_id": "openai/gpt-6.1-sol"
+        }
+      ]
+    },
+    {
+      "task": "implement",
+      "routes": [
+        {
+          "rank": 1,
+          "model_id": "opencode-go/deepseek-v4.1-flash"
+        },
+        {
+          "rank": 2,
+          "model_id": "opencode-go/gpt-5.6-luna"
+        }
+      ]
+    },
+    {
+      "task": "review",
+      "routes": [
+        {
+          "rank": 1,
+          "model_id": "mistral/zai-glm-5-3"
+        }
+      ]
+    },
+    {
+      "task": "run_stage_break",
+      "routes": [
+        {
+          "rank": 1,
+          "model_id": "opencode-go/hy3"
+        },
+        {
+          "rank": 2,
+          "model_id": "opencode-go/gpt-5.6-luna"
+        }
+      ]
+    }
+  ],
+  "recommendations": [
+    {"task":"run_stage_plan","decision":"evidence-only","rationale":"No candidate reaches the coverage threshold for planning. Keep the route unchanged pending local comparative planning samples; this is not evidence that it is best."},
+    {"task":"review_plan","decision":"evidence-only","rationale":"No candidate reaches the coverage threshold for plan review. Compare real plan reviews before choosing a route; openai provider availability is unverified in the provider registry."},
+    {"task":"implement","decision":"evidence-only","rationale":"The configured DeepSeek baseline is unrankable because its software-engineering evidence is a different release and is marked proxy-family. GLM-5.3 and GPT-5.6 Luna have eligible results but cannot be compared to the baseline. Test them on matched local implementation tasks before changing the route."},
+    {"task":"review","decision":"evidence-only","rationale":"The configured Mistral GLM-5.3 baseline has insufficient release-matched evidence. GLM-5.3 Flash reaches the threshold through one vendor review benchmark, but cannot be compared with the baseline. Run matched local reviews measuring valid findings and false positives before changing the route."},
+    {"task":"run_stage_break","decision":"evidence-only","rationale":"No candidate reaches the coverage threshold for adversarial failure analysis. Compare real break-stage samples before changing the current route."}
+  ]
+}

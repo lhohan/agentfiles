@@ -43,6 +43,7 @@ Agent configuration files are managed with Mise and GNU Stow.
 
 - [detect-jujutsu](agents/dotagents/.agents/skills/detect-jujutsu/) and [use-jujutsu](agents/dotagents/.agents/skills/use-jujutsu/) are the stable Jujutsu guidance pair. Combine them with instructions in [`AGENTS.md`](agents/agents-shared/CANONICAL/AGENTS.md).
 - [use-jujutsu-workspaces](agents/dotagents/.agents/skills/use-jujutsu-workspaces/) is an experimental, under-construction companion for `jj workspace` workflows when running parallel agent work. It is not yet a default recommendation alongside the main Jujutsu skills.
+- [compare-implementations](agents/dotagents/.agents/skills/compare-implementations/) compares competing solutions against the same request and recommends what to retain.
 - [karpathy-guidelines](agents/dotagents/.agents/skills/karpathy-guidelines/) is a reusable coding-behaviour skill. To default-enable it for a project, add this to the project's `AGENTS.md`: `- Use the skill 'karpathy-guidelines' for coding tasks.`
 - [document-architectural-decisions](agents/dotagents/.agents/skills/document-architectural-decisions/) guides creation and review of Architecture Decision Records using traditional ADRs or Y-statements.
 - [document-change-intentions-using-change-intent-records](agents/dotagents/.agents/skills/document-change-intentions-using-change-intent-records/) is a new skill under evaluation for documenting change intent worth remembering with lightweight Change Intent Records (CIRs), based on Bryan Liles' [Change Intent Records](https://blog.bryanl.dev/posts/change-intent-records/) pattern.
@@ -63,6 +64,7 @@ Agent configuration files are managed with Mise and GNU Stow.
 Located in [Pi](agents/pi).
 
   - A global [`APPEND_SYSTEM.md`](agents/pi/.pi/agent/APPEND_SYSTEM.md) for Pi-specific startup and questionnaire-steering behaviour
+  - An experimental `/recap` prompt at [`agents/pi/.pi/agent/prompts/recap.md`](agents/pi/.pi/agent/prompts/recap.md) for a short catch-up on the current conversation. It uses the [recap skill](agents/dotagents/.agents/skills/recap/SKILL.md). Remove it if it does not prove useful.
   - A `/run-stage-plan` prompt at [`agents/pi/.pi/agent/prompts/enhanced/run-stage-plan.md`](agents/pi/.pi/agent/prompts/enhanced/run-stage-plan.md) for read-only planning before implementation.
   - A `/review` prompt at [`agents/pi/.pi/agent/prompts/enhanced/review.md`](agents/pi/.pi/agent/prompts/enhanced/review.md) for read-only code review.
   - A `/run-stage-break` prompt at [`agents/pi/.pi/agent/prompts/enhanced/run-stage-break.md`](agents/pi/.pi/agent/prompts/enhanced/run-stage-break.md) for read-only adversarial QA and failure-mode hunting.

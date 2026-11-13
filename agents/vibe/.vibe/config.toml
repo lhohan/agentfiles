@@ -29,7 +29,7 @@ applied_migrations = [
 
 [[providers]]
 name = "mistral"
-api_base = "https://api.mistral.ai/v1"
+api_base = "https://api.eu.mistral.ai/v1"
 api_key_env_var = "MISTRAL_API_KEY"
 browser_auth_base_url = "https://console.mistral.ai"
 browser_auth_api_base_url = "https://console.mistral.ai/api"
@@ -89,9 +89,9 @@ provider = "mistral"
 alias = "zai-glm-5-3"
 temperature = 0.3
 thinking = "high"
-input_price = 1.4
-output_price = 4.4
-cached_input_price = 0.14
+input_price = 1.54
+output_price = 4.84
+cached_input_price = 0.154
 
 [[models]]
 name = "mistral-large-4"
@@ -99,8 +99,8 @@ provider = "mistral"
 alias = "mistral-large-4"
 temperature = 0.3
 thinking = "high"
-input_price = 0.68
-output_price = 2.09
+input_price = 0.77
+output_price = 2.31
 
 [[transcribe_providers]]
 name = "mistral"

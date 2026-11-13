@@ -9,14 +9,12 @@ tasks:
       - rank: 1
         model_id: opencode-go/glm-5.3
       - rank: 2
-        model_id: mistral/zai-glm-5-2
+        model_id: mistral/zai-glm-5-3
   - id: review_plan
     source: agents/pi/.pi/agent/prompts/enhanced/review-plan.md
     routes:
       - rank: 1
-        model_id: openai-codex/gpt-5.6-sol
-      - rank: 2
-        model_id: mistral/zai-glm-5-2
+        model_id: openai/gpt-6.1-sol
   - id: implement
     source: agents/pi/.pi/agent/prompts/enhanced/implement.md
     routes:
@@ -24,29 +22,18 @@ tasks:
         model_id: opencode-go/deepseek-v4.1-flash
       - rank: 2
         model_id: opencode-go/gpt-5.6-luna
-      - rank: 3
-        model_id: openai-codex/gpt-5.6-luna
   - id: review
     source: agents/pi/.pi/agent/prompts/enhanced/review.md
     routes:
       - rank: 1
-        model_id: openai-codex/gpt-5.6-sol
-      - rank: 2
-        model_id: mistral/zai-glm-5-2
+        model_id: mistral/zai-glm-5-3
   - id: run_stage_break
     source: agents/pi/.pi/agent/prompts/enhanced/run-stage-break.md
     routes:
       - rank: 1
         model_id: opencode-go/hy3
       - rank: 2
-        model_id: openai-codex/gpt-5.6-luna
-      - rank: 3
         model_id: opencode-go/gpt-5.6-luna
-  - id: general
-    source: agents/pi/.pi/agent/settings.json --> sessionStartModel.model
-    routes:
-      - rank: 1
-        model_id: openai-codex/gpt-5.6-luna
 ---
 # Pi Agent Profile
 
@@ -58,10 +45,9 @@ explicitly **out of scope** for this skill — do not document or verify them.
 
 - Prompt chains: `agents/pi/.pi/agent/prompts/enhanced/*.md` (`model:` frontmatter)
 - Enabled models: `agents/pi/.pi/agent/settings.json` (`enabledModels`). Models can be added based on evaluation results.
-- Session-start model: `settings.json` (`sessionStartModel.model`)
 - Catalog metadata (context limits, pricing, inputs): `~/.pi/agent/models-store.json`
 - Routing rationale: `docs/pi/cir/2026-08-13-pi-routing-openai-capacity-and-review-gates.md`
-- Related policy: `docs/pi/decisions.md` (pi-028 `sessionStartModel`, pi-006 prompt-owned model selection)
+- Related policy: `docs/pi/decisions.md` (pi-006 prompt-owned model selection)
 
 Never read credential or secret files under `~/.pi/agent/`. Provider availability is confirmed manually via `references/providers.md`.
 

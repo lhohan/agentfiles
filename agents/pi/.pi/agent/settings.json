@@ -6,7 +6,7 @@
   "defaultTools": [
     "+codemode"
   ],
-  "theme": "kanagawa-dragon",
+  "theme": "system",
   "terminal": {
     "showImages": true
   },
@@ -42,6 +42,8 @@
     "openai/gpt-6-sol",
     "openai/gpt-6.1-sol",
     "openai/gpt-6.1-terra",
+    "openai/gpt-6.2-astra",
+    "openai/gpt-6.2-sol",
     "opencode-go/claude-haiku-5-5",
     "opencode-go/deepseek-v4-pro",
     "opencode-go/deepseek-v4.1-flash",
@@ -54,6 +56,7 @@
     "opencode-go/grok-4.7",
     "opencode-go/hy3",
     "opencode-go/hy4",
+    "opencode-go/hy4-flash-free",
     "opencode-go/hy4-preview",
     "opencode-go/kimi-k2.7-code",
     "opencode-go/kimi-k3",
@@ -67,6 +70,7 @@
     "opencode-go/qwen3.7-plus",
     "opencode-go/qwen3.8-flash",
     "opencode-go/qwen3.8-max",
+    "opencode-go/qwen4-max",
     "opencode-go/step-5-preview",
     "opencode-go/beam-free"
   ],
