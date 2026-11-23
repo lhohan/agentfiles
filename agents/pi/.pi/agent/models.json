@@ -25,6 +25,22 @@
       "authHeader": true,
       "models": [
         {
+          "id": "main-alt",
+          "contextWindow": 131072,
+          "input": [
+            "text",
+            "image"
+          ]
+        },
+        {
+          "id": "coder",
+          "contextWindow": 131072,
+          "input": [
+            "text",
+            "image"
+          ]
+        },
+        {
           "id": "scanner",
           "contextWindow": 131072,
           "input": [

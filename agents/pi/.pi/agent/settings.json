@@ -25,6 +25,8 @@
     "npm:pi-warden@2.7.0"
   ],
   "enabledModels": [
+    "omlx/main-alt",
+    "omlx/coder",
     "omlx/scanner",
     "omlx/nano",
     "omlx/mini",
