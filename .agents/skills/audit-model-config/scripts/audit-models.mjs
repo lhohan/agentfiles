@@ -125,7 +125,7 @@ function collectRouteRefs(repo) {
 }
 
 /**
- * Section-typed TOML scan covering the shapes Zerostack and Vibe actually use:
+ * Section-typed TOML scan covering the shapes Zerostack actually uses:
  * top-level model/provider pairs, `[quick_models.*]`, `[[models]]` name/provider
  * pairs behind aliases, audio model blocks, and harness tool model keys.
  */
@@ -247,7 +247,6 @@ function audit(repo) {
       ref,
     })),
     ...scanTomlModels(repo, "agents/zerostack/.config/zerostack/config.toml"),
-    ...scanTomlModels(repo, "agents/vibe/.vibe/config.toml"),
   ].map((r) => {
     const { provider, id } = splitRef(r.ref);
     const checkable = r.checkable ?? true;

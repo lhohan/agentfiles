@@ -17,7 +17,6 @@ Agent configuration files are managed with Mise and GNU Stow.
 │   ├── agents-shared/      # shared AGENTS.md for Pi, OpenCode, and Codex
 │   ├── dotagents/          # shared global skills under ~/.agents/skills/
 │   ├── pi/                 # Pi package
-│   ├── vibe/               # Vibe package
 │   ├── zerostack/          # ZeroStack package
 │   └── …                   # other agent packages as needed
 └── docs/                   # package-specific documentation
@@ -95,12 +94,6 @@ Located in [Pi](agents/pi).
 
 - A [Sandbox EPERM halt extension](agents/pi/.pi/agent/extensions/sandbox-eperm-halt/index.ts) that detects sandbox permission failures (EPERM / "Operation not permitted") in built-in tool results and halts the agent for the current turn. It is a best-effort "stop trying" signal layered on top of sandbox containment. [Documentation](agents/pi/.pi/agent/extensions/sandbox-eperm-halt/sandbox-eperm-halt.md)
     - no extra setup required
-
-## Vibe
-
-Located in [Vibe](agents/vibe).
-
-- A [`config.toml`](agents/vibe/.vibe/config.toml) for the [Vibe CLI](https://github.com/Mistral-AI-Club/vibe-cli) with Mistral provider settings, model aliases, and tool permission profiles.
 
 ## ZeroStack
 

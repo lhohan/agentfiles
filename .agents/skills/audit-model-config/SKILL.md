@@ -1,7 +1,7 @@
 ---
 name: audit-model-config
 description: >
-  Find and fix model references that no longer work: refresh Pi's model catalogs, then audit every configured model across this repository (enabled models, prompt-template routes, extraction and skill mappings, models.json definitions and overrides, Zerostack, Vibe) against the live catalog, provider auth, and real reachability. Use when the user asks to review or update their models, when a model ID looks stale, after a provider renames or withdraws a model, when Pi prints "No models match pattern", or when a configured model fails at runtime.
+  Find and fix model references that no longer work: refresh Pi's model catalogs, then audit every configured model across this repository (enabled models, prompt-template routes, extraction and skill mappings, models.json definitions and overrides, Zerostack) against the live catalog, provider auth, and real reachability. Use when the user asks to review or update their models, when a model ID looks stale, after a provider renames or withdraws a model, when Pi prints "No models match pattern", or when a configured model fails at runtime.
 ---
 
 # Audit Model Config
@@ -98,12 +98,11 @@ The files that hold model references in this repository:
 | `agents/pi/.pi/agent/extensions/skill-model-switch.json` | skill → `provider/model` |
 | `agents/pi/.pi/agent/models.json` | local model definitions and `modelOverrides` per provider |
 | `agents/zerostack/.config/zerostack/config.toml` | `model`, `subagent_model`, `[quick_models.*]` |
-| `agents/vibe/.vibe/config.toml` | `active_model`, `[[models]]`, audio and tool models |
 
 Edit files in the repository, never the linked copies in `~/`.
 
 When you change a model's cost metadata, also check its declared prices in other
-harnesses. Zerostack and Vibe carry their own `input_token_cost` values, and a `0.0`
+harnesses. Zerostack carries its own `input_token_cost` values, and a `0.0`
 placeholder is not the same as a free model.
 
 ### 6. Verify

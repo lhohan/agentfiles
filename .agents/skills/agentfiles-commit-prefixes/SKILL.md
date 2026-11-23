@@ -17,7 +17,6 @@ This is **not** traditional Conventional Commits.
 - `pi:` — changes under `agents/pi/`
 - `dotagents:` — changes under `agents/dotagents/`
 - `shared:` — changes under `agents/agents-shared/`
-- `vibe:` — changes under `agents/vibe/`
 - `zerostack:` — changes under `agents/zerostack/`
 - `skill(evaluate-model-routing):` — the model-routing evaluation skill at
   `.agents/skills/evaluate-model-routing/`, including its review output under

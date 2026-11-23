@@ -36,17 +36,17 @@ Canonical Stow settings live in `.stowrc`:
 - `mise stow agents-shared` — link only package `agents-shared`
 - `mise stow dotagents` — link only package `dotagents`
 - `mise stow pi` — link only package `pi`
-- `mise stow vibe` — link only package `vibe`
+- `mise stow zerostack` — link only package `zerostack`
 - `mise unstow` — remove links for all packages
 - `mise restow agents-shared` — recreate links for package `agents-shared`
 - `mise restow dotagents` — recreate links for package `dotagents`
 - `mise restow pi` — recreate links for package `pi`
-- `mise restow vibe` — recreate links for package `vibe`
+- `mise restow zerostack` — recreate links for package `zerostack`
 - `mise check` — preview link actions for all packages
 - `mise check agents-shared` — preview link actions for package `agents-shared`
 - `mise check dotagents` — preview link actions for package `dotagents`
 - `mise check pi` — preview link actions for package `pi`
-- `mise check vibe` — preview link actions for package `vibe`
+- `mise check zerostack` — preview link actions for package `zerostack`
 
 ### Helper scripts
 
