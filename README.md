@@ -47,6 +47,7 @@ Agent configuration files are managed with Mise and GNU Stow.
 - [document-architectural-decisions](agents/dotagents/.agents/skills/document-architectural-decisions/) guides creation and review of Architecture Decision Records using traditional ADRs or Y-statements.
 - [document-change-intentions-using-change-intent-records](agents/dotagents/.agents/skills/document-change-intentions-using-change-intent-records/) is a new skill under evaluation for documenting change intent worth remembering with lightweight Change Intent Records (CIRs), based on Bryan Liles' [Change Intent Records](https://blog.bryanl.dev/posts/change-intent-records/) pattern.
 - [landing-the-plane](agents/dotagents/.agents/skills/landing-the-plane/) runs the end-of-task closure workflow.
+- [align-intent](agents/dotagents/.agents/skills/align-intent/) checks understanding of your goal, requested work, and constraints before planning or acting, then waits for your confirmation. Use `/align-intent [request]` in Pi or Vibe, `$align-intent [request]` in Codex, or ask OpenCode to use the `align-intent` skill. Omit the optional request to use the preceding conversation. These agents load the shared skill from `~/.agents/skills/`; no Vibe config is managed here. Run `/reload` in Pi or start a new session in the other agents after installation.
 
 ## Repository-local skills
 
@@ -63,6 +64,7 @@ Agent configuration files are managed with Mise and GNU Stow.
 Located in [Pi](agents/pi).
 
   - A global [`APPEND_SYSTEM.md`](agents/pi/.pi/agent/APPEND_SYSTEM.md) for Pi-specific startup and questionnaire-steering behaviour
+  - An [`/align-intent`](agents/pi/.pi/agent/prompts/align-intent.md) prompt that delegates to the shared skill to check understanding before planning or acting.
   - An experimental `/recap` prompt at [`agents/pi/.pi/agent/prompts/recap.md`](agents/pi/.pi/agent/prompts/recap.md) for a short catch-up on the current conversation. It uses the [recap skill](agents/dotagents/.agents/skills/recap/SKILL.md). Remove it if it does not prove useful.
   - A `/run-stage-plan` prompt at [`agents/pi/.pi/agent/prompts/enhanced/run-stage-plan.md`](agents/pi/.pi/agent/prompts/enhanced/run-stage-plan.md) for read-only planning before implementation.
   - A `/review` prompt at [`agents/pi/.pi/agent/prompts/enhanced/review.md`](agents/pi/.pi/agent/prompts/enhanced/review.md) for read-only code review.
